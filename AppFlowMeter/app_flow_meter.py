@@ -9,11 +9,16 @@ class AppFlowMeter(object):
         print("You initiated Application Flow Meter!")
 
     def run(self, output_file: str = "output.csv"):
-        print("run")
         flow_capturer = FlowCapturer()
-        flows = flow_capturer.capture()
+#        TODO: use config file for input pcap file & output.csv file & interface name and ...
+        print("> capturing started...")
+        flows = flow_capturer.capture("./test.pcap")
+        print("> capturing ended...")
+        print("> features extracting started...")
         feature_extractor = FeatureExtractor(flows)
         data = feature_extractor.execute()
+        print("> features extracting ended...")
+        print("> writing results to", output_file)
         writer = Writer(CSVWriter())
         writer.write(output_file, data)
-        print("end")
+        print("results are ready!")
