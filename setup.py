@@ -20,7 +20,7 @@ setup(
         packages=[
             "AppFlowMeter",
             "AppFlowMeter.features",
-            "AppFlowMeter.flow_capturer",
+            "AppFlowMeter.app_flow_capturer",
             "AppFlowMeter.writers",
         ],
         package_dir={

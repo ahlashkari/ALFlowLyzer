@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from .flow_capturer import Flow
+from .app_flow_capturer import Flow
 from .features import *
 
 

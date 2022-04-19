@@ -5,7 +5,7 @@ from scapy.layers.http import HTTPRequest #TODO: check for HTTPResponse
 from multipledispatch import dispatch
 from .flow import Flow
 
-class FlowCapturer(object):
+class AppFlowCapturer(object):
     def __init__(self):
         self.__flows = []
 

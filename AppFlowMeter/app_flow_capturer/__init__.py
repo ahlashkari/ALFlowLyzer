@@ -1,4 +1,4 @@
 #!/usr/bin/env python3
 
-from .flow_capturer import FlowCapturer
+from .app_flow_capturer import AppFlowCapturer
 from .flow import Flow
