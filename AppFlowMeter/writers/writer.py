@@ -12,5 +12,5 @@ class Writer(object):
         else:
             self.strategy = CSVWriter()
 
-    def write(self, file_address: str, data: dict) -> None:
+    def write(self, file_address: str, data: list) -> None:
         self.strategy.write(file_address, data)

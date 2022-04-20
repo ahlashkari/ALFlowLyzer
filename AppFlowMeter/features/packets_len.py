@@ -5,126 +5,64 @@ from scipy import stats
 from .feature import Feature
 
 
-class PacketsLen(Feature):
-    def __init__(self):
-        self.data = { "src_ip": [], "dst_ip": [], "src_port": [], "dst_port": []}
-
-    def extract(self, flows: list) -> dict:
-        pass
-
-
-class PacketsLenMin(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["min_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["min_packets_length"].append(min(packets_len))
-        return self.data
+class PacketsLenMin(Feature):
+    name = "packets_length_min"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return min(packets_len)
 
 
-class PacketsLenMax(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["max_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["max_packets_length"].append(max(packets_len))
-        return self.data
+class PacketsLenMax(Feature):
+    name = "packets_length_max"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return max(packets_len)
 
 
-class PacketsLenMean(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["mean_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["mean_packets_length"].append(statistics.mean(packets_len))
-        return self.data
+class PacketsLenMean(Feature):
+    name = "packets_length_mean"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return statistics.mean(packets_len)
 
 
-class PacketsLenMode(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["mode_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["mode_packets_length"].append(statistics.mode(packets_len))
-        return self.data
+class PacketsLenMode(Feature):
+    name = "packets_length_mode"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return statistics.mode(packets_len)
 
 
-class PacketsLenVariance(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["variance_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["variance_packets_length"].append(statistics.pvariance(packets_len))
-        return self.data
+class PacketsLenVariance(Feature):
+    name = "packets_length_variance"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return statistics.pvariance(packets_len)
 
 
-class PacketsLenStandardDeviation(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["standard_deviation_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["standard_deviation_packets_length"].append(statistics.pstdev(packets_len))
-        return self.data
+class PacketsLenStandardDeviation(Feature):
+    name = "packets_length_standard_deviation"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return statistics.pstdev(packets_len)
 
 
-class PacketsLenMedian(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["median_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["median_packets_length"].append(statistics.median(packets_len))
-        return self.data
+class PacketsLenMedian(Feature):
+    name = "packets_length_median"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return statistics.median(packets_len)
 
 
-class PacketsLenSkewness(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["skewness_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["skewness_packets_length"].append(statistics.median(packets_len))
-        return self.data
+class PacketsLenSkewness(Feature):
+    name = "packets_length_skewness"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return statistics.median(packets_len)
 
 
-class PacketsLenCoefficientOfVariation(PacketsLen):
-    def extract(self, flows: list) -> dict:
-        self.data["median_packets_length"] = []
-        for flow in flows:
-            self.data["src_ip"].append(flow.get_src_ip())
-            self.data["dst_ip"].append(flow.get_dst_ip())
-            self.data["src_port"].append(flow.get_src_port())
-            self.data["dst_port"].append(flow.get_dst_port())
-            packets_len = [len(packet) for packet in flow.get_packets()]
-            self.data["median_packets_length"].append(stats.skew(packets_len))
-        return self.data
+class PacketsLenCoefficientOfVariation(Feature):
+    name = "packets_length_coefficient_of_variation"
+    def extract(self, flow: object) -> dict:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return stats.skew(packets_len)
