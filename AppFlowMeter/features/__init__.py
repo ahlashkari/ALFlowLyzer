@@ -5,3 +5,4 @@ from .packets_len import PacketsLenMin, PacketsLenMax, PacketsLenMean, PacketsLe
                          PacketsLenStandardDeviation, PacketsLenVariance, PacketsLenMode, \
                          PacketsLenSkewness, PacketsLenCoefficientOfVariation
 from .packets_numbers import PacketsNumbers
+from .packets_time import ConnectionTime
