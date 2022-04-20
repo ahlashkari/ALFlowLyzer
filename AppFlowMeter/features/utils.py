@@ -3,18 +3,23 @@
 from scapy.all import *
 
 
-def calculate_incoming_packets_number(packets: list, dst_ip: str) -> int:
-    counter = 0
+def calculate_duration(packets: list):
+    packets_time = [packet.time for packet in packets]
+    return max(packets_time) - min(packets_time)
+
+
+def extract_incoming_packets(packets: list, dst_ip: str) -> list:
+    incoming_packets = []
     for packet in packets:
         if packet[IP].dst == dst_ip:
-            counter += 1
-    return counter
+            incoming_packets.append(packet)
+    return incoming_packets
 
 
-def calculate_outgoing_packets_number(packets: list, dst_ip: str) -> int:
-    counter = 0
+def extract_outgoing_packets(packets: list, dst_ip: str) -> list:
+    outgoing_packets = []
     for packet in packets:
         if packet[IP].src == dst_ip:
-            counter += 1
-    return counter
+            outgoing_packets.append(packet)
+    return outgoing_packets
 
