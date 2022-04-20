@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from .app_flow_capturer import Flow
-from .features import *
+from .features import *     # TODO: Imrove it
 
 
 class FeatureExtractor(object):
@@ -11,6 +11,12 @@ class FeatureExtractor(object):
                 PacketsLenMin(),
                 PacketsLenMax(),
                 PacketsLenMean(),
+                PacketsLenMedian(),
+                PacketsLenStandardDeviation(),
+                PacketsLenVariance(),
+                PacketsLenMode(),
+                PacketsLenCoefficientOfVariation(),
+                PacketsLenSkewness(),
                 PacketsNumbers()
             ]
 

@@ -12,9 +12,7 @@ class CSVWriter(Strategy):
             headers.pop(0)
             writer.writerow(headers)
             for i in range(len(data["src_ip"])):
-                writer.writerow([data["src_ip"][i],
-                                 data["dst_ip"][i],
-                                 data["src_port"][i],
-                                 data["dst_port"][i],
-                                 data["packets_numbers"][i],
-                    ])
+                row = []
+                for header in headers:
+                    row.append(data[header][i])
+                writer.writerow(row)
