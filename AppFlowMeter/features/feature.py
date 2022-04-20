@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 
 class Feature(ABC):
+    name: str
     @abstractmethod
-    def extract(self, flows: list) -> dict:
+    def extract(self, flow: object) -> dict:
         pass
