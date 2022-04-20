@@ -17,6 +17,8 @@ class FeatureExtractor(object):
                 PacketsLenCoefficientOfVariation(),
                 PacketsLenSkewness(),
                 PacketsNumbers(),
+                IncomingPacketsNumbers(),
+                OutgoingPacketsNumbers(),
                 ConnectionTime()
             ]
 
