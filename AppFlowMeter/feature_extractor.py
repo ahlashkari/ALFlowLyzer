@@ -19,7 +19,10 @@ class FeatureExtractor(object):
                 PacketsNumbers(),
                 IncomingPacketsNumbers(),
                 OutgoingPacketsNumbers(),
-                ConnectionTime()
+                ConnectionTime(),
+                PacketsRate(),
+                IncomingPacketsRate(),
+                OutgoingPacketsRate(),
             ]
 
     def execute(self) -> list:
