@@ -17,7 +17,8 @@ class FeatureExtractor(object):
                 PacketsLenMode(),
                 PacketsLenCoefficientOfVariation(),
                 PacketsLenSkewness(),
-                PacketsNumbers()
+                PacketsNumbers(),
+                ConnectionTime()
             ]
 
     def execute(self) -> dict:
