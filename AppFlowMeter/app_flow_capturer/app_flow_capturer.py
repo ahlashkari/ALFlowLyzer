@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from scapy.all import *
-from scapy.layers.http import HTTPRequest #TODO: check for HTTPResponse
+#from scapy.layers.http import HTTPRequest #TODO: check for HTTPResponse
+from scapy.layers.http import HTTP
 from multipledispatch import dispatch
 from .flow import Flow
 
@@ -17,7 +18,8 @@ class AppFlowCapturer(object):
     def capture(self, pcap_file: str) -> list:
         packets = rdpcap(pcap_file)
         for packet in packets:
-            if packet.haslayer(HTTPRequest) and packet.haslayer(TCP):
+            #if packet.haslayer(HTTPRequest) and packet.haslayer(TCP):
+            if packet.haslayer(HTTP):
                 self.__add_packet_to_flow(packet)
         return self.__flows
 
@@ -47,4 +49,3 @@ class AppFlowCapturer(object):
         new_flow = Flow(src_ip, dst_ip, src_port, dst_port)
         new_flow.add_packet(packet)
         self.__flows.append(new_flow)
-
