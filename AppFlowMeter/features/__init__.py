@@ -9,5 +9,10 @@ from .packets_len import ReceivingPacketsDeltaLenMin, ReceivingPacketsDeltaLenMa
                          SendingPacketsDeltaLenStandardDeviation, SendingPacketsDeltaLenVariance, SendingPacketsDeltaLenMode, \
                          SendingPacketsDeltaLenSkewness, SendingPacketsDeltaLenCoefficientOfVariation 
 from .packets_numbers import PacketsNumbers, IncomingPacketsNumbers, OutgoingPacketsNumbers
-from .packets_time import ConnectionTime
+from .packets_time import ConnectionTime, ReceivingPacketsDeltaTimeMin, ReceivingPacketsDeltaTimeMax, ReceivingPacketsDeltaTimeMean, ReceivingPacketsDeltaTimeMedian, \
+                         ReceivingPacketsDeltaTimeStandardDeviation, ReceivingPacketsDeltaTimeVariance, ReceivingPacketsDeltaTimeMode, \
+                         ReceivingPacketsDeltaTimeSkewness, ReceivingPacketsDeltaTimeCoefficientOfVariation, \
+                         SendingPacketsDeltaTimeMin, SendingPacketsDeltaTimeMax, SendingPacketsDeltaTimeMean, SendingPacketsDeltaTimeMedian, \
+                         SendingPacketsDeltaTimeStandardDeviation, SendingPacketsDeltaTimeVariance, SendingPacketsDeltaTimeMode, \
+                         SendingPacketsDeltaTimeSkewness, SendingPacketsDeltaTimeCoefficientOfVariation 
 from .packets_rate import PacketsRate, IncomingPacketsRate, OutgoingPacketsRate
