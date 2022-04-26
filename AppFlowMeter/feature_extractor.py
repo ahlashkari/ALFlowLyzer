@@ -7,15 +7,6 @@ class FeatureExtractor(object):
     def __init__(self, flows: list):
         self.__flows = flows
         self.__features = [
-                PacketsLenMin(),
-                PacketsLenMax(),
-                PacketsLenMean(),
-                PacketsLenMedian(),
-                PacketsLenStandardDeviation(),
-                PacketsLenVariance(),
-                PacketsLenMode(),
-                PacketsLenCoefficientOfVariation(),
-                PacketsLenSkewness(),
                 ReceivingPacketsDeltaLenMin(),
                 ReceivingPacketsDeltaLenMax(),
                 ReceivingPacketsDeltaLenMean(),
