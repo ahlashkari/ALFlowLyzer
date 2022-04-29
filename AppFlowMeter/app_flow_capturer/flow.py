@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from scapy.all import *
 
 class Flow(object):
     def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: str,
@@ -11,9 +12,15 @@ class Flow(object):
         self.__timestamp = timestamp
         self.__protocol = protocol
         self.__packets = []
+        self.__number_of_fin_flags = 0
+        self.__has_rst_flag = False
 
     def add_packet(self, packet) -> None:
         self.__packets.append(packet)
+        if packet[TCP].flags.FIN:
+            self.__number_of_fin_flags += 1
+        if packet[TCP].flags.RST:
+            self.__has_rst_flag = True
 
     def get_src_ip(self) -> str:
         return self.__src_ip
@@ -35,3 +42,11 @@ class Flow(object):
 
     def get_packets(self) -> list:
         return self.__packets
+
+    def has_two_fin_flags(self) -> bool:
+        if self.__number_of_fin_flags >= 2:
+            return True
+        return False
+
+    def has_rst_flag(self):
+        return self.__has_rst_flag
