@@ -65,6 +65,7 @@ class FeatureExtractor(object):
         self.__extracted_data = []
         for flow in self.__flows:
             features_of_flow = {}
+            features_of_flow["flow_id"] = str(flow)
             features_of_flow["timestamp"] = datetime.fromtimestamp(flow.get_timestamp())
             features_of_flow["src_ip"] = flow.get_src_ip()
             features_of_flow["src_port"] = flow.get_src_port()

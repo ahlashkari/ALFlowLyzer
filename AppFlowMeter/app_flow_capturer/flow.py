@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
 from scapy.all import *
 
 class Flow(object):
@@ -14,6 +15,10 @@ class Flow(object):
         self.__packets = []
         self.__number_of_fin_flags = 0
         self.__has_rst_flag = False
+
+    def __str__(self):
+        return str(datetime.fromtimestamp(self.__timestamp)) + '--' + self.__src_ip + '--' + \
+                str(self.__src_port) + '--' + self.__dst_ip + '--' + str(self.__dst_port)
 
     def add_packet(self, packet) -> None:
         self.__packets.append(packet)
