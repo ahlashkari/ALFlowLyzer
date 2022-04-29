@@ -48,5 +48,5 @@ class Flow(object):
             return True
         return False
 
-    def has_rst_flag(self):
+    def has_rst_flag(self) -> bool:
         return self.__has_rst_flag
