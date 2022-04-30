@@ -10,13 +10,13 @@ class PacketsNumbers(Feature):
         return len(flow.get_packets())
 
 
-class IncomingPacketsNumbers(Feature):
-    name = "incoming_packets_numbers"
+class ReceivingPacketsNumbers(Feature):
+    name = "receiving_packets_numbers"
     def extract(self, flow: object) -> int:
-        return len(utils.extract_incoming_packets(flow.get_packets(), flow.get_dst_ip()))
+        return len(utils.extract_receiving_packets(flow.get_packets(), flow.get_dst_ip()))
 
 
-class OutgoingPacketsNumbers(Feature):
-    name = "outgoing_packets_numbers"
+class SendingPacketsNumbers(Feature):
+    name = "sending_packets_numbers"
     def extract(self, flow: object) -> int:
-        return len(utils.extract_outgoing_packets(flow.get_packets(), flow.get_dst_ip()))
+        return len(utils.extract_sending_packets(flow.get_packets(), flow.get_dst_ip()))
