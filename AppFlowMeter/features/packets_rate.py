@@ -9,22 +9,25 @@ class PacketsRate(Feature):
     def extract(self, flow: object) -> float:
         if len(flow.get_packets()) <= 1:
             return 0
-        return len(flow.get_packets()) / utils.calculate_duration(flow.get_packets())
+        return format(len(flow.get_packets()) / utils.calculate_duration(flow.get_packets()),
+                     self.floating_point_unit)
 
 
-class IncomingPacketsRate(Feature):
-    name = "incoming_packets_rate"
+class ReceivingPacketsRate(Feature):
+    name = "receiving_packets_rate"
     def extract(self, flow: object) -> float:
-        incoming_packets = utils.extract_incoming_packets(flow.get_packets(), flow.get_dst_ip())
-        if len(incoming_packets) <= 1:
+        receiving_packets = utils.extract_receiving_packets(flow.get_packets(), flow.get_dst_ip())
+        if len(receiving_packets) <= 1:
             return 0
-        return len(incoming_packets) / utils.calculate_duration(incoming_packets)
+        return format(len(receiving_packets) / utils.calculate_duration(receiving_packets),
+                     self.floating_point_unit)
 
 
-class OutgoingPacketsRate(Feature):
-    name = "outgoing_packets_rate"
+class SendingPacketsRate(Feature):
+    name = "sending_packets_rate"
     def extract(self, flow: object) -> float:
-        outgoing_packets = utils.extract_outgoing_packets(flow.get_packets(), flow.get_dst_ip())
-        if len(outgoing_packets) <= 1:
+        sending_packets = utils.extract_sending_packets(flow.get_packets(), flow.get_dst_ip())
+        if len(sending_packets) <= 1:
             return 0
-        return len(outgoing_packets) / utils.calculate_duration(outgoing_packets)
+        return format(len(sending_packets) / utils.calculate_duration(sending_packets),
+                     self.floating_point_unit)
