@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from scapy.all import *
+from scapy.layers.http import *
 
 
 def calculate_duration(packets: list) -> float:
@@ -23,3 +24,11 @@ def extract_sending_packets(packets: list, dst_ip: str) -> list:
             sending_packets.append(packet)
     return sending_packets
 
+
+def extract_successful_packets(packets: list, dst_ip: str) -> list:
+    successful_packets = []
+    for packet in packets:
+        if HTTPResponse in packet:
+            if int(packet[HTTPResponse].Status_Code) == 200:
+                successful_packets.append(packet)
+    return successful_packets
