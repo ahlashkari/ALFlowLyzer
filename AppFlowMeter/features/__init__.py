@@ -24,7 +24,8 @@ from .packets_len import PacketsLenMin, PacketsLenMax, PacketsLenMean, PacketsLe
                          SendingPacketsDeltaLenStandardDeviation, SendingPacketsDeltaLenVariance, \
                          SendingPacketsDeltaLenMode, SendingPacketsDeltaLenSkewness, \
                          SendingPacketsDeltaLenCoefficientOfVariation
-from .packets_numbers import PacketsNumbers, ReceivingPacketsNumbers, SendingPacketsNumbers
+from .packets_numbers import PacketsNumbers, ReceivingPacketsNumbers, SendingPacketsNumbers, \
+                            SuccessfulPacketsNumbers
 from .packets_time import Duration, ReceivingPacketsDeltaTimeMin, \
                          ReceivingPacketsDeltaTimeMax, ReceivingPacketsDeltaTimeMean, \
                          ReceivingPacketsDeltaTimeMedian, \
@@ -37,4 +38,4 @@ from .packets_time import Duration, ReceivingPacketsDeltaTimeMin, \
                          SendingPacketsDeltaTimeStandardDeviation, SendingPacketsDeltaTimeVariance, \
                          SendingPacketsDeltaTimeMode, SendingPacketsDeltaTimeSkewness, \
                          SendingPacketsDeltaTimeCoefficientOfVariation
-from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate
+from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate, SuccessfulPacketsRate
