@@ -1,11 +1,11 @@
 # AppFlowMeter
+TODO: update these values:
 ![](https://img.shields.io/github/stars/pandao/editor.md.svg) ![](https://img.shields.io/github/forks/pandao/editor.md.svg) ![](https://img.shields.io/github/tag/pandao/editor.md.svg) ![](https://img.shields.io/github/release/pandao/editor.md.svg) ![](https://img.shields.io/github/issues/pandao/editor.md.svg)
 
 
-**Table of Contents**
+# Table of Contents
 
 - [Installation](#installation)
-  * [Requirements](#requirements)
 - [Architecture](#architecture)
 - [Extracted Features](#extracted-features)
   * [Statistical Information Calculation](#statistical-information-calculation)
@@ -14,16 +14,30 @@
 
 # Installation
 
-## Requirements
+You must install the requirements in your system before you can begin installing or running anything. To do so, you can easily run this command:
+
 ```bash
 sudo pip3 install -r requirements.txt
 ```
+
+You are now ready to install AppFlowMeter. In order to do so, you should run this command, which will install the AppFlowMeter package in your system:
+
 ```bash
 sudo python3 setup.py install
 ```
+
+Finally, to execute the program, run this command:
+
 ```bash
-app-flow-meter
+sudo app-flow-meter
 ```
+Also, you can use `-h` to see different options of the program.
+
+Moreover, this project has been successfully tested on Ubuntu 20.04. It should work on other versions of Ubuntu OS (or even Debian OS) as long as your system has the necessary python3 packages (you can see the required packages in the `requirements.txt` file).
+
+TODO: after adding arg parser, explain different options here.
+
+TODO: after adding config file, explain how to use it here.
 
 
 # Architecture
@@ -35,13 +49,195 @@ app-flow-meter
 
 # Extracted Features
                 
-We have currenlty 80 features that are as follows:
-+ Item A
-+ Item B
-+ Item C
+We have currenlty 71 features that are as follows:
+1. Duration
+1. Packets Numbers
+1. Receiving Packets Numbers
+1. Sending Packets Numbers
+1. Successful Packets Numbers (HTTP packets only)
+1. Successful Packets Rate (HTTP packets only)
+1. Packets Rate
+1. Receiving Packets Rate
+1. Sending Packets Rate
+1. Packets Len Min
+1. Packets Len Max
+1. Packets Len Mean
+1. Packets Len Median
+1. Packets Len Mode
+1. Packets Len Standard Deviation
+1. Packets Len Variance
+1. Packets Len Coefficient of Variation
+1. Packets Len Skewness
+1. Receiving Packets Len Min
+1. Receiving Packets Len Max
+1. Receiving Packets Len Mean
+1. Receiving Packets Len Median
+1. Receiving Packets Len Mode
+1. Receiving Packets Len Standard Deviation
+1. Receiving Packets Len Variance
+1. Receiving Packets Len Coefficient of Variation
+1. Receiving Packets Len Skewness
+1. Sending Packets Len Min
+1. Sending Packets Len Max
+1. Sending Packets Len Mean
+1. Sending Packets Len Median
+1. Sending Packets Len Mode
+1. Sending Packets Len Standard Deviation
+1. Sending Packets Len Variance
+1. Sending Packets Len Coefficient of Variation
+1. Sending Packets Len Skewness
+1. Receiving Packets Delta Len Min
+1. Receiving Packets Delta Len Max
+1. Receiving Packets Delta Len Mean
+1. Receiving Packets Delta Len Median
+1. Receiving Packets Delta Len Standard Deviation
+1. Receiving Packets Delta Len Variance
+1. Receiving Packets Delta Len Mode
+1. Receiving Packets Delta Len Coefficient of Variation
+1. Receiving Packets Delta Len Skewness
+1. Sending Packets Delta Len Min
+1. Sending Packets Delta Len Max
+1. Sending Packets Delta Len Mean
+1. Sending Packets Delta Len Median
+1. Sending Packets Delta Len Standard Deviation
+1. Sending Packets Delta Len Variance
+1. Sending Packets Delta Len Mode
+1. Sending Packets Delta Len Coefficient of Variation
+1. Sending Packets Delta Len Skewness
+1. Receiving Packets Delta Time Max
+1. Receiving Packets Delta Time Mean
+1. Receiving Packets Delta Time Median
+1. Receiving Packets Delta Time Standard Deviation
+1. Receiving Packets Delta Time Variance
+1. Receiving Packets Delta Time Mode
+1. Receiving Packets Delta Time Coefficient of Variation
+1. Receiving Packets Delta Time Skewness
+1. Sending Packets Delta Time Min
+1. Sending Packets Delta Time Max
+1. Sending Packets Delta Time Mean
+1. Sending Packets Delta Time Median
+1. Sending Packets Delta Time Standard Deviation
+1. Sending Packets Delta Time Variance
+1. Sending Packets Delta Time Mode
+1. Sending Packets Delta Time Coefficient of Variation
+1. Sending Packets Delta Time Skewness
+
+note: Delta features are about differences (time or length or anything else) between two 'consecutive' packets.
 
 ## Statistical Information Calculation
-ss
+
+We use differnet libraries to calculate various mathematical equations. Below you can see the libraries and their brief definition based on their documentations:
+
++ [**statistics**](https://docs.python.org/3/library/statistics.html)
+
+     This module provides functions for calculating mathematical statistics of numeric (Real-valued) data.
+
+     The module is not intended to be a competitor to third-party libraries such as NumPy, SciPy, or proprietary full-featured statistics packages aimed at professional statisticians such as Minitab, SAS and Matlab. It is aimed at the level of graphing and scientific calculators.
+
+
++ [**scipy**](https://scipy.github.io/devdocs/tutorial/general.html)
+
+     SciPy is a third-party library for scientific computing based on NumPy. It offers additional functionality compared to NumPy, including scipy.stats for statistical analysis. In this project, we use ['scipy.stats'](https://scipy.github.io/devdocs/tutorial/stats.html).
+
+
+
+TODO: for all functions, use scipy library instead of statistics (because it is faster).
+
+
+Nine mathematical functions are used to extract different features. You can see how those functions are calculated in the AppFlowMeter below:
+
+1. Min
+
+      You know what it means :). The 'min' function (Python built-in) calculates the minimum value in a given list.
+
+1. Max
+
+      Same as min. The 'max' function (Python built-in) calculates the minimum value in a given list.
+
+1. Mean
+
+      The ['mean'](https://docs.python.org/3/library/statistics.html#statistics.mean) function from 'statistics' library (Python built-in) calculates the mean value of a given list. According to the library documentation:
+        
+      The arithmetic mean is the sum of the data divided by the number of data points. It is commonly called “the average”, although it is only one of many different mathematical averages. It is a measure of the central location of the data.
+
+      TODO: use 'fmean' instead of mean (it is new in python 3.8). According to the library documentation:
+        
+      This runs faster than the mean() function and it always returns a float. The data may be a sequence or iterable. If the input dataset is empty, raises a StatisticsError.
+
+
+
+1. Median
+
+      The ['median'](https://docs.python.org/3/library/statistics.html#statistics.median) function from 'statistics' library (Python built-in) calculates the mean value of a given list. According to the library documentation:
+      
+      Return the median (middle value) of numeric data, using the common “mean of middle two” method. If data is empty, StatisticsError is raised. data can be a sequence or iterable.
+
+      The median is a robust measure of central location and is less affected by the presence of outliers. When the number of data points is odd, the middle data point is returned. When the number of data points is even, the median is interpolated by taking the average of the two middle values:
+
+
+1. Variance
+
+      The ['pvariance'](https://docs.python.org/3/library/statistics.html#statistics.pstdev) function from 'statistics' library (Python built-in) calculates the mean value of a given list. According to the library documentation:
+
+      Return the population variance of data, a non-empty sequence or iterable of real-valued numbers. Variance, or second moment about the mean, is a measure of the variability (spread or dispersion) of data. A large variance indicates that the data is spread out; a small variance indicates it is clustered closely around the mean.
+      
+      Raises StatisticsError if data is empty.
+
+
+
+
+1. Standard Deviation
+
+      The ['pstdev'](https://docs.python.org/3/library/statistics.html#statistics.pstdev) function from 'statistics' library (Python built-in) calculates the mean value of a given list. According to the library documentation:
+
+      Return the population standard deviation (the square root of the population variance). See pvariance() for arguments and other details.
+
+
+1. Mode
+
+      The ['mode'](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mode.html) function from 'scipy.stats' library calculates the mode value of a given list. According to the library documentation, this function:
+      
+      Return an array of the modal (most common) value in the passed array.
+
+      If there is more than one such value, only the smallest is returned. The bin-count for the modal bins is also returned.
+
+
+1. Coefficient of Variation
+
+      The ['variation'](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.variation.html) function from 'scipy.stats' library calculates the mode value of a given list. According to the library documentation, this function:
+      
+      The coefficient of variation is the standard deviation divided by the mean.
+      
+      There are several edge cases that are handled without generating a warning:
+
+      + If both the mean and the standard deviation are zero, nan is returned.
+
+      + If the mean is zero and the standard deviation is nonzero, inf is returned.
+
+      + If the input has length zero (either because the array has zero length, or all the input values are nan and nan_policy is 'omit'), nan is returned.
+
+      + If the input contains inf, nan is returned.
+
+1. Skewness
+
+      The ['skew'](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skew.html) function from 'scipy.stats' library calculates the mode value of a given list. According to the library documentation, this function:
+      
+      For normally distributed data, the skewness should be about zero. For unimodal continuous distributions, a skewness value greater than zero means that there is more weight in the right tail of the distribution.
+      
+      The sample skewness is computed as the Fisher-Pearson coefficient of skewness, i.e.
+
+      ![equation](https://latex.codecogs.com/svg.image?g_{1}&space;&space;=&space;&space;\frac{&space;m_{3}&space;}{&space;&space;&space;m_{2}^{&space;\frac{3}{2}&space;}&space;})
+            
+      <img src="https://render.githubusercontent.com/render/math?math=g_{1}  =  \frac{ m_{3} }{   m_{2}^{ \frac{3}{2} } }">
+
+      where
+
+      <img src="https://render.githubusercontent.com/render/math?math= m_{i}  =  \frac{1}{N} \sum_n^N (x[n] -  \overline{x} ) ^{i} ">
+      
+      is the biased sample ith central moment, and x- is the sample mean. If bias is False, the calculations are corrected for bias and the value computed is the adjusted Fisher-Pearson standardized moment coefficient, i.e.
+      
+      <img src="https://render.githubusercontent.com/render/math?math= G_{1}  =  \frac{ k_{3} }{k_{2}^{ \frac{3}{2} } } =  \frac{ \sqrt{N(N - 1)} }{N - 2} }  \frac{ m_{3} }{ m_{2}^{ \frac{3}{2} } }  ">
+      
 
 
 
