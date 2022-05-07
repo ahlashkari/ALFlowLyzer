@@ -226,15 +226,15 @@ Nine mathematical functions are used to extract different features. You can see 
       
       The sample skewness is computed as the Fisher-Pearson coefficient of skewness, i.e.
 
-      ![equation](https://latex.codecogs.com/svg.image?g_{1}&space;&space;=&space;&space;\frac{&space;m_{3}&space;}{&space;&space;&space;m_{2}^{&space;\frac{3}{2}&space;}&space;})
+      ![equation](https://latex.codecogs.com/svg.image?{\color{blue}&space;g_{1}=\frac{m_{3}}{m_{2}^{\frac{3}{2}}}})
 
       where
 
-      ![equation](https://latex.codecogs.com/svg.image?m_{i}&space;=&space;\frac{1}{N}&space;\sum_n^N&space;(x[n]&space;-&space;&space;\overline{x})&space;^{i}&space;)
+      ![equation](https://latex.codecogs.com/svg.image?{\color{blue}m_{i}=\frac{1}{N}\sum_n^N(x[n]-\overline{x})^{i}})
       
       is the biased sample ith central moment, and x- is the sample mean. If bias is False, the calculations are corrected for bias and the value computed is the adjusted Fisher-Pearson standardized moment coefficient, i.e.
       
-      ![equation](https://latex.codecogs.com/svg.image?G_{1}&space;=&space;\frac{k_{3}}{k_{2}^{\frac{3}{2}}}&space;=&space;\frac{\sqrt{N(N&space;-&space;1)}}{N&space;-&space;2}&space;\frac{&space;m_{3}}{m_{2}^{\frac{3}{2}})      
+      ![equation](https://latex.codecogs.com/svg.image?{\color{blue}G_{1}=\frac{k_{3}}{k_{2}^{\frac{3}{2}}}=\frac{\sqrt{N(N-1)}}{N-2}\frac{m_{3}}{m_{2}^{\frac{3}{2}}})      
 
 
 
