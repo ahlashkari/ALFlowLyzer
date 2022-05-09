@@ -42,7 +42,8 @@ TODO: after adding config file, explain how to use it here.
 
 # Architecture
 
-![](https://github.com/ahlashkari/AppFlowMeter/blob/features/10-update-readme-file/Architecture.svg)
+
+![](./Architecture.svg)
 
                 
 ----
