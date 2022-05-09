@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
-from scapy.all import *
 
 class Flow(object):
     def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: str,
@@ -15,6 +14,7 @@ class Flow(object):
         self.__packets = []
         self.__number_of_fin_flags = 0
         self.__has_rst_flag = False
+        self.__last_packet_timestamp = timestamp
 
     def __str__(self):
         return str(datetime.fromtimestamp(self.__timestamp)) + '--' + self.__src_ip + '--' + \
@@ -22,9 +22,11 @@ class Flow(object):
 
     def add_packet(self, packet) -> None:
         self.__packets.append(packet)
-        if packet[TCP].flags.FIN:
+        self.__last_packet_timestamp = packet.get_timestamp()
+        # TODO: check for forward and backward FIN
+        if 'F' in packet.get_tcp_flags():
             self.__number_of_fin_flags += 1
-        if packet[TCP].flags.RST:
+        if 'R' in packet.get_tcp_flags():
             self.__has_rst_flag = True
 
     def get_src_ip(self) -> str:
@@ -55,3 +57,6 @@ class Flow(object):
 
     def has_rst_flag(self) -> bool:
         return self.__has_rst_flag
+
+    def get_last_packet_timestamp(self):
+        return self.__last_packet_timestamp

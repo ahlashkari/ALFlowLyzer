@@ -8,6 +8,9 @@ class CSVWriter(Strategy):
     def write(self, file_address: str, data: list) -> str:
         with open(file_address, 'w') as f:
             writer = csv.writer(f)
+            if len(data) == 0:
+                print("There is nothing to be shown.")
+                return 0
             headers = list(data[0].keys())
             writer.writerow(headers)
             for data_row in data:
