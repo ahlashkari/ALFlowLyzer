@@ -244,7 +244,7 @@ class ReceivingPacketsLenCoefficientOfVariation(Feature):
 class PacketsDeltaLenBase(Feature):
     def get_receiving_delta(self, flow: object) -> list:
         receiving_packets = utils.extract_receiving_packets(flow.get_packets(), flow.get_dst_ip())
-        receiving_packets_timestamp = [packet.time for packet in receiving_packets]
+        receiving_packets_timestamp = [packet.get_timestamp() for packet in receiving_packets]
         receiving_packets_sorted = [packet for _, packet in sorted(zip(receiving_packets_timestamp,
                                                                        receiving_packets))]
         receiving_packets_len = [len(packet) for packet in receiving_packets_sorted]
@@ -254,7 +254,7 @@ class PacketsDeltaLenBase(Feature):
 
     def get_sending_delta(self, flow: object) -> list:
         sending_packets = utils.extract_sending_packets(flow.get_packets(), flow.get_dst_ip())
-        sending_packets_timestamp = [packet.time for packet in sending_packets]
+        sending_packets_timestamp = [packet.get_timestamp() for packet in sending_packets]
         sending_packets_sorted = [packet for _, packet in sorted(zip(sending_packets_timestamp,
                                                                        sending_packets))]
         sending_packets_len = [len(packet) for packet in sending_packets_sorted]

@@ -15,7 +15,7 @@ class Duration(Feature):
 class PacketsDeltaTimeBase(Feature):
     def get_receiving_delta(self, flow: object) -> list:
         receiving_packets = utils.extract_receiving_packets(flow.get_packets(), flow.get_dst_ip())
-        receiving_packets_timestamp = [float(packet.time) for packet in receiving_packets]
+        receiving_packets_timestamp = [float(packet.get_timestamp()) for packet in receiving_packets]
         receiving_packets_timestamp_sorted = sorted(receiving_packets_timestamp)
         receiving_packets_del_time = [pkt - pkt_prev for pkt_prev, pkt in
                            zip(receiving_packets_timestamp_sorted[:-1], receiving_packets_timestamp_sorted[1:])]
@@ -23,7 +23,7 @@ class PacketsDeltaTimeBase(Feature):
 
     def get_sending_delta(self, flow: object) -> list:
         sending_packets = utils.extract_sending_packets(flow.get_packets(), flow.get_dst_ip())
-        sending_packets_timestamp = [float(packet.time) for packet in sending_packets]
+        sending_packets_timestamp = [float(packet.get_timestamp()) for packet in sending_packets]
         sending_packets_timestamp_sorted = sorted(sending_packets_timestamp)
         sending_packets_del_time = [pkt - pkt_prev for pkt_prev, pkt in
                            zip(sending_packets_timestamp_sorted[:-1], sending_packets_timestamp_sorted[1:])]

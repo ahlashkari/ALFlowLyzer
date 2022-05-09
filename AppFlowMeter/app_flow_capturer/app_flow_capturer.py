@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
-from scapy.all import *
-from scapy.layers.http import HTTP
 from multipledispatch import dispatch
+from scapy.all import *
 from .flow import Flow
+from .packet import Packet
 
 class AppFlowCapturer(object):
     def __init__(self):
         self.__finished_flows = []
         self.__ongoing_flows = []
         # TODO: read these from config file
-        self.ideal_time = 100000
-        self.threshold = 100000
+        self.max_flow_duration = 120000
+        self.activity_timeout = 5000
 
     @dispatch()
     def capture(self) -> list:
@@ -20,37 +20,39 @@ class AppFlowCapturer(object):
 
     @dispatch(str)
     def capture(self, pcap_file: str) -> list:
-        packets = rdpcap(pcap_file)
-        for packet in packets:
-            if packet.haslayer(HTTP):
-                self.__add_packet_to_flow(packet, 'HTTP')
+        sniff(offline=pcap_file, filter="ip", prn=self.packet_processing, store=0)
         return self.__finished_flows + self.__ongoing_flows
 
-    def __add_packet_to_flow(self, packet: object, protocol: str) -> None:
-        src_ip = packet[IP].src
-        dst_ip = packet[IP].dst
-        src_port = packet[TCP].sport
-        dst_port = packet[TCP].dport
-        flow = self.__search_for_flow(src_ip, dst_ip, src_port, dst_port, packet.time, protocol)
+    def packet_processing(self, pkt):
+        packet = Packet(pkt)
+        self.__add_packet_to_flow(packet)
+
+    def __add_packet_to_flow(self, packet: object) -> None:
+        src_ip = packet.get_src_ip()
+        dst_ip = packet.get_dst_ip()
+        src_port = packet.get_src_port()
+        dst_port = packet.get_dst_port()
+        flow = self.__search_for_flow(src_ip, dst_ip, src_port, dst_port, packet.get_timestamp(),
+                packet.get_application_protocol())
         if flow == None:
-            self.__create_new_flow(src_ip, dst_ip, src_port, dst_port, protocol, packet)
+            self.__create_new_flow(src_ip, dst_ip, src_port, dst_port, packet)
         else:
             if self.__flow_is_ended(flow, packet):
                 self.__ongoing_flows.remove(flow)
                 self.__finished_flows.append(flow)
-                self.__create_new_flow(src_ip, dst_ip, src_port, dst_port, protocol, packet)
+                self.__create_new_flow(src_ip, dst_ip, src_port, dst_port, packet)
             else:
                 flow.add_packet(packet)
 
     def __flow_is_ended(self, flow: object, packet: object) -> bool:
-        duration = packet.time - flow.get_timestamp()
-        if duration > self.ideal_time or duration > self.threshold or flow.has_two_fin_flags() or \
-                flow.has_rst_flag():
+        flow_duration = packet.get_timestamp() - flow.get_timestamp()
+        active_time = packet.get_timestamp() - flow.get_last_packet_timestamp()
+        if flow_duration > self.max_flow_duration or active_time > self.activity_timeout or \
+                flow.has_two_fin_flags() or flow.has_rst_flag():
+
             return True
         return False
 
-
-#    TODO: Improve it
     def __search_for_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
             timestamp: str, protocol: str) -> object:
         for flow in self.__ongoing_flows:
@@ -61,11 +63,11 @@ class AppFlowCapturer(object):
                (flow.get_protocol() == protocol) and \
                (datetime.fromtimestamp(timestamp) >= datetime.fromtimestamp(flow.get_timestamp())):
                    return flow
-
         return None
 
     def __create_new_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
-            protocol: str, packet: object) -> None:
-        new_flow = Flow(src_ip, dst_ip, src_port, dst_port, packet.time, protocol)
+            packet: object) -> None:
+        new_flow = Flow(src_ip, dst_ip, src_port, dst_port, packet.get_timestamp(),
+                packet.get_application_protocol())
         new_flow.add_packet(packet)
         self.__ongoing_flows.append(new_flow)
