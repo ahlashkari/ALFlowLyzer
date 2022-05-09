@@ -23,9 +23,9 @@ class AppFlowCapturer(object):
         sniff(offline=pcap_file, filter="ip", prn=self.packet_processing, store=0)
         return self.__finished_flows + self.__ongoing_flows
 
-    def packet_processing(self, pkt):
-        packet = Packet(pkt)
-        self.__add_packet_to_flow(packet)
+    def packet_processing(self, scapy_packet):
+        app_flow_packet = Packet(scapy_packet)
+        self.__add_packet_to_flow(app_flow_packet)
 
     def __add_packet_to_flow(self, packet: object) -> None:
         src_ip = packet.get_src_ip()
