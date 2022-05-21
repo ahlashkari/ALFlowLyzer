@@ -7,12 +7,11 @@ from .flow import Flow
 from .packet import Packet
 
 class AppFlowCapturer(object):
-    def __init__(self):
+    def __init__(self, max_flow_duration: int, activity_timeout: int):
         self.__finished_flows = []
         self.__ongoing_flows = []
-        # TODO: read these from config file
-        self.max_flow_duration = 120000
-        self.activity_timeout = 5000
+        self.max_flow_duration = max_flow_duration
+        self.activity_timeout = activity_timeout
 
     @dispatch()
     def capture(self) -> list:
@@ -20,10 +19,12 @@ class AppFlowCapturer(object):
 
     @dispatch(str)
     def capture(self, pcap_file: str) -> list:
-        sniff(offline=pcap_file, filter="ip", prn=self.packet_processing, store=0)
+        sniff(offline=pcap_file, prn=self.packet_processing, store=0)
         return self.__finished_flows + self.__ongoing_flows
 
     def packet_processing(self, scapy_packet):
+        if TCP not in scapy_packet and UDP not in scapy_packet:
+            return
         app_flow_packet = Packet(scapy_packet)
         self.__add_packet_to_flow(app_flow_packet)
 
@@ -49,7 +50,6 @@ class AppFlowCapturer(object):
         active_time = packet.get_timestamp() - flow.get_last_packet_timestamp()
         if flow_duration > self.max_flow_duration or active_time > self.activity_timeout or \
                 flow.has_two_fin_flags() or flow.has_rst_flag():
-
             return True
         return False
 
