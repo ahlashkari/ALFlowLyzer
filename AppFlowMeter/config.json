@@ -1,3 +1,8 @@
 {
-
+    "pcap_file_address": "./test.pcap",
+    "output_file_address": "./output.csv",
+    "interface_name": "eth0",
+    "max_flow_duration": 120000,
+    "activity_timeout": 5000,
+    "floating_point_unit": ".64f"
 }

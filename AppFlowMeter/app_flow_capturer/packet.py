@@ -4,6 +4,7 @@ from datetime import datetime
 from scapy.all import *
 from scapy.layers.http import HTTP, HTTPResponse
 from scapy.layers.dns import DNS
+from .protocols import Protocols
 
 class Packet(object):
     def __init__(self, packet: object):
@@ -40,19 +41,10 @@ class Packet(object):
             self.__network_protocol = UDP
 
     def __extract_application_layer_protocol(self, packet: object) -> None:
-        if packet[self.__network_protocol].dport == 80 or \
-                packet[self.__network_protocol].sport == 80 or \
-                packet.haslayer(HTTP):
-            self.__application_protocol = 'HTTP'
-
-        elif packet[self.__network_protocol].dport == 53 or \
-                packet[self.__network_protocol].sport == 53 or \
-                packet.haslayer(DNS):
-            self.__application_protocol = 'DNS'
-
-        elif packet[self.__network_protocol].dport == 443 or \
-                packet[self.__network_protocol].sport == 443:
-            self.__application_protocol = 'HTTPS'
+        for protocol_name, protocol_port in Protocols.__members__.items():
+            if self.__dst_port == protocol_port.value or self.__src_port == protocol_port.value:
+                self.__application_protocol = protocol_name
+                return
 
     def get_tcp_flags(self):
         return self.__tcp_flags

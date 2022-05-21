@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
-from .features import *     # TODO: Imrove it
+from .features import *
 
 
 class FeatureExtractor(object):
-    def __init__(self, flows: list):
+    def __init__(self, flows: list, floating_point_unit: str):
         self.__flows = flows
+        self.floating_point_unit = floating_point_unit
         self.__features = [
                 Duration(),
                 PacketsNumbers(),
@@ -93,6 +94,7 @@ class FeatureExtractor(object):
             features_of_flow["dst_port"] = flow.get_dst_port()
             features_of_flow["protocol"] = flow.get_protocol()
             for feature in self.__features:
+                feature.set_floating_point_unit(self.floating_point_unit)
                 features_of_flow[feature.name] = feature.extract(flow)
             self.__extracted_data.append(features_of_flow.copy())
         return self.__extracted_data.copy()
