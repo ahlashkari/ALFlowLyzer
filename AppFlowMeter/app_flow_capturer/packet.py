@@ -10,8 +10,7 @@ class Packet(object):
     def __init__(self, packet: object):
         self.__network_protocol = None
         self.__application_protocol = 'Others'
-        self.__extract_protocols(packet)
-
+        self.__extract_network_layer_protocol(packet)
         self.__is_http_response = True if HTTPResponse in packet else False
         self.__status_code = int(packet[HTTPResponse].Status_Code) if self.__is_http_response else -1
         self.__src_ip = packet[IP].src
@@ -22,16 +21,13 @@ class Packet(object):
         self.__tcp_flags = packet[self.__network_protocol].flags if self.__network_protocol == TCP else []
         self.__len = len(packet)
         self.__has_rst_flag = False
+        self.__extract_application_layer_protocol(packet)
 
     def __len__(self):
         return self.__len
 
     def __lt__(self, o: object):
         return (self.__timestamp <= o.get_timestamp())
-
-    def __extract_protocols(self, packet: object) -> None:
-        self.__extract_network_layer_protocol(packet)
-        self.__extract_application_layer_protocol(packet)
 
     def __extract_network_layer_protocol(self, packet: object) -> None:
         if packet.haslayer(TCP):

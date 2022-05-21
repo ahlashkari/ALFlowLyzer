@@ -6,7 +6,7 @@ from .writers import Writer, CSVWriter
 from .config_loader import ConfigLoader
 
 class AppFlowMeter(object):
-    def __init__(self, config_file_address: str):
+    def __init__(self, config_file_address: str, online_capturing: bool):
         print("You initiated Application Flow Meter!")
         self.config_file_address = config_file_address
 
