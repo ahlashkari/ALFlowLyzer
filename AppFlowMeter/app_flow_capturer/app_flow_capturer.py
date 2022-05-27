@@ -23,6 +23,8 @@ class AppFlowCapturer(object):
         return self.__finished_flows + self.__ongoing_flows
 
     def packet_processing(self, scapy_packet):
+        if IP not in scapy_packet:
+            return
         if TCP not in scapy_packet and UDP not in scapy_packet:
             return
         app_flow_packet = Packet(scapy_packet)

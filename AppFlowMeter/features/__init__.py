@@ -38,4 +38,5 @@ from .packets_time import Duration, ReceivingPacketsDeltaTimeMin, \
                          SendingPacketsDeltaTimeStandardDeviation, SendingPacketsDeltaTimeVariance, \
                          SendingPacketsDeltaTimeMode, SendingPacketsDeltaTimeSkewness, \
                          SendingPacketsDeltaTimeCoefficientOfVariation
-from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate, SuccessfulPacketsRate
+from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate, SuccessfulPacketsRate, \
+                         PacketsLenRate, SendingPacketsLenRate, ReceivingPacketsLenRate
