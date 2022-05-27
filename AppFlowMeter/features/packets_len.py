@@ -6,6 +6,29 @@ from .feature import Feature
 from . import utils
 
 
+class TotalBytes(Feature):
+    name = "total_bytes"
+    def extract(self, flow: object) -> int:
+        packets_len = [len(packet) for packet in flow.get_packets()]
+        return sum(packets_len)
+
+
+class SendingBytes(Feature):
+    name = "sending_bytes"
+    def extract(self, flow: object) -> int:
+        sending_packets = utils.extract_sending_packets(flow.get_packets(), flow.get_dst_ip())
+        sending_packets_len = [len(packet) for packet in sending_packets]
+        return sum(sending_packets_len)
+
+
+class ReceivingBytes(Feature):
+    name = "receiving_bytes"
+    def extract(self, flow: object) -> int:
+        receiving_packets = utils.extract_receiving_packets(flow.get_packets(), flow.get_dst_ip())
+        receiving_packets_len = [len(packet) for packet in receiving_packets]
+        return sum(receiving_packets_len)
+
+
 class PacketsLenMin(Feature):
     name = "min_packets_len"
     def extract(self, flow: object) -> int:
