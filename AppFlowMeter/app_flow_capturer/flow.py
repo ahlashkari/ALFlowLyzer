@@ -17,8 +17,8 @@ class Flow(object):
         self.__last_packet_timestamp = timestamp
 
     def __str__(self):
-        return str(datetime.fromtimestamp(self.__timestamp)) + '--' + self.__src_ip + '--' + \
-                str(self.__src_port) + '--' + self.__dst_ip + '--' + str(self.__dst_port)
+        return str(datetime.fromtimestamp(self.__timestamp)) + '_' + self.__src_ip + '_' + \
+                str(self.__src_port) + '_' + self.__dst_ip + '_' + str(self.__dst_port)
 
     def add_packet(self, packet) -> None:
         self.__packets.append(packet)
