@@ -23,7 +23,8 @@ from .packets_len import PacketsLenMin, PacketsLenMax, PacketsLenMean, PacketsLe
                          SendingPacketsDeltaLenMean, SendingPacketsDeltaLenMedian, \
                          SendingPacketsDeltaLenStandardDeviation, SendingPacketsDeltaLenVariance, \
                          SendingPacketsDeltaLenMode, SendingPacketsDeltaLenSkewness, \
-                         SendingPacketsDeltaLenCoefficientOfVariation
+                         SendingPacketsDeltaLenCoefficientOfVariation, \
+                         TotalBytes, SendingBytes, ReceivingBytes
 from .packets_numbers import PacketsNumbers, ReceivingPacketsNumbers, SendingPacketsNumbers, \
                             SuccessfulPacketsNumbers
 from .packets_time import Duration, DeltaStart, ReceivingPacketsDeltaTimeMin, \
