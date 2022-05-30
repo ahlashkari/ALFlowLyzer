@@ -67,5 +67,11 @@ class Packet(object):
     def get_application_protocol(self) -> str:
         return self.__application_protocol
     
-    def get_req_status(self) -> int:
-        return int(self.__is_http_request)
+    def get_req_status(self) -> bool:
+        return self.__is_http_request
+    
+    def get_syn_flag(self) -> int:
+        if self.__network_protocol == TCP:
+            syn_flag = self.__tcp_flags.S
+            return int(syn_flag)
+        return 0
