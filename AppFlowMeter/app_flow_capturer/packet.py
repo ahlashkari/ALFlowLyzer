@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from scapy.all import *
-from scapy.layers.http import HTTP, HTTPResponse
+from scapy.layers.http import HTTP, HTTPResponse, HTTPRequest
 from scapy.layers.dns import DNS
 from .protocols import Protocols
 
@@ -12,6 +12,7 @@ class Packet(object):
         self.__application_protocol = 'Others'
         self.__extract_network_layer_protocol(packet)
         self.__is_http_response = True if HTTPResponse in packet else False
+        self.__is_http_request = True if HTTPRequest in packet else False
         self.__status_code = int(packet[HTTPResponse].Status_Code) if self.__is_http_response else -1
         self.__src_ip = packet[IP].src
         self.__dst_ip = packet[IP].dst
@@ -62,6 +63,9 @@ class Packet(object):
 
     def get_status_code(self) -> int:
         return self.__status_code
-
+    
     def get_application_protocol(self) -> str:
         return self.__application_protocol
+    
+    def get_req_status(self) -> int:
+        return int(self.__is_http_request)
