@@ -12,6 +12,20 @@ class Duration(Feature):
         return format(utils.calculate_duration(flow.get_packets()), self.floating_point_unit)
 
 
+class DeltaStart(Feature):
+    name = "delta_start"
+    def extract(self, flow: object) -> float:
+        packets = flow.get_packets()
+        packets_time = [packet.get_timestamp() for packet in packets]
+        request_packet_time = []
+        for packet in packets:
+            if packet.get_req_status() == 1:
+                request_packet_time.append(packet.get_timestamp())
+        if len(request_packet_time) > 0:
+            return format(min(request_packet_time) - min(packets_time), self.floating_point_unit)
+        return 0
+
+
 class PacketsDeltaTimeBase(Feature):
     def get_receiving_delta(self, flow: object) -> list:
         receiving_packets = utils.extract_receiving_packets(flow.get_packets(), flow.get_dst_ip())
