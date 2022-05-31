@@ -24,7 +24,11 @@ from .packets_len import PacketsLenMin, PacketsLenMax, PacketsLenMean, PacketsLe
                          SendingPacketsDeltaLenStandardDeviation, SendingPacketsDeltaLenVariance, \
                          SendingPacketsDeltaLenMode, SendingPacketsDeltaLenSkewness, \
                          SendingPacketsDeltaLenCoefficientOfVariation, \
-                         TotalBytes, SendingBytes, ReceivingBytes
+                         TotalBytes, SendingBytes, ReceivingBytes, \
+                         RequestResponseBytesMin, RequestResponseBytesMax, RequestResponseBytesMean, \
+                         RequestResponseBytesMode, RequestResponseBytesVariance, RequestResponseBytesStandardDeviation, \
+                         RequestResponseBytesMedian, RequestResponseBytesSkewness, \
+                         RequestResponseBytesCoefficientOfVariation
 from .packets_numbers import PacketsNumbers, ReceivingPacketsNumbers, SendingPacketsNumbers, \
                             SuccessfulPacketsNumbers
 from .packets_time import Duration, DeltaStart, ReceivingPacketsDeltaTimeMin, \
