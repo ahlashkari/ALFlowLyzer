@@ -50,7 +50,7 @@ TODO: after adding config file, explain how to use it here.
 
 # Extracted Features
                 
-We have currenlty 78 features that are as follows:
+We have currenlty 87 features that are as follows:
 1. Duration
 1. Packets Numbers
 1. Receiving Packets Numbers
@@ -129,6 +129,15 @@ We have currenlty 78 features that are as follows:
 1. Sending Packets Delta Time Mode
 1. Sending Packets Delta Time Coefficient of Variation
 1. Sending Packets Delta Time Skewness
+1. Request Response Packets Byte Min
+1. Request Response Packets Byte Max
+1. Request Response Packets Byte Mean
+1. Request Response Packets Byte Median
+1. Request Response Packets Byte Standard Deviation
+1. Request Response Packets Byte Variance
+1. Request Response Packets Byte Mode
+1. Request Response Packets Byte Coefficient of Variation
+1. Request Response Packets Byte Skewness
 
 note: Delta features are about differences (time or length or anything else) between two 'consecutive' packets.
 
