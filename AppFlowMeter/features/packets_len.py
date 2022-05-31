@@ -29,6 +29,96 @@ class ReceivingBytes(Feature):
         return sum(receiving_packets_len)
 
 
+class RequestResponseBytesMin(Feature):
+    name = "min_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return min(req_response_packets_len)
+        return 0
+
+
+class RequestResponseBytesMax(Feature):
+    name = "max_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return max(req_response_packets_len)
+        return 0
+
+
+class RequestResponseBytesMean(Feature):
+    name = "mean_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return format(statistics.mean(req_response_packets_len), self.floating_point_unit)
+        return 0
+    
+
+class RequestResponseBytesMode(Feature):
+    name = "mode_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return format(float(stats.mode(req_response_packets_len)[0]), self.floating_point_unit)
+        return 0
+        
+
+class RequestResponseBytesVariance(Feature):
+    name = "variance_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return format(statistics.pvariance(req_response_packets_len), self.floating_point_unit)
+        return 0
+
+
+class RequestResponseBytesStandardDeviation(Feature):
+    name = "standard_deviation_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return format(statistics.pstdev(req_response_packets_len), self.floating_point_unit)
+        return 0
+
+
+class RequestResponseBytesMedian(Feature):
+    name = "median_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return format(statistics.median(req_response_packets_len), self.floating_point_unit)
+        return 0
+
+
+class RequestResponseBytesSkewness(Feature):
+    name = "skewness_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return format(stats.skew(req_response_packets_len), self.floating_point_unit)
+        return 0
+
+
+class RequestResponseBytesCoefficientOfVariation(Feature):
+    name = "coefficient_of_variation_request_response_bytes"
+    def extract(self, flow: object) -> int:
+        req_response_packets = utils.extract_request_response_packets(flow.get_packets())
+        req_response_packets_len = [len(packet) for packet in req_response_packets]
+        if len(req_response_packets_len) > 0:
+            return format(stats.variation(req_response_packets_len), self.floating_point_unit)
+        return 0
+
+
 class PacketsLenMin(Feature):
     name = "min_packets_len"
     def extract(self, flow: object) -> int:
