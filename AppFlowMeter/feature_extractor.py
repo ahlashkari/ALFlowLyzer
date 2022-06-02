@@ -87,6 +87,15 @@ class FeatureExtractor(object):
                 SendingPacketsDeltaTimeMode(),
                 SendingPacketsDeltaTimeCoefficientOfVariation(),
                 SendingPacketsDeltaTimeSkewness(),
+                RequestResponseBytesMin(),
+                RequestResponseBytesMax(),
+                RequestResponseBytesMean(),
+                RequestResponseBytesMode(),
+                RequestResponseBytesVariance(),
+                RequestResponseBytesStandardDeviation(),
+                RequestResponseBytesMedian(),
+                RequestResponseBytesSkewness(),
+                RequestResponseBytesCoefficientOfVariation(),
             ]
 
     def execute(self) -> list:
