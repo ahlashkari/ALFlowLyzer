@@ -36,3 +36,19 @@ def extract_request_response_packets(packets: list) -> list:
         if packet.get_req_status() or packet.get_response_status():
             request_response_packets.append(packet)
     return request_response_packets
+
+
+def extract_delta_delay(packets: list) -> list:
+    delta_delay = []
+    req_pkt_end_time = []
+    resp_pkt_time = []
+    for (pkt_idx, packet) in enumerate(packets):
+        if packet.get_req_status():
+            req_pkt_end_time.append(packets[pkt_idx+1].get_timestamp())
+        if packet.get_response_status():
+            resp_pkt_time.append(packet.get_timestamp())
+    
+    if len(req_pkt_end_time) == len(resp_pkt_time):
+        for i in range(len(req_pkt_end_time)):
+            delta_delay.append(float(resp_pkt_time[i] - req_pkt_end_time[i]))
+    return delta_delay
