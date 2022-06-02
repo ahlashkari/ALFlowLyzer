@@ -206,3 +206,90 @@ class SendingPacketsDeltaTimeCoefficientOfVariation(PacketsDeltaTimeBase):
         if len(sending_packets_del_time) > 0:
             return format(stats.variation(sending_packets_del_time), self.floating_point_unit)
         return 0
+
+
+class SuccessfulPacketsNumbers(Feature):
+    name = "success_packets_numbers"
+    def extract(self, flow: object) -> int:
+        return len(utils.extract_successful_packets(flow.get_packets(), flow.get_dst_ip())) 
+
+
+class DeltaDelayMin(Feature):
+    name = "min_delta_delay"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return min(delta_delay)
+        return 0
+
+
+class DeltaDelayMax(Feature):
+    name = "max_delta_delay"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return max(delta_delay)
+        return 0
+
+
+class DeltaDelayMean(Feature):
+    name = "mean_delta_delay"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return format(statistics.mean(delta_delay), self.floating_point_unit)
+        return 0
+
+
+class DeltaDelayMode(Feature):
+    name = "mode_delta_delta"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return format(float(stats.mode(delta_delay)[0]), self.floating_point_unit)
+        return 0
+
+
+class DeltaDelayVariance(Feature):
+    name = "variance_delta_delay"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return format(statistics.pvariance(delta_delay), self.floating_point_unit)
+        return 0
+
+
+class DeltaDelayStandardDeviation(Feature):
+    name = "standard_delta_delay"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return format(statistics.pstdev(delta_delay), self.floating_point_unit)
+        return 0
+
+
+class DeltaDelayMedian(Feature):
+    name = "median_delta_delay"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return format(statistics.median(delta_delay), self.floating_point_unit)
+        return 0
+
+
+class DeltaDelaySkewness(Feature):
+    name = "skewness_delta_delay"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return format(stats.skew(delta_delay), self.floating_point_unit)
+        return 0
+
+
+class DeltaDelayCoefficientOfVariation(Feature):
+    name = "coefficient_of_variation_delta_delay"
+    def extract(self, flow: object) -> int:
+        delta_delay = utils.extract_delta_delay(flow.get_packets())
+        if len(delta_delay) > 0:
+            return format(stats.variation(delta_delay), self.floating_point_unit)
+        return 0
