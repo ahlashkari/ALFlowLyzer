@@ -96,6 +96,15 @@ class FeatureExtractor(object):
                 RequestResponseBytesMedian(),
                 RequestResponseBytesSkewness(),
                 RequestResponseBytesCoefficientOfVariation(),
+                DeltaDelayMin(),
+                DeltaDelayMax(),
+                DeltaDelayMean(),
+                DeltaDelayMode(),
+                DeltaDelayVariance(),
+                DeltaDelayStandardDeviation(),
+                DeltaDelayMedian(),
+                DeltaDelaySkewness(),
+                DeltaDelayCoefficientOfVariation()
             ]
 
     def execute(self) -> list:
