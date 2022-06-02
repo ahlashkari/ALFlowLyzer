@@ -42,6 +42,9 @@ from .packets_time import Duration, DeltaStart, ReceivingPacketsDeltaTimeMin, \
                          SendingPacketsDeltaTimeMean, SendingPacketsDeltaTimeMedian, \
                          SendingPacketsDeltaTimeStandardDeviation, SendingPacketsDeltaTimeVariance, \
                          SendingPacketsDeltaTimeMode, SendingPacketsDeltaTimeSkewness, \
-                         SendingPacketsDeltaTimeCoefficientOfVariation
+                         SendingPacketsDeltaTimeCoefficientOfVariation, DeltaDelayMin, \
+                         DeltaDelayMax, DeltaDelayMean, DeltaDelayMode, DeltaDelayVariance, \
+                         DeltaDelayStandardDeviation, DeltaDelayMedian, \
+                         DeltaDelaySkewness, DeltaDelayCoefficientOfVariation
 from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate, SuccessfulPacketsRate, \
                          PacketsLenRate, SendingPacketsLenRate, ReceivingPacketsLenRate
