@@ -16,15 +16,15 @@ class DeltaStart(Feature):
     name = "delta_start"
     def extract(self, flow: object) -> float:
         packets = flow.get_packets()
-        start_handshake_time = -1
-        first_http_req_time = -1
+        start_handshake_time = []
+        first_http_req_time = []
         for packet in packets:
             if (packet.get_dst_port() == 80) & (packet.get_syn_flag() == 1):
-                start_handshake_time = packet.get_timestamp()
+                start_handshake_time.append(packet.get_timestamp())
             if packet.get_req_status(): 
-                first_http_req_time = packet.get_timestamp()
-            if start_handshake_time >= 0 and first_http_req_time >= 0:
-                return format(first_http_req_time - start_handshake_time, self.floating_point_unit)
+                first_http_req_time.append(packet.get_timestamp())
+        if len(start_handshake_time) > 0 and len(first_http_req_time) > 0:
+            return format(min(first_http_req_time) - min(start_handshake_time), self.floating_point_unit)
         return None
 
 
