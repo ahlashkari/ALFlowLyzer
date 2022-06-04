@@ -22,6 +22,7 @@ class Packet(object):
         self.__len = len(packet)
         self.__has_rst_flag = False
         self.__extract_application_layer_protocol(packet)
+        self.__transaction_id = packet.id if DNS in packet else -1
 
     def __len__(self):
         return self.__len
@@ -65,3 +66,6 @@ class Packet(object):
 
     def get_application_protocol(self) -> str:
         return self.__application_protocol
+
+    def get_transaction_id(self):
+        return self.__transaction_id
