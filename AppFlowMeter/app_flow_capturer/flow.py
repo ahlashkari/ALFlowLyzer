@@ -25,19 +25,20 @@ class Flow(object):
     def __eq__(self, other):
         if isinstance(other, Flow):
             if self.equality_check(other.get_src_ip(), other.get_dst_ip(), other.get_src_port(),
-                    other.get_dst_port(), other.get_timestamp(), other.get_protocol()):
+                    other.get_dst_port(), other.get_timestamp(), other.get_protocol(),
+                    other.get_transaction_id()):
                 return True
         return False
 
     def equality_check(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
-            timestamp: str, protocol: str) -> bool:
+            timestamp: str, protocol: str, transaction_id: int) -> bool:
         if (self.__src_ip == src_ip or self.__dst_ip == src_ip) and \
            (self.__src_ip == dst_ip or self.__dst_ip == dst_ip) and \
            (self.__src_port == src_port or self.__dst_port == src_port) and \
            (self.__src_port == dst_port or self.__dst_port == dst_port) and \
            (self.__protocol == protocol) and \
            (datetime.fromtimestamp(self._timestamp) <= datetime.fromtimestamp(timestamp)):
-           return True
+            return True
         return False
 
     def add_packet(self, packet) -> None:
@@ -101,15 +102,15 @@ class DNSFlow(Flow):
     def __str__(self):
         return super().__str__() + '_' + str(self.__transaction_id)
 
-    def __eq__(self, other):
-        if isinstance(other, DNSFlow):
-            if super().__eq__(other):
-                if other.get_transaction_id() == self.__transaction_id:
-                    return True
-        return False
-
     def get_transaction_id(self) -> int:
         return self.__transaction_id
+
+    def equality_check(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
+            timestamp: str, protocol: str, transaction_id: int) -> bool:
+        if super().equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, transaction_id):
+            if transaction_id == self.__transaction_id:
+                return True
+        return False
 
     def is_ended(self, packet: object, max_flow_duration: int, activity_timeout: int) -> bool:
         # TODO: check dns timeout=30 sec

@@ -36,8 +36,9 @@ class AppFlowCapturer(object):
         dst_ip = packet.get_dst_ip()
         src_port = packet.get_src_port()
         dst_port = packet.get_dst_port()
+        transaction_id = packet.get_transaction_id()
         flow = self.__search_for_flow(src_ip, dst_ip, src_port, dst_port, packet.get_timestamp(),
-                packet.get_application_protocol())
+                packet.get_application_protocol(), transaction_id)
         if flow == None:
             self.__create_new_flow(src_ip, dst_ip, src_port, dst_port, packet)
         else:
@@ -49,9 +50,9 @@ class AppFlowCapturer(object):
                 flow.add_packet(packet)
 
     def __search_for_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
-            timestamp: str, protocol: str) -> object:
+            timestamp: str, protocol: str, transaction_id: int) -> object:
         for flow in self.__ongoing_flows:
-            if flow.equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol):
+            if flow.equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, transaction_id):
                 return flow
         return None
 

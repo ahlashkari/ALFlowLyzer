@@ -42,6 +42,10 @@ class Packet(object):
             if self.__dst_port == protocol_port.value or self.__src_port == protocol_port.value:
                 self.__application_protocol = protocol_name
                 return
+        # decide based on other things than main port numbers
+        if DNS in packet:
+            self.__application_protocol = "DNS"
+
 
     def get_tcp_flags(self):
         return self.__tcp_flags
