@@ -18,20 +18,17 @@ class Flow(object):
 
     def __str__(self):
         return str(datetime.fromtimestamp(self._timestamp)) + '_' + self.__src_ip + '_' + \
-                str(self.__src_port) + '_' + self.__dst_ip + '_' + str(self.__dst_port) + \
-                '_' + self.__protocol
-
+                str(self.__src_port) + '_' + self.__dst_ip + '_' + str(self.__dst_port)
     # TODO: check line lengths
     def __eq__(self, other):
         if isinstance(other, Flow):
             if self.equality_check(other.get_src_ip(), other.get_dst_ip(), other.get_src_port(),
-                    other.get_dst_port(), other.get_timestamp(), other.get_protocol(),
-                    other.get_transaction_id()):
+                    other.get_dst_port(), other.get_timestamp(), other.get_protocol()):
                 return True
         return False
 
     def equality_check(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
-            timestamp: str, protocol: str, transaction_id: int) -> bool:
+            timestamp: str, protocol: str, transaction_id: int = -1) -> bool:
         if (self.__src_ip == src_ip or self.__dst_ip == src_ip) and \
            (self.__src_ip == dst_ip or self.__dst_ip == dst_ip) and \
            (self.__src_port == src_port or self.__dst_port == src_port) and \
@@ -106,7 +103,7 @@ class DNSFlow(Flow):
         return self.__transaction_id
 
     def equality_check(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
-            timestamp: str, protocol: str, transaction_id: int) -> bool:
+            timestamp: str, protocol: str, transaction_id: int = -1) -> bool:
         if super().equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, transaction_id):
             if transaction_id == self.__transaction_id:
                 return True
