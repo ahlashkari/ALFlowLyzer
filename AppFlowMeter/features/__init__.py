@@ -27,7 +27,7 @@ from .packets_len import PacketsLenMin, PacketsLenMax, PacketsLenMean, PacketsLe
                          TotalBytes, SendingBytes, ReceivingBytes
 from .packets_numbers import PacketsNumbers, ReceivingPacketsNumbers, SendingPacketsNumbers, \
                             SuccessfulPacketsNumbers
-from .packets_time import Duration, ReceivingPacketsDeltaTimeMin, \
+from .packets_time import Duration, DeltaStart, ReceivingPacketsDeltaTimeMin, \
                          ReceivingPacketsDeltaTimeMax, ReceivingPacketsDeltaTimeMean, \
                          ReceivingPacketsDeltaTimeMedian, \
                          ReceivingPacketsDeltaTimeStandardDeviation, \
