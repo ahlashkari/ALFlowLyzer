@@ -16,6 +16,7 @@ class FeatureExtractor(object):
                 SuccessfulPacketsNumbers(),
                 SuccessfulPacketsRate(),
                 TotalBytes(),
+                DeltaStart(),
                 ReceivingBytes(),
                 SendingBytes(),
                 PacketsRate(),
