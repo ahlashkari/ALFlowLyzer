@@ -90,3 +90,9 @@ class Packet(object):
             syn_flag = self.__tcp_flags.S
             return int(syn_flag)
         return 0
+    
+    def get_ack_flag(self) -> int:
+        if self.__network_protocol == TCP:
+            syn_flag = self.__tcp_flags.A
+            return int(syn_flag)
+        return 0
