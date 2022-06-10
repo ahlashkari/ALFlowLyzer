@@ -65,7 +65,7 @@ class Packet(object):
 
     def get_status_code(self) -> int:
         return self.__status_code
-    
+
     def get_application_protocol(self) -> str:
         return self.__application_protocol
     
