@@ -37,13 +37,13 @@ class DeltaStart(Feature):
         start_handshake_time = 0
         first_http_req_time = 0
         for packet in packets:
-            if (packet.get_syn_flag() == 1) & (packet.get_ack_flag() == 0):
-                start_handshake_time = packet.get_timestamp()
-            if packet.get_req_status(): 
-                first_http_req_time = packet.get_timestamp()
+            if (not packet.get_syn_flag()) & packet.get_ack_flag():
+                last_handshake_packet = packet.get_timestamp()
+            if packet.get_psh_flag() & packet.get_ack_flag(): 
+                first_not_handshake_packet = packet.get_timestamp()
                 break
         if start_handshake_time > 0 and first_http_req_time > 0:
-            return format(first_http_req_time - start_handshake_time, self.floating_point_unit)
+            return format(first_not_handshake_packet - last_handshake_packet, self.floating_point_unit)
         return None
 
 
