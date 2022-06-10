@@ -64,7 +64,7 @@ class Packet(object):
 
     def get_status_code(self) -> int:
         return self.__status_code
-    
+
     def get_application_protocol(self) -> str:
         return self.__application_protocol
     
@@ -83,7 +83,7 @@ class Packet(object):
         if self.__network_protocol == TCP:
             return self.__is_http_response
         return False
-    
+
     def get_ack_flag(self) -> bool:
         return 'A' in self.__tcp_flags
     
