@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from scapy.all import *
-from scapy.layers.http import HTTP, HTTPResponse, HTTPRequest
+from scapy.layers.http import HTTP, HTTPResponse
 from scapy.layers.dns import DNS
 from .protocols import Protocols
 
@@ -12,7 +12,6 @@ class Packet(object):
         self.__application_protocol = 'Others'
         self.__extract_network_layer_protocol(packet)
         self.__is_http_response = True if HTTPResponse in packet else False
-        self.__is_http_request = True if HTTPRequest in packet else False
         self.__status_code = int(packet[HTTPResponse].Status_Code) if self.__is_http_response else -1
         self.__src_ip = packet[IP].src
         self.__dst_ip = packet[IP].dst
@@ -65,7 +64,7 @@ class Packet(object):
 
     def get_status_code(self) -> int:
         return self.__status_code
-
+    
     def get_application_protocol(self) -> str:
         return self.__application_protocol
     
@@ -85,14 +84,11 @@ class Packet(object):
             return self.__is_http_response
         return False
     
-    def get_syn_flag(self) -> int:
-        if self.__network_protocol == TCP:
-            syn_flag = self.__tcp_flags.S
-            return int(syn_flag)
-        return 0
+    def get_ack_flag(self) -> bool:
+        return 'A' in self.__tcp_flags
     
-    def get_ack_flag(self) -> int:
-        if self.__network_protocol == TCP:
-            syn_flag = self.__tcp_flags.A
-            return int(syn_flag)
-        return 0
+    def get_syn_flag(self) -> bool:
+        return 'S' in self.__tcp_flags
+    
+    def get_psh_flag(self) -> bool:
+        return 'P' in self.__tcp_flags
