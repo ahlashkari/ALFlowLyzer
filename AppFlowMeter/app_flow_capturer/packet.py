@@ -45,6 +45,8 @@ class Packet(object):
         # decide based on other things than main port numbers
         if DNS in packet:
             self.__application_protocol = "DNS"
+        else:
+            self.__application_protocol = "Others"
 
 
     def get_tcp_flags(self):

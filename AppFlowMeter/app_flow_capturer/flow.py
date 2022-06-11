@@ -104,12 +104,14 @@ class DNSFlow(Flow):
 
     def equality_check(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
             timestamp: str, protocol: str, transaction_id: int = -1) -> bool:
-        if super().equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, transaction_id):
-            if transaction_id == self.__transaction_id:
-                return True
+        # TODO: should we check this too?
+#        if super().equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, transaction_id):
+        if transaction_id == self.__transaction_id:
+            return True
         return False
 
     def is_ended(self, packet: object, max_flow_duration: int, activity_timeout: int) -> bool:
+        return False
         # TODO: check dns timeout=30 sec
         flow_duration = packet.get_timestamp() - self._timestamp
         active_time = packet.get_timestamp() - self._last_packet_timestamp
