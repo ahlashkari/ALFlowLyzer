@@ -43,7 +43,7 @@ class Handshake(Feature):
     delta = None
     duration = None
 
-    def extract_date_from_handshaking_process(self, flow: object):
+    def extract_data_from_handshaking_process(self, flow: object):
         if flow.get_network_protocol() != "TCP":
             self.delta = "not a tcp connection"
             self.duration = "not a tcp connection"
@@ -97,14 +97,14 @@ class Handshake(Feature):
 class DeltaStart(Handshake):
     name = "delta_start"
     def extract(self, flow: object) -> float:
-        self.extract_date_from_handshaking_process(flow)
+        self.extract_data_from_handshaking_process(flow)
         return self.delta
 
 
 class HandshakeDuration(Handshake):
     name = "handshake_duration"
     def extract(self, flow: object) -> float:
-        self.extract_date_from_handshaking_process(flow)
+        self.extract_data_from_handshaking_process(flow)
         return self.duration
 
 
