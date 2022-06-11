@@ -54,8 +54,8 @@ class Handshake(Feature):
         first_handshake_packet_time = 0
         first_not_handshake_packet_time = 0
         STATE = HandshakingStates.Ideal
-        seq_number = -1
-        ack_number = -1
+        seq_number = 0
+        ack_number = 0
         for packet in packets:
             if STATE == HandshakingStates.END_OF_HANDSHAKING:
                 if first_not_handshake_packet_time == 0:
