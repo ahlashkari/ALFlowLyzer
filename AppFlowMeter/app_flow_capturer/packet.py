@@ -67,28 +67,18 @@ class Packet(object):
 
     def get_application_protocol(self) -> str:
         return self.__application_protocol
-    
-    def get_req_status(self) -> bool:
-        if self.__network_protocol == TCP:
-            return self.__is_http_request
-        return False
-    
-    def get_seq_num(self) -> int:
+
+    def get_network_protocol(self) -> str:
+        return "TCP" if self.__network_protocol == TCP else "UDP"
+
+    def get_seq_number(self) -> int:
         return self.__seq_num
-    
-    def get_ack_num(self) -> int:
+
+    def get_ack_number(self) -> int:
         return self.__ack_num
-    
-    def get_response_status(self) -> bool:
-        if self.__network_protocol == TCP:
-            return self.__is_http_response
-        return False
 
     def get_ack_flag(self) -> bool:
         return 'A' in self.__tcp_flags
-    
+
     def get_syn_flag(self) -> bool:
         return 'S' in self.__tcp_flags
-    
-    def get_psh_flag(self) -> bool:
-        return 'P' in self.__tcp_flags
