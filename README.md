@@ -58,7 +58,7 @@ We have currenlty 79 features that are as follows:
 1. Successful Packets Numbers (HTTP packets only)
 1. Successful Packets Rate (HTTP packets only)
 1. Delta Start
-1.. Handshake Duration
+1. Handshake Duration
 1. Total Bytes
 1. Receiving Bytes
 1. Sending Bytes
