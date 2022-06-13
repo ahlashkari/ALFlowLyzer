@@ -259,7 +259,7 @@ The following steps are observed in the handshaking process of the TCP/IP packet
 
 1. The client confirms the connection by sending a ACK message to the server. The sequence number and acknowledgment number are both set to 1. 
 
-+ **Delta Start:** It is defined as the time duration between the last handshaking packet and the first non-handshaking request packet sent by the client to the server.   
++ **Delta Start:** It is defined as the time duration between the last handshaking packet and the first non-handshaking request packet sent by the client to the server. The timestamp of the last packet in the handshaking process and the first non-handshaking request packet is stored in the memory. Next, both these quantities are subtracted to obtain the delta start time. However, the function returns NaN in the absence of TCP/IP layer or incomplete handshaking process.   
 
 
 
