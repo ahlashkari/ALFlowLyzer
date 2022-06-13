@@ -52,82 +52,84 @@ TODO: after adding config file, explain how to use it here.
                 
 We have currenlty 77 features that are as follows:
 1. Duration
-1. Packets Numbers
-1. Receiving Packets Numbers
-1. Sending Packets Numbers
-1. Successful Packets Numbers (HTTP packets only)
-1. Successful Packets Rate (HTTP packets only)
-1. Total Bytes
-1. Receiving Bytes
-1. Sending Bytes
-1. Packets Rate
-1. Receiving Packets Rate
-1. Sending Packets Rate
-1. Packets Len Rate
-1. Receiving Len Packets Rate
-1. Sending Len Packets Rate
-1. Packets Len Min
-1. Packets Len Max
-1. Packets Len Mean
-1. Packets Len Median
-1. Packets Len Mode
-1. Packets Len Standard Deviation
-1. Packets Len Variance
-1. Packets Len Coefficient of Variation
-1. Packets Len Skewness
-1. Receiving Packets Len Min
-1. Receiving Packets Len Max
-1. Receiving Packets Len Mean
-1. Receiving Packets Len Median
-1. Receiving Packets Len Mode
-1. Receiving Packets Len Standard Deviation
-1. Receiving Packets Len Variance
-1. Receiving Packets Len Coefficient of Variation
-1. Receiving Packets Len Skewness
-1. Sending Packets Len Min
-1. Sending Packets Len Max
-1. Sending Packets Len Mean
-1. Sending Packets Len Median
-1. Sending Packets Len Mode
-1. Sending Packets Len Standard Deviation
-1. Sending Packets Len Variance
-1. Sending Packets Len Coefficient of Variation
-1. Sending Packets Len Skewness
-1. Receiving Packets Delta Len Min
-1. Receiving Packets Delta Len Max
-1. Receiving Packets Delta Len Mean
-1. Receiving Packets Delta Len Median
-1. Receiving Packets Delta Len Standard Deviation
-1. Receiving Packets Delta Len Variance
-1. Receiving Packets Delta Len Mode
-1. Receiving Packets Delta Len Coefficient of Variation
-1. Receiving Packets Delta Len Skewness
-1. Sending Packets Delta Len Min
-1. Sending Packets Delta Len Max
-1. Sending Packets Delta Len Mean
-1. Sending Packets Delta Len Median
-1. Sending Packets Delta Len Standard Deviation
-1. Sending Packets Delta Len Variance
-1. Sending Packets Delta Len Mode
-1. Sending Packets Delta Len Coefficient of Variation
-1. Sending Packets Delta Len Skewness
-1. Receiving Packets Delta Time Max
-1. Receiving Packets Delta Time Mean
-1. Receiving Packets Delta Time Median
-1. Receiving Packets Delta Time Standard Deviation
-1. Receiving Packets Delta Time Variance
-1. Receiving Packets Delta Time Mode
-1. Receiving Packets Delta Time Coefficient of Variation
-1. Receiving Packets Delta Time Skewness
-1. Sending Packets Delta Time Min
-1. Sending Packets Delta Time Max
-1. Sending Packets Delta Time Mean
-1. Sending Packets Delta Time Median
-1. Sending Packets Delta Time Standard Deviation
-1. Sending Packets Delta Time Variance
-1. Sending Packets Delta Time Mode
-1. Sending Packets Delta Time Coefficient of Variation
-1. Sending Packets Delta Time Skewness
+2. Packets Numbers
+4. Receiving Packets Numbers
+5. Sending Packets Numbers
+6. Successful Packets Numbers (HTTP packets only)
+7. Successful Packets Rate (HTTP packets only)
+8. Delta Start
+9. Handshake Duration
+10. Total Bytes
+11. Receiving Bytes
+12. Sending Bytes
+13. Packets Rate
+14. Receiving Packets Rate
+15. Sending Packets Rate
+16. Packets Len Rate
+17. Receiving Len Packets Rate
+18. Sending Len Packets Rate
+19. Packets Len Min
+20. Packets Len Max
+21. Packets Len Mean
+22. Packets Len Median
+23. Packets Len Mode
+24. Packets Len Standard Deviation
+25. Packets Len Variance
+26. Packets Len Coefficient of Variation
+27. Packets Len Skewness
+28. Receiving Packets Len Min
+29. Receiving Packets Len Max
+30. Receiving Packets Len Mean
+31. Receiving Packets Len Median
+32. Receiving Packets Len Mode
+33. Receiving Packets Len Standard Deviation
+34. Receiving Packets Len Variance
+35. Receiving Packets Len Coefficient of Variation
+36. Receiving Packets Len Skewness
+37. Sending Packets Len Min
+38. Sending Packets Len Max
+39. Sending Packets Len Mean
+40. Sending Packets Len Median
+41. Sending Packets Len Mode
+42. Sending Packets Len Standard Deviation
+43. Sending Packets Len Variance
+44. Sending Packets Len Coefficient of Variation
+45. Sending Packets Len Skewness
+46. Receiving Packets Delta Len Min
+47. Receiving Packets Delta Len Max
+48. Receiving Packets Delta Len Mean
+49. Receiving Packets Delta Len Median
+50. Receiving Packets Delta Len Standard Deviation
+51. Receiving Packets Delta Len Variance
+52. Receiving Packets Delta Len Mode
+53. Receiving Packets Delta Len Coefficient of Variation
+54. Receiving Packets Delta Len Skewness
+55. Sending Packets Delta Len Min
+56. Sending Packets Delta Len Max
+57. Sending Packets Delta Len Mean
+58. Sending Packets Delta Len Median
+59. Sending Packets Delta Len Standard Deviation
+60. Sending Packets Delta Len Variance
+61. Sending Packets Delta Len Mode
+62. Sending Packets Delta Len Coefficient of Variation
+63. Sending Packets Delta Len Skewness
+64. Receiving Packets Delta Time Max
+65. Receiving Packets Delta Time Mean
+66. Receiving Packets Delta Time Median
+67. Receiving Packets Delta Time Standard Deviation
+68. Receiving Packets Delta Time Variance
+69. Receiving Packets Delta Time Mode
+70. Receiving Packets Delta Time Coefficient of Variation
+71. Receiving Packets Delta Time Skewness
+72. Sending Packets Delta Time Min
+73. Sending Packets Delta Time Max
+74. Sending Packets Delta Time Mean
+75. Sending Packets Delta Time Median
+76. Sending Packets Delta Time Standard Deviation
+77. Sending Packets Delta Time Variance
+78. Sending Packets Delta Time Mode
+79. Sending Packets Delta Time Coefficient of Variation
+80. Sending Packets Delta Time Skewness
 
 note: Delta features are about differences (time or length or anything else) between two 'consecutive' packets.
 
@@ -242,6 +244,24 @@ Nine mathematical functions are used to extract different features. You can see 
       is the biased sample ith central moment, and x- is the sample mean. If bias is False, the calculations are corrected for bias and the value computed is the adjusted Fisher-Pearson standardized moment coefficient, i.e.
       
       ![equation](https://latex.codecogs.com/svg.image?{\color{blue}G_{1}=\frac{k_{3}}{k_{2}^{\frac{3}{2}}}=\frac{\sqrt{N(N-1)}}{N-2}\frac{m_{3}}{m_{2}^{\frac{3}{2}}})      
+
+
+
+----
+
+## Handshaking Feature Extraction
+
+The following steps are followed in the handshaking process of the TCP/IP packets:
+
+1. The client sends a connection request to the server with a SYN message. The SYN message has sequence number and acknowledgment number initialised to 0.
+
+1. The server establishes the connection to the client by sending a SYN and ACK message. The sequence number is 0 and the acknowledgment number is incremented to 1.
+
+1. The client confirms the connection by sending a ACK message to the server. The sequence number and acknowledgment number are both set to 1. 
+
++ **Delta Start**
+
++ **Handshake Duration**
 
 
 
