@@ -70,6 +70,6 @@ class AppFlowCapturer(object):
     def __create_new_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
             packet: object) -> None:
         new_flow = Flow(src_ip, dst_ip, src_port, dst_port, packet.get_timestamp(),
-                packet.get_application_protocol())
+                packet.get_application_protocol(), packet.get_network_protocol())
         new_flow.add_packet(packet)
         self.__ongoing_flows.append(new_flow)

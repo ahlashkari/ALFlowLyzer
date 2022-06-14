@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import statistics
+from enum import Enum
 from scipy import stats
 from .feature import Feature
 from . import utils
@@ -28,6 +29,83 @@ class PacketsDeltaTimeBase(Feature):
         sending_packets_del_time = [pkt - pkt_prev for pkt_prev, pkt in
                            zip(sending_packets_timestamp_sorted[:-1], sending_packets_timestamp_sorted[1:])]
         return sending_packets_del_time
+
+
+class HandshakingStates(Enum):
+    Ideal = 0
+    CLIENT_SENT_HANDSHAKE_REQUEST = 1
+    SERVER_ACKNWOLEDGED_CLIENT_HANDSHAKE_REQUEST = 2
+    END_OF_HANDSHAKING = 3
+
+
+class Handshake(Feature):
+    name = "delta_start"
+    delta = None
+    duration = None
+
+    def extract_data_from_handshaking_process(self, flow: object):
+        if flow.get_network_protocol() != "TCP":
+            self.delta = "not a tcp connection"
+            self.duration = "not a tcp connection"
+            return
+
+        packets = flow.get_packets()
+        last_handshake_packet_time = 0
+        first_handshake_packet_time = 0
+        first_not_handshake_packet_time = 0
+        STATE = HandshakingStates.Ideal
+        seq_number = 0
+        ack_number = 0
+        for packet in packets:
+            if STATE == HandshakingStates.END_OF_HANDSHAKING:
+                if first_not_handshake_packet_time == 0:
+                    first_not_handshake_packet_time = packet.get_timestamp()
+                self.delta = format(first_not_handshake_packet_time - last_handshake_packet_time,
+                        self.floating_point_unit)
+                self.duration = format(last_handshake_packet_time - first_handshake_packet_time,
+                        self.floating_point_unit)
+                return
+
+            if STATE == HandshakingStates.Ideal and packet.get_syn_flag():
+                first_handshake_packet_time = packet.get_timestamp()
+                seq_number = packet.get_seq_number()
+                STATE = HandshakingStates.CLIENT_SENT_HANDSHAKE_REQUEST
+
+            elif STATE == HandshakingStates.CLIENT_SENT_HANDSHAKE_REQUEST \
+                    and packet.get_syn_flag() \
+                    and packet.get_ack_flag() and seq_number == packet.get_ack_number() - 1:
+                seq_number = packet.get_seq_number()
+                ack_number = packet.get_ack_number()
+                STATE = HandshakingStates.SERVER_ACKNWOLEDGED_CLIENT_HANDSHAKE_REQUEST
+
+            elif STATE == HandshakingStates.SERVER_ACKNWOLEDGED_CLIENT_HANDSHAKE_REQUEST \
+                    and packet.get_ack_flag() and seq_number == packet.get_ack_number() - 1 \
+                    and ack_number == packet.get_seq_number():
+                last_handshake_packet_time = packet.get_timestamp()
+                STATE = HandshakingStates.END_OF_HANDSHAKING
+
+            elif first_not_handshake_packet_time == 0:
+                first_not_handshake_packet_time = packet.get_timestamp()
+
+        self.delta = "not a complete handshake"
+        self.duration = "not a complete handshake"
+
+    def extract(self, flow: object) -> float:
+        pass
+
+
+class DeltaStart(Handshake):
+    name = "delta_start"
+    def extract(self, flow: object) -> float:
+        self.extract_data_from_handshaking_process(flow)
+        return self.delta
+
+
+class HandshakeDuration(Handshake):
+    name = "handshake_duration"
+    def extract(self, flow: object) -> float:
+        self.extract_data_from_handshaking_process(flow)
+        return self.duration
 
 
 class ReceivingPacketsDeltaTimeMin(PacketsDeltaTimeBase):

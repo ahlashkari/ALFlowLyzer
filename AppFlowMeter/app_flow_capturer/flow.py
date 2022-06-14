@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Flow(object):
     def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: str,
-            protocol: str):
+            protocol: str, network_protocol: str):
         self.__src_ip = src_ip
         self.__dst_ip = dst_ip
         self.__src_port = src_port
@@ -15,6 +15,7 @@ class Flow(object):
         self.__number_of_fin_flags = 0
         self.__has_rst_flag = False
         self.__last_packet_timestamp = timestamp
+        self.__network_protocol = network_protocol
 
     def __str__(self):
         return str(datetime.fromtimestamp(self.__timestamp)) + '_' + self.__src_ip + '_' + \
@@ -46,6 +47,9 @@ class Flow(object):
 
     def get_protocol(self) -> str:
         return self.__protocol
+
+    def get_network_protocol(self):
+        return self.__network_protocol
 
     def get_packets(self) -> list:
         return self.__packets

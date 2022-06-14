@@ -13,6 +13,8 @@ class FeatureExtractor(object):
                 PacketsNumbers(),
                 ReceivingPacketsNumbers(),
                 SendingPacketsNumbers(),
+                HandshakeDuration(),
+                DeltaStart(),
                 SuccessfulPacketsNumbers(),
                 SuccessfulPacketsRate(),
                 TotalBytes(),
