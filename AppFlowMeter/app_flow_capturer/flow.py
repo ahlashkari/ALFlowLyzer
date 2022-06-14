@@ -98,6 +98,11 @@ class DNSFlow(Flow):
             protocol: str, network_protocol: str, transaction_id: int):
         super().__init__(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, network_protocol)
         self.__transaction_id = transaction_id
+        self.__domain_names = []
+
+    def add_packet(self, packet) -> None:
+        self.__domain_names.append(packet.get_domain_name())
+        super().add_packet(packet)
 
     def __str__(self):
         return super().__str__() + '_' + str(self.__transaction_id)
@@ -121,3 +126,6 @@ class DNSFlow(Flow):
         if flow_duration > max_flow_duration or active_time > activity_timeout:
             return True
         return False
+
+    def get_domain_names(self):
+        return self.__domain_names

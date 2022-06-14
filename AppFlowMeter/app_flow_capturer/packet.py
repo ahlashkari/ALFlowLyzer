@@ -24,7 +24,16 @@ class Packet(object):
         self.__seq_number = packet[self.__network_protocol].seq if self.__network_protocol == TCP else -1
         self.__ack_number = packet[self.__network_protocol].ack if self.__network_protocol == TCP else -1
         self.__extract_application_layer_protocol(packet)
-        self.__transaction_id = packet[DNS].id if DNS in packet else -1
+        self.__transaction_id = -1
+        self.__domain_name = "!!!"
+        if DNS in packet:
+            self.__transaction_id = packet[DNS].id
+            if packet[DNS].qd is not None:
+                self.__domain_name = packet[DNS].qd.qname.decode('UTF-8')
+            elif packet[DNS].an is not None:
+                self.__domain_name = packet[DNS].an.rrname.decode('UTF-8')
+            else:
+                self.__domain_name = "no domain name!"
 
     def __len__(self):
         return self.__len
@@ -90,5 +99,8 @@ class Packet(object):
     def get_syn_flag(self) -> bool:
         return 'S' in self.__tcp_flags
 
-    def get_transaction_id(self):
+    def get_transaction_id(self) -> int:
         return self.__transaction_id
+
+    def get_domain_name(self) -> str:
+        return self.__domain_name

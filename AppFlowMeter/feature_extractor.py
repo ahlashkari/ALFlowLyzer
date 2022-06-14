@@ -88,6 +88,7 @@ class FeatureExtractor(object):
                 SendingPacketsDeltaTimeMode(),
                 SendingPacketsDeltaTimeCoefficientOfVariation(),
                 SendingPacketsDeltaTimeSkewness(),
+                DomainName(),
             ]
 
     def execute(self) -> list:
