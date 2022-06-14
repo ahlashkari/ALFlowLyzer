@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-from datetime import datetime
 from multipledispatch import dispatch
 from scapy.all import *
-from .flow import Flow
 from .packet import Packet
+from .flow_factory import FlowFactory
 
 class AppFlowCapturer(object):
     def __init__(self, max_flow_duration: int, activity_timeout: int):
@@ -12,6 +11,7 @@ class AppFlowCapturer(object):
         self.__ongoing_flows = []
         self.max_flow_duration = max_flow_duration
         self.activity_timeout = activity_timeout
+        self.flow_factory = FlowFactory()
 
     @dispatch()
     def capture(self) -> list:
@@ -35,41 +35,25 @@ class AppFlowCapturer(object):
         dst_ip = packet.get_dst_ip()
         src_port = packet.get_src_port()
         dst_port = packet.get_dst_port()
+        transaction_id = packet.get_transaction_id()
         flow = self.__search_for_flow(src_ip, dst_ip, src_port, dst_port, packet.get_timestamp(),
-                packet.get_application_protocol())
+                packet.get_application_protocol(), transaction_id)
         if flow == None:
-            self.__create_new_flow(src_ip, dst_ip, src_port, dst_port, packet)
-        else:
-            if self.__flow_is_ended(flow, packet):
-                self.__ongoing_flows.remove(flow)
-                self.__finished_flows.append(flow)
-                self.__create_new_flow(src_ip, dst_ip, src_port, dst_port, packet)
-            else:
-                flow.add_packet(packet)
+            self.__ongoing_flows.append(self.flow_factory.create(packet))
+            return
 
-    def __flow_is_ended(self, flow: object, packet: object) -> bool:
-        flow_duration = packet.get_timestamp() - flow.get_timestamp()
-        active_time = packet.get_timestamp() - flow.get_last_packet_timestamp()
-        if flow_duration > self.max_flow_duration or active_time > self.activity_timeout or \
-                flow.has_two_fin_flags() or flow.has_rst_flag():
-            return True
-        return False
+        if flow.is_ended(packet, self.max_flow_duration, self.activity_timeout):
+            self.__ongoing_flows.remove(flow)
+            self.__finished_flows.append(flow)
+            self.__ongoing_flows.append(self.flow_factory.create(packet))
+            return
+
+        flow.add_packet(packet)
 
     def __search_for_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
-            timestamp: str, protocol: str) -> object:
+            timestamp: str, protocol: str, transaction_id: int) -> object:
         for flow in self.__ongoing_flows:
-            if (flow.get_src_ip() == src_ip or flow.get_src_ip() == dst_ip) and \
-               (flow.get_dst_ip() == src_ip or flow.get_dst_ip() == dst_ip) and \
-               (flow.get_src_port() == src_port or flow.get_src_port() == dst_port) and \
-               (flow.get_dst_port() == src_port or flow.get_dst_port() == dst_port) and \
-               (flow.get_protocol() == protocol) and \
-               (datetime.fromtimestamp(timestamp) >= datetime.fromtimestamp(flow.get_timestamp())):
-                   return flow
+            if flow.equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol,
+                    transaction_id):
+                return flow
         return None
-
-    def __create_new_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
-            packet: object) -> None:
-        new_flow = Flow(src_ip, dst_ip, src_port, dst_port, packet.get_timestamp(),
-                packet.get_application_protocol(), packet.get_network_protocol())
-        new_flow.add_packet(packet)
-        self.__ongoing_flows.append(new_flow)

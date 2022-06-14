@@ -24,6 +24,7 @@ class Packet(object):
         self.__seq_number = packet[self.__network_protocol].seq if self.__network_protocol == TCP else -1
         self.__ack_number = packet[self.__network_protocol].ack if self.__network_protocol == TCP else -1
         self.__extract_application_layer_protocol(packet)
+        self.__transaction_id = packet[DNS].id if DNS in packet else -1
 
     def __len__(self):
         return self.__len
@@ -43,6 +44,12 @@ class Packet(object):
             if self.__dst_port == protocol_port.value or self.__src_port == protocol_port.value:
                 self.__application_protocol = protocol_name
                 return
+        # decide based on other things than main port numbers
+        if DNS in packet:
+            self.__application_protocol = "DNS"
+        else:
+            self.__application_protocol = "Others"
+
 
     def get_tcp_flags(self):
         return self.__tcp_flags
@@ -82,3 +89,6 @@ class Packet(object):
 
     def get_syn_flag(self) -> bool:
         return 'S' in self.__tcp_flags
+
+    def get_transaction_id(self):
+        return self.__transaction_id
