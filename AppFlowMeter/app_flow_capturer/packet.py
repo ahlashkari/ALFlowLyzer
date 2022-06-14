@@ -21,6 +21,8 @@ class Packet(object):
         self.__tcp_flags = packet[self.__network_protocol].flags if self.__network_protocol == TCP else []
         self.__len = len(packet)
         self.__has_rst_flag = False
+        self.__seq_number = packet[self.__network_protocol].seq if self.__network_protocol == TCP else -1
+        self.__ack_number = packet[self.__network_protocol].ack if self.__network_protocol == TCP else -1
         self.__extract_application_layer_protocol(packet)
         self.__transaction_id = packet[DNS].id if DNS in packet else -1
 
@@ -72,6 +74,21 @@ class Packet(object):
 
     def get_application_protocol(self) -> str:
         return self.__application_protocol
+
+    def get_network_protocol(self) -> str:
+        return "TCP" if self.__network_protocol == TCP else "UDP"
+
+    def get_seq_number(self) -> int:
+        return self.__seq_number
+
+    def get_ack_number(self) -> int:
+        return self.__ack_number
+
+    def get_ack_flag(self) -> bool:
+        return 'A' in self.__tcp_flags
+
+    def get_syn_flag(self) -> bool:
+        return 'S' in self.__tcp_flags
 
     def get_transaction_id(self):
         return self.__transaction_id

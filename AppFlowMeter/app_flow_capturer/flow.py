@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Flow(object):
     def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: str,
-            protocol: str):
+            protocol: str, network_protocol: str):
         self.__src_ip = src_ip
         self.__dst_ip = dst_ip
         self.__src_port = src_port
@@ -15,11 +15,12 @@ class Flow(object):
         self.__number_of_fin_flags = 0
         self.__has_rst_flag = False
         self._last_packet_timestamp = timestamp
+        self.__network_protocol = network_protocol
 
     def __str__(self):
         return str(datetime.fromtimestamp(self._timestamp)) + '_' + self.__src_ip + '_' + \
                 str(self.__src_port) + '_' + self.__dst_ip + '_' + str(self.__dst_port)
-    # TODO: check line lengths
+
     def __eq__(self, other):
         if isinstance(other, Flow):
             if self.equality_check(other.get_src_ip(), other.get_dst_ip(), other.get_src_port(),
@@ -65,6 +66,9 @@ class Flow(object):
     def get_protocol(self) -> str:
         return self.__protocol
 
+    def get_network_protocol(self):
+        return self.__network_protocol
+
     def get_packets(self) -> list:
         return self.__packets
 
@@ -80,7 +84,6 @@ class Flow(object):
         return self._last_packet_timestamp
 
     # TODO: change configuration class to be singleton
-    # TODO: check the function name
     def is_ended(self, packet: object, max_flow_duration: int, activity_timeout: int) -> bool:
         flow_duration = packet.get_timestamp() - self._timestamp
         active_time = packet.get_timestamp() - self._last_packet_timestamp
@@ -92,8 +95,8 @@ class Flow(object):
 
 class DNSFlow(Flow):
     def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: str,
-            protocol: str, transaction_id: int):
-        super().__init__(src_ip, dst_ip, src_port, dst_port, timestamp, protocol)
+            protocol: str, network_protocol: str, transaction_id: int):
+        super().__init__(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, network_protocol)
         self.__transaction_id = transaction_id
 
     def __str__(self):
