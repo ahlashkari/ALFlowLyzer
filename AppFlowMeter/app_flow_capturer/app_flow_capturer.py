@@ -40,13 +40,15 @@ class AppFlowCapturer(object):
                 packet.get_application_protocol(), transaction_id)
         if flow == None:
             self.__ongoing_flows.append(self.flow_factory.create(packet))
-        else:
-            if flow.is_ended(packet, self.max_flow_duration, self.activity_timeout):
-                self.__ongoing_flows.remove(flow)
-                self.__finished_flows.append(flow)
-                self.__ongoing_flows.append(self.flow_factory.create(packet))
-            else:
-                flow.add_packet(packet)
+            return
+
+        if flow.is_ended(packet, self.max_flow_duration, self.activity_timeout):
+            self.__ongoing_flows.remove(flow)
+            self.__finished_flows.append(flow)
+            self.__ongoing_flows.append(self.flow_factory.create(packet))
+            return
+
+        flow.add_packet(packet)
 
     def __search_for_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
             timestamp: str, protocol: str, transaction_id: int) -> object:
