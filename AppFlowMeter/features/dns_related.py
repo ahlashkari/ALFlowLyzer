@@ -10,3 +10,10 @@ class DomainName(Feature):
             return "not a dns flow"
         return flow.get_domain_names()[0]
 
+
+class TopLevelDomain(Feature):
+    name = "top_level_domain"
+    def extract(self, flow: object) -> str:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        return "." + flow.get_domain_names()[0].split(".")[-2]
