@@ -41,4 +41,4 @@ from .packets_time import Duration, DeltaStart, ReceivingPacketsDeltaTimeMin, \
                          SendingPacketsDeltaTimeCoefficientOfVariation, HandshakeDuration
 from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate, SuccessfulPacketsRate, \
                          PacketsLenRate, SendingPacketsLenRate, ReceivingPacketsLenRate
-from .dns_related import DomainName
+from .dns_related import DomainName, TopLevelDomain
