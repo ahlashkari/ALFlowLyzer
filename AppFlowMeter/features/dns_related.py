@@ -5,63 +5,81 @@ import datetime
 from .feature import Feature
 
 
+domains = {}
+
 class DomainName(Feature):
     name = "dns_domain_name"
     def extract(self, flow: object) -> str:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
+        domain_name = flow.get_domain_names()[0]
+        index = len(domain_name) - 1
+        domain_name = domain_name[:index] + "" + domain_name[index + 1:]
+        return domain_name
         return flow.get_domain_names()[0]
 
 
 class WhoisInfo(Feature):
-    whois_response = None
-    res = {}
     def extract(self, flow: object) -> str:
         pass
+
+    def get_domain_name(self, flow):
+        domain_name = flow.get_domain_names()[0]
+        index = len(domain_name) - 1
+        domain_name = domain_name[:index] + "" + domain_name[index + 1:]
+        return domain_name
 
     def get_whois_info(self, flow):
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
 
         try:
-            domain_name = flow.get_domain_names()[0]
-            index = len(domain_name) - 1
-            domain_name = domain_name[:index] + "" + domain_name[index + 1:]
-            if domain_name in self.res:
-                return self.res[domain_name]
-            print(domain_name)
-            self.whois_response = whois.whois(domain_name)
+            domain_name = self.get_domain_name(flow)
+            if domain_name not in domains:
+                print(domain_name)
+                whois_response = whois.whois(domain_name)
+#                domains[domain_name] = whois_response.copy()
+                domains[domain_name] = whois_response
         except:
-            pass
+            domains[domain_name] = None
 
-        self.res[domain_name] = self.whois_response
-        return "No information found" if self.whois_response is None else self.whois_response
+        return "No information found" if domains[domain_name] is None else domains[domain_name]
+
+
+class WhoisDomainName(WhoisInfo):
+    name = "dns_whois_domain_name"
+    def extract(self, flow: object) -> str:
+        result = self.get_whois_info(flow)
+        whois_response = domains[self.get_domain_name(flow)]
+#        return result if whois_response is None else ", ".join(whois_response.emails)
+        return result if whois_response is None else whois_response.domain_name
 
 
 class DomainEmail(WhoisInfo):
     name = "dns_domain_email"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-#        return result if self.whois_response is None else ", ".join(self.whois_response.emails)
-        return result if self.whois_response is None else self.whois_response.emails
+        whois_response = domains[self.get_domain_name(flow)]
+#        return result if whois_response is None else ", ".join(whois_response.emails)
+        return result if whois_response is None else whois_response.emails
 
 
 class DomainRegistrar(WhoisInfo):
     name = "dns_domain_registrar"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.registrar
+        whois_response = domains[self.get_domain_name(flow)]
+#        print(whois_response)
+        return result if whois_response is None else whois_response.registrar
 
 
 class DomainCreationDate(WhoisInfo):
     name = "dns_domain_creation_date"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
+        whois_response = domains[self.get_domain_name(flow)]
         try:
-            return result if self.whois_response is None else datetime.datetime.fromtimestamp(self.whois_response.creation_date)
+            return result if whois_response is None else datetime.datetime.fromtimestamp(whois_response.creation_date)
         except:
             return "ERROR"
 
@@ -69,10 +87,10 @@ class DomainCreationDate(WhoisInfo):
 class DomainExpirationDate(WhoisInfo):
     name = "dns_domain_expiration_date"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
+        whois_response = domains[self.get_domain_name(flow)]
         try:
-            return result if self.whois_response is None else datetime.datetime.fromtimestamp(self.whois_response.expiration_date)
+            return result if whois_response is None else datetime.datetime.fromtimestamp(whois_response.expiration_date)
         except:
             return "ERROR"
 
@@ -80,10 +98,10 @@ class DomainExpirationDate(WhoisInfo):
 class DomainAge(WhoisInfo):
     name = "dns_domain_age"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
+        whois_response = domains[self.get_domain_name(flow)]
         try:
-            return result if self.whois_response is None else (datetime.datetime.today() - self.whois_response.creation_date).days 
+            return result if whois_response is None else (datetime.datetime.today() - whois_response.creation_date).days 
         except:
             return "ERROR"
 
@@ -91,70 +109,70 @@ class DomainAge(WhoisInfo):
 class DomainCountry(WhoisInfo):
     name = "dns_domain_country"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.country
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.country
 
 
 class DomainDNSSEC(WhoisInfo):
     name = "dns_domain_dnssec"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.dnssec
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.dnssec
 
 
 class DomainOrganization(WhoisInfo):
     name = "dns_domain_dnssec"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.org
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.org
 
 
 class DomainAddress(WhoisInfo):
     name = "dns_domain_address"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.address
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.address
 
 
 class DomainCity(WhoisInfo):
     name = "dns_domain_city"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.city
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.city
 
 
 class DomainState(WhoisInfo):
     name = "dns_domain_state"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.state
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.state
 
 
 class DomainZipcode(WhoisInfo):
     name = "dns_domain_zipcode"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.zipcode
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.zipcode
 
 
 class DomainNameServers(WhoisInfo):
     name = "dns_domain_name_servers"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.name_servers
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.name_servers
 
 
 class DomainUpdatedDate(WhoisInfo):
     name = "dns_domain_updated_date"
     def extract(self, flow: object) -> str:
-        #        super().get_whois_info(flow)
         result = self.get_whois_info(flow)
-        return result if self.whois_response is None else self.whois_response.updated_date
+        whois_response = domains[self.get_domain_name(flow)]
+        return result if whois_response is None else whois_response.updated_date

@@ -88,7 +88,11 @@ class FeatureExtractor(object):
                 SendingPacketsDeltaTimeMode(),
                 SendingPacketsDeltaTimeCoefficientOfVariation(),
                 SendingPacketsDeltaTimeSkewness(),
+            ]
+
+        self.__dns_features = [
                 DomainName(),
+                WhoisDomainName(),
                 DomainEmail(),
                 DomainRegistrar(),
                 DomainCreationDate(),
@@ -107,6 +111,7 @@ class FeatureExtractor(object):
 
     def execute(self) -> list:
         self.__extracted_data = []
+        self.__features = self.__features + self.__dns_features
         for flow in self.__flows:
             features_of_flow = {}
             features_of_flow["flow_id"] = str(flow)

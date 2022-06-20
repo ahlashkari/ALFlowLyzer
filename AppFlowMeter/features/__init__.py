@@ -44,4 +44,4 @@ from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate,
 from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreationDate, \
                         DomainExpirationDate, DomainAge, DomainCountry, DomainDNSSEC, \
                         DomainOrganization, DomainAddress, DomainCity, DomainState, DomainZipcode, \
-                        DomainNameServers, DomainUpdatedDate
+                        DomainNameServers, DomainUpdatedDate, WhoisDomainName
