@@ -25,8 +25,11 @@ class AppFlowCapturer(object):
     def packet_processing(self, scapy_packet):
         if IP not in scapy_packet:
             return
+        if DNS not in scapy_packet:
+            return
         if TCP not in scapy_packet and UDP not in scapy_packet:
             return
+
         app_flow_packet = Packet(scapy_packet)
         self.__add_packet_to_flow(app_flow_packet)
 

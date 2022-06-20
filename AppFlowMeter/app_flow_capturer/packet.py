@@ -28,9 +28,9 @@ class Packet(object):
         self.__domain_name = "!!!"
         if DNS in packet:
             self.__transaction_id = packet[DNS].id
-            if packet[DNS].qd is not None:
+            if packet[DNS].qd is not None and not isinstance(packet[DNS].qd, bytes):
                 self.__domain_name = packet[DNS].qd.qname.decode('UTF-8')
-            elif packet[DNS].an is not None:
+            elif packet[DNS].an is not None and not isinstance(packet[DNS].qd, bytes):
                 self.__domain_name = packet[DNS].an.rrname.decode('UTF-8')
             else:
                 self.__domain_name = "no domain name!"

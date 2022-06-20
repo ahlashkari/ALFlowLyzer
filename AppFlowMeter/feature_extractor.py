@@ -89,6 +89,20 @@ class FeatureExtractor(object):
                 SendingPacketsDeltaTimeCoefficientOfVariation(),
                 SendingPacketsDeltaTimeSkewness(),
                 DomainName(),
+                DomainEmail(),
+                DomainRegistrar(),
+                DomainCreationDate(),
+                DomainExpirationDate(),
+                DomainAge(),
+                DomainCountry(),
+                DomainDNSSEC(),
+                DomainOrganization(),
+                DomainAddress(),
+                DomainCity(),
+                DomainState(),
+                DomainZipcode(),
+                DomainNameServers(),
+                DomainUpdatedDate(),
             ]
 
     def execute(self) -> list:
