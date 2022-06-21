@@ -14,14 +14,17 @@ class DomainName(Feature):
 class TopLevelDomain(Feature):
     name = "top_level_domain"
     def extract(self, flow: object) -> str:
+        tld_index = -2
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        return "." + flow.get_domain_names()[0].split(".")[-2]
+        return "." + flow.get_domain_names()[0].split(".")[tld_index]
 
 
 class SecondLevelDomain(Feature):
     name = "second_level_domain"
     def extract(self, flow: object) -> str:
+        tld_index = -2
+        sld_index = -3
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        return "." + flow.get_domain_names()[0].split(".")[-3] + "." + flow.get_domain_names()[0].split(".")[-2]
+        return "." + flow.get_domain_names()[0].split(".")[sld_index] + "." + flow.get_domain_names()[0].split(".")[tld_index]
