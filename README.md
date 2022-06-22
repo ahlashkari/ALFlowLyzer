@@ -8,6 +8,7 @@ TODO: update these values:
 - [Installation](#installation)
 - [Architecture](#architecture)
 - [Extracted Features](#extracted-features)
+  * [DNS Related](#dns-related)
   * [Statistical Information Calculation](#statistical-information-calculation)
 - [Output](#output)
 
@@ -50,7 +51,7 @@ TODO: after adding config file, explain how to use it here.
 
 # Extracted Features
                 
-We have currenlty 79 features that are as follows:
+We have currenlty 84 features that are as follows:
 1. Duration
 1. Packets Numbers
 1. Receiving Packets Numbers
@@ -132,6 +133,14 @@ We have currenlty 79 features that are as follows:
 1. Sending Packets Delta Time Skewness
 
 note: Delta features are about differences (time or length or anything else) between two 'consecutive' packets.
+
+## DNS Related
+
+1. Domain Name
+1. Top Level Domain
+1. Second Level Domain
+1. Domain Name Length
+1. Sub Domain Name Length
 
 ## Statistical Information Calculation
 
