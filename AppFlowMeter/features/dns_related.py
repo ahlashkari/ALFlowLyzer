@@ -28,3 +28,22 @@ class SecondLevelDomain(Feature):
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         return "." + flow.get_domain_names()[0].split(".")[sld_index] + "." + flow.get_domain_names()[0].split(".")[tld_index]
+
+
+class DomainNameLen(Feature):
+    name = "domain_name_length"
+    def extract(self, flow: object) -> str:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        return len(flow.get_domain_names()[0])
+
+
+class SubDomainNameLen(Feature):
+    name = "subdomain_name_length"
+    def extract(self, flow: object) -> str:
+        min_fqdn_len = 4
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        elif len(flow.get_domain_names()[0].split(".")) < min_fqdn_len:
+            return None
+        return len(flow.get_domain_names()[0].split(".")[0])
