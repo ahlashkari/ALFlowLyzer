@@ -90,6 +90,9 @@ class FeatureExtractor(object):
                 SendingPacketsDeltaTimeSkewness(),
                 DomainName(),
                 TopLevelDomain(),
+                SecondLevelDomain(),
+                DomainNameLen(),
+                SubDomainNameLen(),
             ]
 
     def execute(self) -> list:
