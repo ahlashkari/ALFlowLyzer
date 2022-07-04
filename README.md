@@ -51,7 +51,7 @@ TODO: after adding config file, explain how to use it here.
 
 # Extracted Features
                 
-We have currenlty 87 features that are as follows:
+We have currenlty 88 features that are as follows:
 1. Duration
 1. Packets Numbers
 1. Receiving Packets Numbers
@@ -144,6 +144,7 @@ note: Delta features are about differences (time or length or anything else) bet
 1. Domain Name 1-Gram
 1. Domain Name 2-Gram
 1. Domain Name 3-Gram
+1. Numerical Percentage
 
 ## Statistical Information Calculation
 
