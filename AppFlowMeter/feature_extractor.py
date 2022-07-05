@@ -93,6 +93,11 @@ class FeatureExtractor(object):
                 SecondLevelDomain(),
                 DomainNameLen(),
                 SubDomainNameLen(),
+                UniGramDomainName(),
+                BiGramDomainName(),
+                TriGramDomainName(),
+                NumericalPercentage(),
+                CharacterDistribution(),
             ]
 
     def execute(self) -> list:
