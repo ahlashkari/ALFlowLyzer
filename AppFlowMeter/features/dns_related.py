@@ -85,3 +85,13 @@ class NumericalPercentage(Feature):
         domain_name = flow.get_domain_names()[0]
         num_count = sum(char.isdigit() for char in domain_name)
         return num_count / len(flow.get_domain_names()[0])
+
+
+class CharacterDistribution(Feature):
+    name = "character_distribution"
+    def extract(self, flow: object) -> dict:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        domain_name = flow.get_domain_names()[0]
+        char_dist = {char: domain_name.count(char) for char in set(domain_name)}
+        return char_dist

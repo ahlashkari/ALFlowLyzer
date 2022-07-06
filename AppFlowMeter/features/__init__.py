@@ -42,4 +42,5 @@ from .packets_time import Duration, DeltaStart, ReceivingPacketsDeltaTimeMin, \
 from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate, SuccessfulPacketsRate, \
                          PacketsLenRate, SendingPacketsLenRate, ReceivingPacketsLenRate
 from .dns_related import DomainName, TopLevelDomain, SecondLevelDomain, DomainNameLen, SubDomainNameLen, \
-                         UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage
+                         UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage, \
+                         CharacterDistribution
