@@ -96,6 +96,7 @@ class FeatureExtractor(object):
                 UniGramDomainName(),
                 BiGramDomainName(),
                 TriGramDomainName(),
+                NumericalPercentage(),
             ]
 
     def execute(self) -> list:

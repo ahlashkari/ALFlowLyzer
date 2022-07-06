@@ -75,3 +75,13 @@ class TriGramDomainName(Feature):
         one_gram = list(flow.get_domain_names()[0])
         tri_gram = [one_gram[i] + one_gram[i+1] + one_gram[i+2] for i in range(len(one_gram)-2)]
         return tri_gram
+
+
+class NumericalPercentage(Feature):
+    name = "numerical_percentage"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        domain_name = flow.get_domain_names()[0]
+        num_count = sum(char.isdigit() for char in domain_name)
+        return num_count / len(flow.get_domain_names()[0])
