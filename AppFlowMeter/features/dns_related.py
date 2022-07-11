@@ -20,9 +20,6 @@ class DomainName(Feature):
 
 
 class WhoisInfo(Feature):
-    def extract(self, flow: object) -> str:
-        pass
-
     def get_domain_name(self, flow):
         domain_name = flow.get_domain_names()[0]
         index = len(domain_name) - 1
@@ -38,7 +35,6 @@ class WhoisInfo(Feature):
             if domain_name not in domains:
                 print(domain_name)
                 whois_response = whois.whois(domain_name)
-#                domains[domain_name] = whois_response.copy()
                 domains[domain_name] = whois_response
         except:
             domains[domain_name] = None
@@ -51,7 +47,6 @@ class WhoisDomainName(WhoisInfo):
     def extract(self, flow: object) -> str:
         result = self.get_whois_info(flow)
         whois_response = domains[self.get_domain_name(flow)]
-#        return result if whois_response is None else ", ".join(whois_response.emails)
         return result if whois_response is None else whois_response.domain_name
 
 
@@ -60,7 +55,6 @@ class DomainEmail(WhoisInfo):
     def extract(self, flow: object) -> str:
         result = self.get_whois_info(flow)
         whois_response = domains[self.get_domain_name(flow)]
-#        return result if whois_response is None else ", ".join(whois_response.emails)
         return result if whois_response is None else whois_response.emails
 
 
@@ -69,7 +63,6 @@ class DomainRegistrar(WhoisInfo):
     def extract(self, flow: object) -> str:
         result = self.get_whois_info(flow)
         whois_response = domains[self.get_domain_name(flow)]
-#        print(whois_response)
         return result if whois_response is None else whois_response.registrar
 
 
@@ -79,7 +72,7 @@ class DomainCreationDate(WhoisInfo):
         result = self.get_whois_info(flow)
         whois_response = domains[self.get_domain_name(flow)]
         try:
-            return result if whois_response is None else datetime.datetime.fromtimestamp(whois_response.creation_date)
+            return result if whois_response is None else whois_response.creation_date
         except:
             return "ERROR"
 
@@ -90,7 +83,7 @@ class DomainExpirationDate(WhoisInfo):
         result = self.get_whois_info(flow)
         whois_response = domains[self.get_domain_name(flow)]
         try:
-            return result if whois_response is None else datetime.datetime.fromtimestamp(whois_response.expiration_date)
+            return result if whois_response is None else whois_response.expiration_date
         except:
             return "ERROR"
 
@@ -101,6 +94,8 @@ class DomainAge(WhoisInfo):
         result = self.get_whois_info(flow)
         whois_response = domains[self.get_domain_name(flow)]
         try:
+            if whois_response.creation_date is None:
+                return "no creation date"
             return result if whois_response is None else (datetime.datetime.today() - whois_response.creation_date).days 
         except:
             return "ERROR"
@@ -176,3 +171,41 @@ class DomainUpdatedDate(WhoisInfo):
         result = self.get_whois_info(flow)
         whois_response = domains[self.get_domain_name(flow)]
         return result if whois_response is None else whois_response.updated_date
+
+
+class TopLevelDomain(Feature):
+    name = "dns_top_level_domain"
+    def extract(self, flow: object) -> str:
+        tld_index = -2
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        return "." + flow.get_domain_names()[0].split(".")[tld_index]
+
+
+class SecondLevelDomain(Feature):
+    name = "dns_second_level_domain"
+    def extract(self, flow: object) -> str:
+        tld_index = -2
+        sld_index = -3
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        return "." + flow.get_domain_names()[0].split(".")[sld_index] + "." + flow.get_domain_names()[0].split(".")[tld_index]
+
+
+class DomainNameLen(Feature):
+    name = "dns_domain_name_length"
+    def extract(self, flow: object) -> str:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        return len(flow.get_domain_names()[0])
+
+
+class SubDomainNameLen(Feature):
+    name = "dns_subdomain_name_length"
+    def extract(self, flow: object) -> str:
+        min_fqdn_len = 4
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        elif len(flow.get_domain_names()[0].split(".")) < min_fqdn_len:
+            return None
+        return len(flow.get_domain_names()[0].split(".")[0])

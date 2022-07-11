@@ -93,6 +93,10 @@ class FeatureExtractor(object):
         self.__dns_features = [
                 DomainName(),
                 WhoisDomainName(),
+                TopLevelDomain(),
+                SecondLevelDomain(),
+                DomainNameLen(),
+                SubDomainNameLen(),
                 DomainEmail(),
                 DomainRegistrar(),
                 DomainCreationDate(),
@@ -112,7 +116,12 @@ class FeatureExtractor(object):
     def execute(self) -> list:
         self.__extracted_data = []
         self.__features = self.__features + self.__dns_features
+        print(len(self.__flows))
+        i = 0
         for flow in self.__flows:
+            print(50*"=")
+            print(i, "/", len(self.__flows))
+            i += 1
             features_of_flow = {}
             features_of_flow["flow_id"] = str(flow)
             features_of_flow["timestamp"] = datetime.fromtimestamp(flow.get_timestamp())
