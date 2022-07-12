@@ -98,6 +98,7 @@ class FeatureExtractor(object):
                 TriGramDomainName(),
                 NumericalPercentage(),
                 CharacterDistribution(),
+                CharacterEntropy(),
             ]
 
     def execute(self) -> list:
