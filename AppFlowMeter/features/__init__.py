@@ -47,4 +47,6 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          DomainNameServers, DomainUpdatedDate, WhoisDomainName, TopLevelDomain, \
                          SecondLevelDomain, DomainNameLen, SubDomainNameLen, \
                          UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage, \
-                         CharacterDistribution, CharacterEntropy
+                         CharacterDistribution, CharacterEntropy, DistinctTTLValues, TTLValuesMin, \
+                         TTLValuesMax, TTLValuesMean, TTLValuesMode, TTLValuesVariance, TTLValuesStandardDeviation, \
+                         TTLValuesMedian, TTLValuesSkewness, TTLValuesCoefficientOfVariation
