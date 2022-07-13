@@ -100,6 +100,15 @@ class FeatureExtractor(object):
                 CharacterDistribution(),
                 CharacterEntropy(),
                 DistinctTTLValues(),
+                TTLValuesMin(),
+                TTLValuesMax(),
+                TTLValuesMean(),
+                TTLValuesMode(),
+                TTLValuesVariance(),
+                TTLValuesStandardDeviation(),
+                TTLValuesMedian(),
+                TTLValuesSkewness(),
+                TTLValuesCoefficientOfVariation(),
             ]
 
     def execute(self) -> list:
