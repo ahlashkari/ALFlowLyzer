@@ -15,6 +15,7 @@ class Packet(object):
         self.__status_code = int(packet[HTTPResponse].Status_Code) if self.__is_http_response else -1
         self.__src_ip = packet[IP].src
         self.__dst_ip = packet[IP].dst
+        self.__ttl_values = packet.ttl
         self.__src_port = packet[self.__network_protocol].sport
         self.__dst_port = packet[self.__network_protocol].dport
         self.__timestamp = packet.time
@@ -104,3 +105,6 @@ class Packet(object):
 
     def get_domain_name(self) -> str:
         return self.__domain_name
+    
+    def get_ttl_values(self) -> int:
+        return self.__ttl_values
