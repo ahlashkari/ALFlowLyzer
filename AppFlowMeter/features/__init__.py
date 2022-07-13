@@ -47,4 +47,4 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          DomainNameServers, DomainUpdatedDate, WhoisDomainName, TopLevelDomain, \
                          SecondLevelDomain, DomainNameLen, SubDomainNameLen, \
                          UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage, \
-                         CharacterDistribution
+                         CharacterDistribution, CharacterEntropy

@@ -3,7 +3,7 @@
 import whois
 import datetime
 from .feature import Feature
-
+import math
 
 domains = {}
 
@@ -263,3 +263,18 @@ class CharacterDistribution(Feature):
         domain_name = flow.get_domain_names()[0]
         char_dist = {char: domain_name.count(char) for char in set(domain_name)}
         return char_dist
+
+
+class CharacterEntropy(Feature):
+    name = "character_entropy"
+    def extract(self, flow: object) -> dict:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        domain_name = flow.get_domain_names()[0]
+        char_dist = {char: domain_name.count(char) for char in set(domain_name)}
+        domain_name_len = len(domain_name)
+        char_entropy = 0
+        for char in char_dist.keys():
+            char_dist_ratio = char_dist[char] / domain_name_len
+            char_entropy += -1 * char_dist_ratio * math.log2(char_dist_ratio)
+        return char_entropy
