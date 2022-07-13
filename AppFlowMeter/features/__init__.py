@@ -45,6 +45,6 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          DomainExpirationDate, DomainAge, DomainCountry, DomainDNSSEC, \
                          DomainOrganization, DomainAddress, DomainCity, DomainState, DomainZipcode, \
                          DomainNameServers, DomainUpdatedDate, WhoisDomainName, TopLevelDomain, \
-                         SecondLevelDomain, DomainNameLen, SubDomainNameLen \
-                         UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage
+                         SecondLevelDomain, DomainNameLen, SubDomainNameLen, \
+                         UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage, \
                          CharacterDistribution

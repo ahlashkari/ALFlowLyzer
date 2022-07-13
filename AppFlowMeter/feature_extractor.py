@@ -118,15 +118,10 @@ class FeatureExtractor(object):
                 DomainUpdatedDate(),
             ]
 
-    def execute(self) -> list:
+    def execute(self, features_ignore_list: list = []) -> list:
         self.__extracted_data = []
         self.__features = self.__features + self.__dns_features
-        print(len(self.__flows))
-        i = 0
         for flow in self.__flows:
-            print(50*"=")
-            print(i, "/", len(self.__flows))
-            i += 1
             features_of_flow = {}
             features_of_flow["flow_id"] = str(flow)
             features_of_flow["timestamp"] = datetime.fromtimestamp(flow.get_timestamp())
@@ -136,6 +131,8 @@ class FeatureExtractor(object):
             features_of_flow["dst_port"] = flow.get_dst_port()
             features_of_flow["protocol"] = flow.get_protocol()
             for feature in self.__features:
+                if feature.name in features_ignore_list:
+                    continue
                 feature.set_floating_point_unit(self.floating_point_unit)
                 features_of_flow[feature.name] = feature.extract(flow)
             self.__extracted_data.append(features_of_flow.copy())

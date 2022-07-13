@@ -179,7 +179,10 @@ class TopLevelDomain(Feature):
         tld_index = -2
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        return "." + flow.get_domain_names()[0].split(".")[tld_index]
+        try:
+            return "." + flow.get_domain_names()[0].split(".")[tld_index]
+        except:
+            return "ERROR"
 
 
 class SecondLevelDomain(Feature):
@@ -189,7 +192,10 @@ class SecondLevelDomain(Feature):
         sld_index = -3
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        return "." + flow.get_domain_names()[0].split(".")[sld_index] + "." + flow.get_domain_names()[0].split(".")[tld_index]
+        try:
+            return "." + flow.get_domain_names()[0].split(".")[sld_index] + "." + flow.get_domain_names()[0].split(".")[tld_index]
+        except:
+            return "ERROR"
 
 
 class DomainNameLen(Feature):
