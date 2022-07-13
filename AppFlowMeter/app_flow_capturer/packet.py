@@ -60,7 +60,6 @@ class Packet(object):
         else:
             self.__application_protocol = "Others"
 
-
     def get_tcp_flags(self):
         return self.__tcp_flags
 
