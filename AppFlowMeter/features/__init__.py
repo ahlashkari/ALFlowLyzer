@@ -43,4 +43,6 @@ from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate,
                          PacketsLenRate, SendingPacketsLenRate, ReceivingPacketsLenRate
 from .dns_related import DomainName, TopLevelDomain, SecondLevelDomain, DomainNameLen, SubDomainNameLen, \
                          UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage, \
-                         CharacterDistribution, CharacterEntropy, DistinctTTLValues
+                         CharacterDistribution, CharacterEntropy, DistinctTTLValues, TTLValuesMin, \
+                         TTLValuesMax, TTLValuesMean, TTLValuesMode, TTLValuesVariance, TTLValuesStandardDeviation, \
+                         TTLValuesMedian, TTLValuesSkewness, TTLValuesCoefficientOfVariation
