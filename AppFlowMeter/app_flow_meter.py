@@ -18,7 +18,7 @@ class AppFlowMeter(object):
         print("> capturing ended...")
         print("> features extracting started...")
         feature_extractor = FeatureExtractor(flows, config.floating_point_unit)
-        data = feature_extractor.execute()
+        data = feature_extractor.execute(config.features_ignore_list)
         print("> features extracting ended...")
         print("> writing results to", config.output_file_address)
         writer = Writer(CSVWriter())

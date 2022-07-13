@@ -27,6 +27,7 @@ class AppFlowCapturer(object):
             return
         if TCP not in scapy_packet and UDP not in scapy_packet:
             return
+
         app_flow_packet = Packet(scapy_packet)
         self.__add_packet_to_flow(app_flow_packet)
 

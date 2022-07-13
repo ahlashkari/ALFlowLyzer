@@ -12,6 +12,7 @@ class ConfigLoader:
         self.activity_timeout: int = 5000
         self.protocols: list = []
         self.floating_point_unit: str = ".64f"
+        self.features_ignore_list: list = []
 
         self.read_config_file()
 

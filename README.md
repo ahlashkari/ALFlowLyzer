@@ -51,7 +51,8 @@ TODO: after adding config file, explain how to use it here.
 
 # Extracted Features
                 
-We have currenlty 90 features that are as follows:
+We have currenlty 105 features that are as follows:
+
 1. Duration
 1. Packets Numbers
 1. Receiving Packets Numbers
@@ -137,6 +138,7 @@ note: Delta features are about differences (time or length or anything else) bet
 ## DNS Related
 
 1. Domain Name
+1. WhoisDomainName
 1. Top Level Domain
 1. Second Level Domain
 1. Domain Name Length
@@ -147,6 +149,21 @@ note: Delta features are about differences (time or length or anything else) bet
 1. Numerical Percentage
 1. Character Distribution
 1. Character Entropy
+1. DomainEmail
+1. DomainRegistrar
+1. DomainCreationDate
+1. DomainExpirationDate
+1. DomainAge
+1. DomainCountry
+1. DomainDNSSEC
+1. DomainOrganization
+1. DomainAddress
+1. DomainCity
+1. DomainState
+1. DomainZipcode
+1. DomainNameServers
+1. DomainUpdatedDate
+
 
 ## Statistical Information Calculation
 
@@ -292,3 +309,4 @@ The following steps are observed in the handshaking process of the TCP/IP packet
                     
 
 ----
+
