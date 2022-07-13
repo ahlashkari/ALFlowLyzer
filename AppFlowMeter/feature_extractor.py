@@ -99,6 +99,7 @@ class FeatureExtractor(object):
                 NumericalPercentage(),
                 CharacterDistribution(),
                 CharacterEntropy(),
+                DistinctTTLValues(),
             ]
 
     def execute(self) -> list:
