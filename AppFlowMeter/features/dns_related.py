@@ -110,3 +110,12 @@ class CharacterEntropy(Feature):
             char_dist_ratio = char_dist[char] / domain_name_len
             char_entropy += -1 * char_dist_ratio * math.log2(char_dist_ratio)
         return char_entropy
+
+
+class DistinctTTLValues(Feature):
+    name = "distinct_ttl_values"
+    def extract(self, flow: object) -> dict:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"   
+        ttl_values = [packet.get_ttl_values() for packet in flow.get_packets()]
+        return len(ttl_values)
