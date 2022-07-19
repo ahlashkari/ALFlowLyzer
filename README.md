@@ -51,7 +51,7 @@ TODO: after adding config file, explain how to use it here.
 
 # Extracted Features
                 
-We have currenlty 106 features that are as follows:
+We have currenlty 107 features that are as follows:
 
 1. Duration
 1. Packets Numbers
@@ -163,7 +163,8 @@ note: Delta features are about differences (time or length or anything else) bet
 1. DomainZipcode
 1. DomainNameServers
 1. DomainUpdatedDate
-1. Continuous Numerical Character Maximum Length
+1. Continuous Numeric Max Len
+1. Continuous Alphabet Max Len
 
 
 ## Statistical Information Calculation
