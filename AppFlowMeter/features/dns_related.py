@@ -282,7 +282,7 @@ class CharacterEntropy(Feature):
 
 class ContinuousNumericMaxLen(Feature):
     name = "max_continuous_numeric_len"
-    def extract(self, flow: object) -> float:
+    def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         domain_name = flow.get_domain_names()[0]
@@ -306,7 +306,7 @@ class ContinuousNumericMaxLen(Feature):
 
 class ContinuousAlphabetMaxLen(Feature):
     name = "max_continuous_aphabet_len"
-    def extract(self, flow: object) -> float:
+    def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         domain_name = flow.get_domain_names()[0]
@@ -330,7 +330,7 @@ class ContinuousAlphabetMaxLen(Feature):
 
 class ContinuousConsonantsMaxLen(Feature):
     name = "max_continuous_consonants_len"
-    def extract(self, flow: object) -> float:
+    def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         consonants = list("bcdfghjklmnpqrstvwxyz")
