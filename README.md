@@ -51,7 +51,7 @@ TODO: after adding config file, explain how to use it here.
 
 # Extracted Features
                 
-We have currenlty 109 features that are as follows:
+We have currenlty 110 features that are as follows:
 
 1. Duration
 1. Packets Numbers
