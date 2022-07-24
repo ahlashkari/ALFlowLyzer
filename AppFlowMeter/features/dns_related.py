@@ -283,7 +283,7 @@ class CharacterEntropy(Feature):
 
 class ContinuousNumericMaxLen(Feature):
     name = "max_continuous_numeric_len"
-    def extract(self, flow: object) -> float:
+    def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         domain_name = flow.get_domain_names()[0]
@@ -307,7 +307,7 @@ class ContinuousNumericMaxLen(Feature):
 
 class ContinuousAlphabetMaxLen(Feature):
     name = "max_continuous_aphabet_len"
-    def extract(self, flow: object) -> float:
+    def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         domain_name = flow.get_domain_names()[0]
@@ -317,6 +317,31 @@ class ContinuousAlphabetMaxLen(Feature):
             if domain_name[global_pointer].isalpha():
                 local_pointer = global_pointer
                 while(domain_name[local_pointer].isalpha()):
+                    max_len_temp += 1
+                    local_pointer += 1
+                    if local_pointer >= len(domain_name):
+                        break
+                global_pointer = local_pointer
+            else:
+                global_pointer += 1
+            if max_len_temp > max_len:
+                max_len = max_len_temp
+        return max_len
+
+
+class ContinuousConsonantsMaxLen(Feature):
+    name = "max_continuous_consonants_len"
+    def extract(self, flow: object) -> int:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        consonants = list("bcdfghjklmnpqrstvwxyz")
+        domain_name = flow.get_domain_names()[0]
+        max_len, max_len_temp, local_pointer, global_pointer = 0, 0, 0, 0
+        while global_pointer < len(domain_name)-1:
+            max_len_temp, local_pointer = 0, 0
+            if domain_name[global_pointer] in consonants:
+                local_pointer = global_pointer
+                while(domain_name[local_pointer] in consonants):
                     max_len_temp += 1
                     local_pointer += 1
                     if local_pointer >= len(domain_name):
