@@ -49,4 +49,3 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage, \
                          CharacterDistribution, CharacterEntropy, ContinuousNumericMaxLen, \
                          ContinuousAlphabetMaxLen, ContinuousConsonantsMaxLen, ContinuousSameAlphabetMaxLen
-
