@@ -117,7 +117,8 @@ class FeatureExtractor(object):
                 DomainNameServers(),
                 DomainUpdatedDate(),
                 CharacterEntropy(),
-                ContinuousNumCharMaxLen(),
+                ContinuousNumericMaxLen(),
+                ContinuousAlphabetMaxLen(),
             ]
 
     def execute(self, features_ignore_list: list = []) -> list:
