@@ -48,4 +48,4 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          SecondLevelDomain, DomainNameLen, SubDomainNameLen, \
                          UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage, \
                          CharacterDistribution, CharacterEntropy, ContinuousNumericMaxLen, \
-                         ContinuousAlphabetMaxLen, ContinuousConsonantsMaxLen
+                         ContinuousAlphabetMaxLen, ContinuousConsonantsMaxLen, ContinuousSameAlphabetMaxLen
