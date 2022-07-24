@@ -375,3 +375,20 @@ class ContinuousSameAlphabetMaxLen(Feature):
             if max_len_temp > max_len:
                 max_len = max_len_temp
         return max_len
+
+
+class VowelsConsonantRatio(Feature):
+    name = "vowels_consonant_ratio"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        consonants = list("bcdfghjklmnpqrstvwxyz")
+        vowels = list("aeiou")
+        vowel_count, consonant_count = 0, 0
+        domain_name = flow.get_domain_names()[0]
+        for char in domain_name:
+            if char in vowels:
+                vowel_count += 1
+            elif char in consonants:
+                consonant_count += 1
+        return vowel_count / consonant_count

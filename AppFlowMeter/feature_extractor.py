@@ -121,6 +121,7 @@ class FeatureExtractor(object):
                 ContinuousAlphabetMaxLen(),
                 ContinuousConsonantsMaxLen(),
                 ContinuousSameAlphabetMaxLen(),
+                VowelsConsonantRatio(),
             ]
 
     def execute(self, features_ignore_list: list = []) -> list:
