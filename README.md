@@ -53,6 +53,7 @@ TODO: after adding config file, explain how to use it here.
                 
 We have currenlty 107 features that are as follows:
 
+
 1. Duration
 1. Packets Numbers
 1. Receiving Packets Numbers
@@ -165,6 +166,7 @@ note: Delta features are about differences (time or length or anything else) bet
 1. DomainUpdatedDate
 1. Continuous Numeric Max Len
 1. Continuous Alphabet Max Len
+
 
 
 ## Statistical Information Calculation
