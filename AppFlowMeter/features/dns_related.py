@@ -4,6 +4,7 @@ import whois
 import datetime
 from .feature import Feature
 import math
+import string
 
 domains = {}
 
