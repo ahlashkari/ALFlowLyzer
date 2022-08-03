@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import whois
 import datetime
-from .feature import Feature
 import math
 import statistics
+import string
+import whois
 from scipy import stats
+from .feature import Feature
 
 domains = {}
 
