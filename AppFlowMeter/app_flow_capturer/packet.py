@@ -3,7 +3,7 @@
 from datetime import datetime
 from scapy.all import *
 from scapy.layers.http import HTTP, HTTPResponse
-from scapy.layers.dns import DNS
+from scapy.layers.dns import DNS, DNSRR
 from .protocols import Protocols
 
 class Packet(object):
@@ -18,6 +18,7 @@ class Packet(object):
         self.__src_port = packet[self.__network_protocol].sport
         self.__dst_port = packet[self.__network_protocol].dport
         self.__timestamp = packet.time
+        self.__dns_ttl_value = packet[DNSRR].ttl if packet.haslayer(DNSRR) else 0
         self.__tcp_flags = packet[self.__network_protocol].flags if self.__network_protocol == TCP else []
         self.__len = len(packet)
         self.__has_rst_flag = False
@@ -58,7 +59,6 @@ class Packet(object):
             self.__application_protocol = "DNS"
         else:
             self.__application_protocol = "Others"
-
 
     def get_tcp_flags(self):
         return self.__tcp_flags
@@ -104,3 +104,6 @@ class Packet(object):
 
     def get_domain_name(self) -> str:
         return self.__domain_name
+
+    def get_dns_ttl_value(self) -> int:
+        return self.__dns_ttl_value
