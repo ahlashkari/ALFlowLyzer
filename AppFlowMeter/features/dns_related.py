@@ -504,3 +504,13 @@ class DistinctNSrecords(Feature):
         rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
         NS_record_code = 2
         return rr_type.count(NS_record_code)
+
+
+class AuthorityResourceRecords(Feature):
+    name = "authority_resource_records"
+    def extract(self, flow: object) -> int:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
+        SOA_record_code = 6
+        return rr_type.count(SOA_record_code)
