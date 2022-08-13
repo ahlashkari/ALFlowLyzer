@@ -133,6 +133,7 @@ class FeatureExtractor(object):
                 TTLValuesSkewness(),
                 TTLValuesCoefficientOfVariation(),
                 DistinctArecords(),
+                DistinctNSrecords(),
             ]
 
     def execute(self, features_ignore_list: list = []) -> list:
