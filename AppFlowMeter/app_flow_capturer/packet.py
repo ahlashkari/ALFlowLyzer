@@ -18,8 +18,8 @@ class Packet(object):
         self.__src_port = packet[self.__network_protocol].sport
         self.__dst_port = packet[self.__network_protocol].dport
         self.__timestamp = packet.time
-        self.__ttl_value = packet[DNSRR].ttl if packet.haslayer(DNSRR) else 0
-        self.__rr_type = packet[DNSRR].type if packet.haslayer(DNSRR) else 0
+        self.__dns_ttl_value = packet[DNSRR].ttl if packet.haslayer(DNSRR) else 0
+        self.__dns_rr_type = packet[DNSRR].type if packet.haslayer(DNSRR) else 0
         self.__tcp_flags = packet[self.__network_protocol].flags if self.__network_protocol == TCP else []
         self.__len = len(packet)
         self.__has_rst_flag = False
@@ -106,8 +106,8 @@ class Packet(object):
     def get_domain_name(self) -> str:
         return self.__domain_name
 
-    def get_ttl_value(self) -> int:
-        return self.__ttl_value
+    def get_dns_ttl_value(self) -> int:
+        return self.__dns_ttl_value
     
-    def get_rr_type(self) -> str:
-        return self.__rr_type
+    def get_dns_rr_type(self) -> str:
+        return self.__dns_rr_type
