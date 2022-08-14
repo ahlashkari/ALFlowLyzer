@@ -425,7 +425,7 @@ class TTLValuesMax(Feature):
 
 class TTLValuesMean(Feature):
     name = "ttl_values_mean"
-    def extract(self, flow: object) -> int:
+    def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"   
         ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
@@ -486,7 +486,7 @@ class TTLValuesCoefficientOfVariation(Feature):
         return format(stats.variation(ttl_values), self.floating_point_unit)    
 
 
-class DistinctArecords(Feature):
+class DistinctARecords(Feature):
     name = "distinct_A_records"
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
@@ -496,7 +496,7 @@ class DistinctArecords(Feature):
         return rr_type.count(A_record_code)
 
 
-class DistinctNSrecords(Feature):
+class DistinctNSRecords(Feature):
     name = "distinct_NS_records"
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":

@@ -51,5 +51,5 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          ContinuousAlphabetMaxLen, ContinuousConsonantsMaxLen, ContinuousSameAlphabetMaxLen, \
                          VowelsConsonantRatio, DistinctTTLValues, TTLValuesMin, TTLValuesMax, TTLValuesMean, TTLValuesMode, \
                          TTLValuesVariance, TTLValuesStandardDeviation, TTLValuesMedian, \
-                         TTLValuesSkewness, TTLValuesCoefficientOfVariation, DistinctArecords, DistinctNSrecords, \
+                         TTLValuesSkewness, TTLValuesCoefficientOfVariation, DistinctARecords, DistinctNSRecords, \
                          AuthorityResourceRecords
