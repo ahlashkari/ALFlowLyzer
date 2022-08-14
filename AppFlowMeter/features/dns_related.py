@@ -496,7 +496,7 @@ class DistinctARecords(Feature):
         return rr_type.count(A_record_code)
 
 
-class DistinctNSrecords(Feature):
+class DistinctNSRecords(Feature):
     name = "distinct_NS_records"
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
