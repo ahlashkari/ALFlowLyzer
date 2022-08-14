@@ -52,4 +52,5 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          VowelsConsonantRatio, ConvFreqVowelsConsonants, DistinctTTLValues, TTLValuesMin, \
                          TTLValuesMax, TTLValuesMean, TTLValuesMode, TTLValuesVariance, TTLValuesStandardDeviation, \
                          TTLValuesMedian, TTLValuesSkewness, TTLValuesCoefficientOfVariation, DistinctARecords, \
-                         DistinctNSRecords, AuthorityResourceRecords
+                         DistinctNSRecords, AvgAuthorityResourceRecords, AvgAdditionalResourceRecords, \
+                         AvgAnswerResourceRecords
