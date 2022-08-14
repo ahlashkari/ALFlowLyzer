@@ -531,11 +531,28 @@ class DistinctNSRecords(Feature):
         return rr_type.count(NS_record_code)
 
 
-class AuthorityResourceRecords(Feature):
-    name = "authority_resource_records"
-    def extract(self, flow: object) -> int:
+class AvgAuthorityResourceRecords(Feature):
+    name = "average_authority_resource_records"
+    def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
-        SOA_record_code = 6
-        return rr_type.count(SOA_record_code)
+        auth_rr_count = [packet.get_dns_auth_rr() for packet in flow.get_packets()]
+        return format(statistics.mean(auth_rr_count), self.floating_point_unit)
+
+
+class AvgAdditionalResourceRecords(Feature):
+    name = "average_additional_resource_records"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        add_rr_count = [packet.get_dns_add_rr() for packet in flow.get_packets()]
+        return format(statistics.mean(add_rr_count), self.floating_point_unit)
+
+
+class AvgAnswerResourceRecords(Feature):
+    name = "average_answer_resource_records"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        ans_rr_count = [packet.get_dns_ans_rr() for packet in flow.get_packets()]
+        return format(statistics.mean(ans_rr_count), self.floating_point_unit)
