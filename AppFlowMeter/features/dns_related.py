@@ -396,6 +396,31 @@ class VowelsConsonantRatio(Feature):
         return vowel_count / consonant_count
 
 
+class ConvFreqVowelsConsonants(Feature):
+    name = "conv_freq_vowels_consonants"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        consonants = list("bcdfghjklmnpqrstvwxyz")
+        vowels = list("aeiou")
+        domain_name = flow.get_domain_names()[0]
+        freq_count = 0
+        total_count = len(domain_name)
+        for i in range(len(domain_name)-2):
+            if (domain_name[i] in consonants) and (domain_name[i+1] in vowels):
+                freq_count += 1
+            elif (domain_name[i] in vowels) and (domain_name[i+1] in consonants):
+                freq_count += 1
+            elif (domain_name[i+1] == '.') and (i < len(domain_name)-3):
+                if (domain_name[i] in consonants) and (domain_name[i+2] in vowels):
+                    freq_count += 1
+                    total_count -= 1
+                elif (domain_name[i] in vowels) and (domain_name[i+2] in consonants):
+                    freq_count += 1
+                    total_count -= 1
+        return freq_count/total_count
+
+
 class DistinctTTLValues(Feature):
     name = "distinct_ttl_values"
     def extract(self, flow: object) -> int:
