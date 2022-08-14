@@ -494,3 +494,13 @@ class DistinctARecords(Feature):
         rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
         A_record_code = 1
         return rr_type.count(A_record_code)
+
+
+class DistinctNSRecords(Feature):
+    name = "distinct_NS_records"
+    def extract(self, flow: object) -> int:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
+        NS_record_code = 2
+        return rr_type.count(NS_record_code)
