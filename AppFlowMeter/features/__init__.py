@@ -49,7 +49,7 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          UniGramDomainName, BiGramDomainName, TriGramDomainName, NumericalPercentage, \
                          CharacterDistribution, CharacterEntropy, ContinuousNumericMaxLen, \
                          ContinuousAlphabetMaxLen, ContinuousConsonantsMaxLen, ContinuousSameAlphabetMaxLen, \
-                         VowelsConsonantRatio, DistinctTTLValues, TTLValuesMin, TTLValuesMax, TTLValuesMean, TTLValuesMode, \
-                         TTLValuesVariance, TTLValuesStandardDeviation, TTLValuesMedian, \
-                         TTLValuesSkewness, TTLValuesCoefficientOfVariation, DistinctArecords, DistinctNSrecords, \
-                         AuthorityResourceRecords
+                         VowelsConsonantRatio, ConvFreqVowelsConsonants, DistinctTTLValues, TTLValuesMin, \
+                         TTLValuesMax, TTLValuesMean, TTLValuesMode, TTLValuesVariance, TTLValuesStandardDeviation, \
+                         TTLValuesMedian, TTLValuesSkewness, TTLValuesCoefficientOfVariation, DistinctArecords, \
+                         DistinctNSrecords, AuthorityResourceRecords
