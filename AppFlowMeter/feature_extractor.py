@@ -132,7 +132,7 @@ class FeatureExtractor(object):
                 TTLValuesMedian(),
                 TTLValuesSkewness(),
                 TTLValuesCoefficientOfVariation(),
-                DistinctArecords(),
+                DistinctARecords(),
             ]
 
     def execute(self, features_ignore_list: list = []) -> list:
