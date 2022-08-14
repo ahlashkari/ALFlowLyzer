@@ -20,6 +20,7 @@ class Packet(object):
         self.__timestamp = packet.time
         self.__dns_ttl_value = packet[DNSRR].ttl if packet.haslayer(DNSRR) else 0
         self.__dns_rr_type = packet[DNSRR].type if packet.haslayer(DNSRR) else 0
+        self.__dns_header = packet[DNS] if packet.haslayer(DNS) else None
         self.__tcp_flags = packet[self.__network_protocol].flags if self.__network_protocol == TCP else []
         self.__len = len(packet)
         self.__has_rst_flag = False
@@ -111,3 +112,12 @@ class Packet(object):
     
     def get_dns_rr_type(self) -> str:
         return self.__dns_rr_type
+    
+    def get_dns_auth_rr(self) -> int:
+        return self.__dns_header.nscount
+    
+    def get_dns_add_rr(self) -> int:
+        return self.__dns_header.arcount
+    
+    def get_dns_ans_rr(self) -> int:
+        return self.__dns_header.ancount
