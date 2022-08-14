@@ -122,6 +122,7 @@ class FeatureExtractor(object):
                 ContinuousConsonantsMaxLen(),
                 ContinuousSameAlphabetMaxLen(),
                 VowelsConsonantRatio(),
+                ConvFreqVowelsConsonants(),
                 DistinctTTLValues(),
                 TTLValuesMin(),
                 TTLValuesMax(),
