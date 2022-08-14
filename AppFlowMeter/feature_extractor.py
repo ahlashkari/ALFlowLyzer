@@ -136,6 +136,7 @@ class FeatureExtractor(object):
                 DistinctArecords(),
                 DistinctNSrecords(),
                 AuthorityResourceRecords(),
+                AnswerResourceRecords(),
             ]
 
     def execute(self, features_ignore_list: list = []) -> list:
