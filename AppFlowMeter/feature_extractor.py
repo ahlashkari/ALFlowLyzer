@@ -133,8 +133,8 @@ class FeatureExtractor(object):
                 TTLValuesMedian(),
                 TTLValuesSkewness(),
                 TTLValuesCoefficientOfVariation(),
-                DistinctArecords(),
-                DistinctNSrecords(),
+                DistinctARecords(),
+                DistinctNSRecords(),
                 AuthorityResourceRecords(),
             ]
 
