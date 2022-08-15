@@ -53,4 +53,5 @@ from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreatio
                          TTLValuesMax, TTLValuesMean, TTLValuesMode, TTLValuesVariance, TTLValuesStandardDeviation, \
                          TTLValuesMedian, TTLValuesSkewness, TTLValuesCoefficientOfVariation, DistinctARecords, \
                          DistinctNSRecords, AvgAuthorityResourceRecords, AvgAdditionalResourceRecords, \
-                         AvgAnswerResourceRecords
+                         AvgAnswerResourceRecords, QueryResourceRecordType, AnsResourceRecordType, \
+                         QueryResourceRecordClass, AnsResourceRecordClass
