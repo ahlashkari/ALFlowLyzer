@@ -138,6 +138,10 @@ class FeatureExtractor(object):
                 AvgAuthorityResourceRecords(),
                 AvgAdditionalResourceRecords(),
                 AvgAnswerResourceRecords(),
+                QueryResourceRecordType(),
+                AnsResourceRecordType(),
+                QueryResourceRecordClass(),
+                AnsResourceRecordClass(),
             ]
 
     def execute(self, features_ignore_list: list = []) -> list:
