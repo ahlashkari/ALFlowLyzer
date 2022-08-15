@@ -135,7 +135,9 @@ class FeatureExtractor(object):
                 TTLValuesCoefficientOfVariation(),
                 DistinctARecords(),
                 DistinctNSRecords(),
-                AuthorityResourceRecords(),
+                AvgAuthorityResourceRecords(),
+                AvgAdditionalResourceRecords(),
+                AvgAnswerResourceRecords(),
             ]
 
     def execute(self, features_ignore_list: list = []) -> list:
