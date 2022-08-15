@@ -6,6 +6,7 @@ from scapy.layers.http import HTTP, HTTPResponse
 from scapy.layers.dns import *
 from .protocols import Protocols
 
+
 class Packet(object):
     def __init__(self, packet: object):
         self.__network_protocol = None
@@ -20,6 +21,9 @@ class Packet(object):
         self.__timestamp = packet.time
         self.__dns_ttl_value = packet[DNSRR].ttl if packet.haslayer(DNSRR) else 0
         self.__dns_rr_type = packet[DNSRR].type if packet.haslayer(DNSRR) else 0
+        self.__dns_rr_rclass = packet[DNSRR].rclass if packet.haslayer(DNSRR) else 0
+        self.__dns_rr_qtype = packet[DNSQR].qtype if packet.haslayer(DNSQR) else 0
+        self.__dns_rr_qclass = packet[DNSQR].qclass if packet.haslayer(DNSQR) else 0
         self.__dns_header = packet[DNS] if packet.haslayer(DNS) else None
         self.__tcp_flags = packet[self.__network_protocol].flags if self.__network_protocol == TCP else []
         self.__len = len(packet)
@@ -121,3 +125,12 @@ class Packet(object):
     
     def get_dns_ans_rr(self) -> int:
         return self.__dns_header.ancount
+    
+    def get_dns_qtype(self) -> int:
+        return self.__dns_rr_qtype
+    
+    def get_dns_qclass(self) -> int:
+        return self.__dns_rr_qclass
+    
+    def get_dns_rclass(self) -> int:
+        return self.__dns_rr_rclass
