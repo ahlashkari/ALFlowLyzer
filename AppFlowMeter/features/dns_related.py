@@ -556,3 +556,39 @@ class AvgAnswerResourceRecords(Feature):
             return "not a dns flow"
         ans_rr_count = [packet.get_dns_ans_rr() for packet in flow.get_packets()]
         return format(statistics.mean(ans_rr_count), self.floating_point_unit)
+
+
+class QueryResourceRecordType(Feature):
+    name = "query_resource_record_type"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        query_rr_type = [packet.get_dns_qtype() for packet in flow.get_packets()]
+        return query_rr_type
+
+
+class AnsResourceRecordType(Feature):
+    name = "ans_resource_record_type"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
+        return rr_type
+
+
+class QueryResourceRecordClass(Feature):
+    name = "query_resource_record_class"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        rr_qclass = [packet.get_dns_qclass() for packet in flow.get_packets()]
+        return rr_qclass
+
+
+class AnsResourceRecordClass(Feature):
+    name = "ans_resource_record_class"
+    def extract(self, flow: object) -> float:
+        if flow.get_protocol() != "DNS":
+            return "not a dns flow"
+        rr_rclass = [packet.get_dns_rclass() for packet in flow.get_packets()]
+        return rr_rclass
