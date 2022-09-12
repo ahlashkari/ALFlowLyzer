@@ -18,8 +18,8 @@ class Flow(object):
         self.__network_protocol = network_protocol
 
     def __str__(self):
-        return str(datetime.fromtimestamp(self._timestamp)) + '_' + self.__src_ip + '_' + \
-                str(self.__src_port) + '_' + self.__dst_ip + '_' + str(self.__dst_port)
+        return "_".join(str(datetime.fromtimestamp(self._timestamp)), self.__src_ip,
+                str(self.__src_port), self.__dst_ip, str(self.__dst_port))
 
     def __eq__(self, other):
         if isinstance(other, Flow):
@@ -43,9 +43,9 @@ class Flow(object):
         self.__packets.append(packet)
         self._last_packet_timestamp = packet.get_timestamp()
         # TODO: check for forward and backward FIN
-        if 'F' in packet.get_tcp_flags():
+        if packet.has_fin_flag():
             self.__number_of_fin_flags += 1
-        if 'R' in packet.get_tcp_flags():
+        if packet.has_rst_flag():
             self.__has_rst_flag = True
 
     def get_src_ip(self) -> str:
@@ -105,7 +105,7 @@ class DNSFlow(Flow):
         super().add_packet(packet)
 
     def __str__(self):
-        return super().__str__() + '_' + str(self.__transaction_id)
+        return "_".join(super().__str__(), str(self.__transaction_id))
 
     def get_transaction_id(self) -> int:
         return self.__transaction_id
@@ -119,11 +119,10 @@ class DNSFlow(Flow):
         return False
 
     def is_ended(self, packet: object, max_flow_duration: int, activity_timeout: int) -> bool:
-        return False
-        # TODO: check dns timeout=30 sec
+        dns_activity_timeout = 30
         flow_duration = packet.get_timestamp() - self._timestamp
         active_time = packet.get_timestamp() - self._last_packet_timestamp
-        if flow_duration > max_flow_duration or active_time > activity_timeout:
+        if flow_duration > max_flow_duration or active_time > dns_activity_timeout:
             return True
         return False
 

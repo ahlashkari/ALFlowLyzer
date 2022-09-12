@@ -31,16 +31,6 @@ class SendingPacketsRate(Feature):
             return 0
         return format(len(sending_packets) / utils.calculate_duration(sending_packets),
                      self.floating_point_unit)
-    
-    
-class SuccessfulPacketsRate(Feature):
-    name = "success_packets_rate"
-    def extract(self, flow: object) -> float:
-        success_packets = utils.extract_successful_packets(flow.get_packets(), flow.get_dst_ip())
-        if len(success_packets) <= 1:
-            return 0
-        return format(len(success_packets) / utils.calculate_duration(flow.get_packets()),
-                     self.floating_point_unit)
 
 
 class PacketsLenRate(Feature):

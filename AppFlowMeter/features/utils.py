@@ -19,11 +19,3 @@ def extract_sending_packets(packets: list, dst_ip: str) -> list:
         if packet.get_src_ip() == dst_ip:
             sending_packets.append(packet)
     return sending_packets
-
-
-def extract_successful_packets(packets: list, dst_ip: str) -> list:
-    successful_packets = []
-    for packet in packets:
-        if packet.get_status_code() == 200:
-            successful_packets.append(packet)
-    return successful_packets

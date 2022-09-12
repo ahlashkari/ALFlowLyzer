@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
-from multipledispatch import dispatch
-from scapy.all import *
+import dpkt
+# from multipledispatch import dispatch
+from datetime import datetime
+# from scapy.all import *
 from .packet import Packet
 from .flow_factory import FlowFactory
 
@@ -12,26 +14,38 @@ class AppFlowCapturer(object):
         self.max_flow_duration = max_flow_duration
         self.activity_timeout = activity_timeout
         self.flow_factory = FlowFactory()
+        self.thread_number = -1
 
-    @dispatch()
-    def capture(self) -> list:
-        pass
 
-    @dispatch(str)
-    def capture(self, pcap_file: str) -> list:
-        sniff(offline=pcap_file, prn=self.packet_processing, store=0)
+    def capture(self, thread_number: int, pcap_file: str) -> list:
+        self.thread_number = thread_number
+        f = open(pcap_file, 'rb')
+        pcap = dpkt.pcap.Reader(f)
+        i = 0
+        for ts, buf in pcap:
+            i +=1
+            try:
+                eth = dpkt.ethernet.Ethernet(buf)
+                if not isinstance(eth.data, dpkt.ip.IP):
+                    continue
+                ip = eth.data
+                if not isinstance(ip.data, dpkt.udp.UDP) and \
+                        not isinstance(ip.data, dpkt.tcp.TCP):
+                    continue
+
+            except (dpkt.dpkt.NeedData, dpkt.dpkt.UnpackError, Exception) as e:
+                print('\nError Parsing DNS, Might be a truncated packet...')
+                print('Exception: {!r}'.format(e))
+                continue
+
+            app_flow_packet = Packet(buf, ts)
+            self.__add_packet_to_flow(app_flow_packet)
+            if i % 10000 == 0:
+                print(">> ", self.thread_number, " >>", i, "number of packets has been processed from", pcap_file)
+
         return self.__finished_flows + self.__ongoing_flows
 
-    def packet_processing(self, scapy_packet):
-        if IP not in scapy_packet:
-            return
-        if TCP not in scapy_packet and UDP not in scapy_packet:
-            return
-
-        app_flow_packet = Packet(scapy_packet)
-        self.__add_packet_to_flow(app_flow_packet)
-
-    def __add_packet_to_flow(self, packet: object) -> None:
+    def __add_packet_to_flow(self, packet: Packet) -> None:
         src_ip = packet.get_src_ip()
         dst_ip = packet.get_dst_ip()
         src_port = packet.get_src_port()
@@ -44,12 +58,29 @@ class AppFlowCapturer(object):
             return
 
         if flow.is_ended(packet, self.max_flow_duration, self.activity_timeout):
+            # print('flow is ended', str(flow))
             self.__ongoing_flows.remove(flow)
             self.__finished_flows.append(flow)
             self.__ongoing_flows.append(self.flow_factory.create(packet))
+
+            if len(self.__ongoing_flows) >= 8000:
+                print(">> ", self.thread_number, " >>", "finished flows:", len(self.__finished_flows))
+                print(">> ", self.thread_number, " >>", "ongoing flows:", len(self.__ongoing_flows))
+                for oflow in self.__ongoing_flows:
+                    dns_activity_timeout = 10
+                    active_time = packet.get_timestamp() - oflow.get_last_packet_timestamp()
+                    if active_time >= dns_activity_timeout:
+                        self.__ongoing_flows.remove(oflow)
+                        self.__finished_flows.append(oflow)                    
+                print(">> ", self.thread_number, " >>", "new finished flows:", len(self.__finished_flows))
+                print(">> ", self.thread_number, " >>", "new ongoing flows:", len(self.__ongoing_flows))
+                print(">> ", self.thread_number, " >>", 50*"=")
+            if len(self.__finished_flows) >= 8000:
+                self.__finished_flows.clear()
             return
 
         flow.add_packet(packet)
+
 
     def __search_for_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
             timestamp: str, protocol: str, transaction_id: int) -> object:

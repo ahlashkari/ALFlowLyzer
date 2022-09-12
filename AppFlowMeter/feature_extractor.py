@@ -15,8 +15,6 @@ class FeatureExtractor(object):
                 SendingPacketsNumbers(),
                 HandshakeDuration(),
                 DeltaStart(),
-                SuccessfulPacketsNumbers(),
-                SuccessfulPacketsRate(),
                 TotalBytes(),
                 ReceivingBytes(),
                 SendingBytes(),
@@ -161,5 +159,6 @@ class FeatureExtractor(object):
                     continue
                 feature.set_floating_point_unit(self.floating_point_unit)
                 features_of_flow[feature.name] = feature.extract(flow)
+            features_of_flow["label"] = "benign"
             self.__extracted_data.append(features_of_flow.copy())
         return self.__extracted_data.copy()

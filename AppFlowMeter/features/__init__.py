@@ -25,8 +25,7 @@ from .packets_len import PacketsLenMin, PacketsLenMax, PacketsLenMean, PacketsLe
                          SendingPacketsDeltaLenMode, SendingPacketsDeltaLenSkewness, \
                          SendingPacketsDeltaLenCoefficientOfVariation, \
                          TotalBytes, SendingBytes, ReceivingBytes
-from .packets_numbers import PacketsNumbers, ReceivingPacketsNumbers, SendingPacketsNumbers, \
-                             SuccessfulPacketsNumbers
+from .packets_numbers import PacketsNumbers, ReceivingPacketsNumbers, SendingPacketsNumbers
 from .packets_time import Duration, DeltaStart, ReceivingPacketsDeltaTimeMin, \
                           ReceivingPacketsDeltaTimeMax, ReceivingPacketsDeltaTimeMean, \
                           ReceivingPacketsDeltaTimeMedian, \
@@ -39,8 +38,8 @@ from .packets_time import Duration, DeltaStart, ReceivingPacketsDeltaTimeMin, \
                           SendingPacketsDeltaTimeStandardDeviation, SendingPacketsDeltaTimeVariance, \
                           SendingPacketsDeltaTimeMode, SendingPacketsDeltaTimeSkewness, \
                           SendingPacketsDeltaTimeCoefficientOfVariation, HandshakeDuration
-from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate, SuccessfulPacketsRate, \
-                          PacketsLenRate, SendingPacketsLenRate, ReceivingPacketsLenRate
+from .packets_rate import PacketsRate, ReceivingPacketsRate, SendingPacketsRate, PacketsLenRate, \
+                          SendingPacketsLenRate, ReceivingPacketsLenRate
 from .dns_related import DomainName, DomainEmail, DomainRegistrar, DomainCreationDate, \
                          DomainExpirationDate, DomainAge, DomainCountry, DomainDNSSEC, \
                          DomainOrganization, DomainAddress, DomainCity, DomainState, DomainZipcode, \

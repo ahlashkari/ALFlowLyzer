@@ -66,20 +66,20 @@ class Handshake(Feature):
                         self.floating_point_unit)
                 return
 
-            if STATE == HandshakingStates.Ideal and packet.get_syn_flag():
+            if STATE == HandshakingStates.Ideal and packet.has_syn_flag():
                 first_handshake_packet_time = packet.get_timestamp()
                 seq_number = packet.get_seq_number()
                 STATE = HandshakingStates.CLIENT_SENT_HANDSHAKE_REQUEST
 
             elif STATE == HandshakingStates.CLIENT_SENT_HANDSHAKE_REQUEST \
-                    and packet.get_syn_flag() \
-                    and packet.get_ack_flag() and seq_number == packet.get_ack_number() - 1:
+                    and packet.has_syn_flag() \
+                    and packet.has_ack_flag() and seq_number == packet.get_ack_number() - 1:
                 seq_number = packet.get_seq_number()
                 ack_number = packet.get_ack_number()
                 STATE = HandshakingStates.SERVER_ACKNWOLEDGED_CLIENT_HANDSHAKE_REQUEST
 
             elif STATE == HandshakingStates.SERVER_ACKNWOLEDGED_CLIENT_HANDSHAKE_REQUEST \
-                    and packet.get_ack_flag() and seq_number == packet.get_ack_number() - 1 \
+                    and packet.has_ack_flag() and seq_number == packet.get_ack_number() - 1 \
                     and ack_number == packet.get_seq_number():
                 last_handshake_packet_time = packet.get_timestamp()
                 STATE = HandshakingStates.END_OF_HANDSHAKING

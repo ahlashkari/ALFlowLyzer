@@ -1,6 +1,6 @@
 {
-    "pcap_file_address": "./test.pcap",
-    "output_file_address": "./output.csv",
+    "pcap_file_address": "../../pcaps/test2/test.pcap",
+    "output_file_address": "./output-of-benign-pcap.csv",
     "interface_name": "eth0",
     "max_flow_duration": 120000,
     "activity_timeout": 5000,
