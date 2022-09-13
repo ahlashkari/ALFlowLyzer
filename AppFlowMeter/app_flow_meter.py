@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import threading
+from multiprocessing import Process
+
 from .app_flow_capturer import AppFlowCapturer
 from .feature_extractor import FeatureExtractor
 from .writers import Writer, CSVWriter
@@ -22,21 +24,23 @@ class AppFlowMeter(object):
 
     def run(self):
         config = ConfigLoader(self.config_file_address)
-        test(config, 0)
-        # mythreads = []
-        # for i in range(4):
-        #     mythreads.append(threading.Thread(target=test, args=(config, i,)))
-
-        # for mythread in mythreads:
-        #     mythread.start()
-
-        # for mythread in mythreads:
-        #     mythread.join()
+        # flows = test(config, 0)
+        mythreads = []
+        for i in range(4):
+            # mythreads.append(threading.Thread(target=test, args=(config, i,)))
+            mythreads.append(Process(target=test, args=(config, i,)))
 
 
-        app_flow_capturer = AppFlowCapturer(config.max_flow_duration, config.activity_timeout)
-        print("> capturing started...")
-        flows = app_flow_capturer.run(config.pcap_file_address)
+        for mythread in mythreads:
+            mythread.start()
+
+        for mythread in mythreads:
+            mythread.join()
+
+
+        # app_flow_capturer = AppFlowCapturer(config.max_flow_duration, config.activity_timeout)
+        # print("> capturing started...")
+        # flows = app_flow_capturer.run(config.pcap_file_address)
         print("> capturing ended...")
         print("> features extracting started...")
         feature_extractor = FeatureExtractor(flows, config.floating_point_unit)
