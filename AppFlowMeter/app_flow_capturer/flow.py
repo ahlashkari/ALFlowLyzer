@@ -18,8 +18,8 @@ class Flow(object):
         self.__network_protocol = network_protocol
 
     def __str__(self):
-        return "_".join(str(datetime.fromtimestamp(self._timestamp)), self.__src_ip,
-                str(self.__src_port), self.__dst_ip, str(self.__dst_port))
+        return "_".join([str(datetime.fromtimestamp(self._timestamp)), self.__src_ip,
+                str(self.__src_port), self.__dst_ip, str(self.__dst_port)])
 
     def __eq__(self, other):
         if isinstance(other, Flow):
@@ -105,7 +105,7 @@ class DNSFlow(Flow):
         super().add_packet(packet)
 
     def __str__(self):
-        return "_".join(super().__str__(), str(self.__transaction_id))
+        return "_".join([super().__str__(), str(self.__transaction_id)])
 
     def get_transaction_id(self) -> int:
         return self.__transaction_id

@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
 import dpkt
-# from multipledispatch import dispatch
-from datetime import datetime
-# from scapy.all import *
 from .packet import Packet
 from .flow_factory import FlowFactory
 
@@ -16,8 +13,7 @@ class AppFlowCapturer(object):
         self.flow_factory = FlowFactory()
         self.thread_number = -1
 
-
-    def capture(self, thread_number: int, pcap_file: str) -> list:
+    def capture(self, thread_number: int, pcap_file: str, flows: list) -> list:
         self.thread_number = thread_number
         f = open(pcap_file, 'rb')
         pcap = dpkt.pcap.Reader(f)
@@ -43,6 +39,11 @@ class AppFlowCapturer(object):
             if i % 10000 == 0:
                 print(">> ", self.thread_number, " >>", i, "number of packets has been processed from", pcap_file)
 
+        flows.extend(self.__finished_flows)
+        flows.extend(self.__ongoing_flows)
+        return self.__finished_flows + self.__ongoing_flows
+
+    def get_flows(self):
         return self.__finished_flows + self.__ongoing_flows
 
     def __add_packet_to_flow(self, packet: Packet) -> None:
@@ -67,16 +68,16 @@ class AppFlowCapturer(object):
                 print(">> ", self.thread_number, " >>", "finished flows:", len(self.__finished_flows))
                 print(">> ", self.thread_number, " >>", "ongoing flows:", len(self.__ongoing_flows))
                 for oflow in self.__ongoing_flows:
-                    dns_activity_timeout = 10
+                    dns_activity_timeout = 30
                     active_time = packet.get_timestamp() - oflow.get_last_packet_timestamp()
                     if active_time >= dns_activity_timeout:
                         self.__ongoing_flows.remove(oflow)
-                        self.__finished_flows.append(oflow)                    
+                        self.__finished_flows.append(oflow)
                 print(">> ", self.thread_number, " >>", "new finished flows:", len(self.__finished_flows))
                 print(">> ", self.thread_number, " >>", "new ongoing flows:", len(self.__ongoing_flows))
                 print(">> ", self.thread_number, " >>", 50*"=")
-            if len(self.__finished_flows) >= 8000:
-                self.__finished_flows.clear()
+            # if len(self.__finished_flows) >= 8000:
+            #     self.__finished_flows.clear()
             return
 
         flow.add_packet(packet)

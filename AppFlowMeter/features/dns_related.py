@@ -393,7 +393,9 @@ class VowelsConsonantRatio(Feature):
                 vowel_count += 1
             elif char in consonants:
                 consonant_count += 1
-        return vowel_count / consonant_count
+        if consonant_count != 0:
+            return vowel_count / consonant_count
+        return 0
 
 
 class ConvFreqVowelsConsonants(Feature):
@@ -418,7 +420,7 @@ class ConvFreqVowelsConsonants(Feature):
                 elif (domain_name[i] in vowels) and (domain_name[i+2] in consonants):
                     freq_count += 1
                     total_count -= 1
-        return freq_count/total_count
+        return freq_count / total_count
 
 
 class DistinctTTLValues(Feature):
