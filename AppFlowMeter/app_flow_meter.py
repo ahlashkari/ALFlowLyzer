@@ -1,64 +1,91 @@
 #!/usr/bin/python3
 
-from multiprocessing import Process, Manager
-
+import psutil
+import os
+from multiprocessing import Process, Manager, Lock
+from threading import Thread
 from .app_flow_capturer import AppFlowCapturer
 from .feature_extractor import FeatureExtractor
 from .writers import Writer, CSVWriter
 from .config_loader import ConfigLoader
 
 
-def test(config, i, app_flow_capturer):
-    # app_flow_capturer = AppFlowCapturer(config.max_flow_duration, config.activity_timeout)
-    print("> capturing started...")
-    flows = app_flow_capturer.capture(i, config.pcap_file_address + str(i))
-    return flows
-
-
 class AppFlowMeter(object):
     def __init__(self, config_file_address: str, online_capturing: bool):
         print("You initiated Application Flow Meter!")
-        self.config_file_address = config_file_address
+        self.__config_file_address = config_file_address
 
     def run(self):
-        config = ConfigLoader(self.config_file_address)
-        # flows = test(config, 0)
-
-        # app_flow_capturer = AppFlowCapturer(config.max_flow_duration, config.activity_timeout)
-
-        flows: list
+        self.__config = ConfigLoader(self.__config_file_address)
         with Manager() as manager:
-            flows = manager.list()
-
+            self.__flows = manager.list()
+            self.__data = manager.list()
             capturers = []
-            mythreads = []
-            for i in range(4):
-                capturers.append(AppFlowCapturer(config.max_flow_duration, config.activity_timeout))
-                # mythreads.append(threading.Thread(target=test, args=(config, i,)))
-                mythreads.append(Process(target=capturers[i].capture, args=(i, config.pcap_file_address + str(i), flows,)))
+            self.__threads = []
+            self.__threads_pid = manager.list()
+            self.__watchdog_feature_extractor_pid = manager.Value('i', 0)
+            self.__data_lock = Lock()
+            self.__flows_lock = Lock()
 
-            for mythread in mythreads:
+            for i in range(self.__config.number_of_threads):
+                capturers.append(AppFlowCapturer(self.__config.max_flow_duration,
+                                                 self.__config.activity_timeout))
+                self.__threads_pid.append(0)
+                self.__threads.append(Process(target=capturers[i].capture,
+                                         args=(i, self.__config.pcap_file_address + str(i),
+                                                self.__flows, self.__flows_lock, self.__threads_pid[i])))
+            self.__watchdog_feature_extractor = Process(target=self.feature_extractor, daemon=True)
+            self.__watchdog_writer = Process(target=self.writer, daemon=True)
+
+            print("> capturing started...")
+            for mythread in self.__threads:
                 mythread.start()
+            self.__watchdog_feature_extractor.start()
+            self.__watchdog_writer.start()
 
-            for mythread in mythreads:
+            for mythread in self.__threads:
                 mythread.join()
-
-            print("flows", len(flows))
-
-        # flows = []
-        # for i in range(4):
-        #     print("i >", i, ">", len(capturers[i].get_flows()))
-        #     flows.extend(capturers[i].get_flows())
-
-        # print("> capturing started...")
-        # flows = app_flow_capturer.run(config.pcap_file_address)
-            print("> capturing ended...")
-            print("> features extracting started...")
-            feature_extractor = FeatureExtractor(flows, config.floating_point_unit)
-            data = feature_extractor.execute(config.features_ignore_list)
-            print("> features extracting ended...")
-            print("> writing results to", config.output_file_address)
-            writer = Writer(CSVWriter())
-            writer.write(config.output_file_address, data)
+            self.__watchdog_feature_extractor.join()
+            self.__watchdog_writer.join()
             print("results are ready!")
 
+    def feature_extractor(self):
+        # TODO: read from file
+        label = "benign"
+        self.__watchdog_feature_extractor_pid = os.getpid()
+        print(10*">", self.__watchdog_writer.pid)
+
+        feature_extractor = FeatureExtractor(self.__config.floating_point_unit)
+        while 1:
+            # print(10*">", self.__watchdog_writer.pid)
+            # TODO: read from file
+            if len(self.__flows) > 500:
+                with self.__data_lock and self.__flows_lock:
+                    print(50*"$")
+                    self.__data.extend(feature_extractor.execute(self.__flows, label))
+                    self.__flows.clear()
+                    print(50*"$")
+            # if not any(psutil.pid_exists(thread_pid) for thread_pid in self.__threads_pid):
+            # if not any(thread.is_alive() for thread in self.__threads):
+                # return
+
+    def writer(self):
+        writer = Writer(CSVWriter())
+        header_writing_mode = 'w'
+        data_writing_mode = 'a'
+        file_address = self.__config.output_file_address
+        writer.write(file_address, self.__data, header_writing_mode, only_headers=True)
+        print(20*"(", self.__watchdog_writer.pid)
+
+        while 1:
+            # TODO: read from file
+            if len(self.__data) > 5000:
+                with self.__data_lock and self.__flows_lock:
+                    print(50*"*")
+                    writer.write(file_address, self.__data, data_writing_mode)
+                    self.__data.clear()
+                    print(50*"*")
+            # if psutil.pid_exists(self.__watchdog_feature_extractor_pid):
+            # # if not self.__watchdog_feature_extractor.is_alive():
+            #     writer.write(file_address, self.__data, data_writing_mode)
+            #     return

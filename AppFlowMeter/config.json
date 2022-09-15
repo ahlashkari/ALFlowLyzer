@@ -1,10 +1,11 @@
 {
-    "pcap_file_address": "../pcaps/test/test/test.pcap",
+    "pcap_file_address": "../pcaps/test/test.pcap",
     "output_file_address": "./output-of-benign-pcap.csv",
     "interface_name": "eth0",
     "max_flow_duration": 120000,
-    "activity_timeout": 5000,
-    "floating_point_unit": ".64f",
+    "activity_timeout": 300,
+    "floating_point_unit": ".8f",
+    "number_of_threads": 2,
     "features_ignore_list": [
         "dns_whois_domain_name",
         "dns_domain_email",

@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import dpkt
+import os
+from multiprocessing import Lock
+from AppFlowMeter.app_flow_capturer.flow import DNSFlow
 from .packet import Packet
 from .flow_factory import FlowFactory
 
@@ -13,7 +16,9 @@ class AppFlowCapturer(object):
         self.flow_factory = FlowFactory()
         self.thread_number = -1
 
-    def capture(self, thread_number: int, pcap_file: str, flows: list) -> list:
+    def capture(self, thread_number: int, pcap_file: str, flows: list, flows_lock: Lock,
+            thread_pid: int) -> list:
+        thread_pid = os.getpid()
         self.thread_number = thread_number
         f = open(pcap_file, 'rb')
         pcap = dpkt.pcap.Reader(f)
@@ -35,18 +40,18 @@ class AppFlowCapturer(object):
                 continue
 
             app_flow_packet = Packet(buf, ts)
-            self.__add_packet_to_flow(app_flow_packet)
+            self.__add_packet_to_flow(app_flow_packet, flows, flows_lock)
             if i % 10000 == 0:
                 print(">> ", self.thread_number, " >>", i, "number of packets has been processed from", pcap_file)
 
-        flows.extend(self.__finished_flows)
-        flows.extend(self.__ongoing_flows)
+        with flows_lock:
+            print(50*"#")
+            flows.extend(self.__finished_flows)
+            flows.extend(self.__ongoing_flows)
+            print(50*"#")
         return self.__finished_flows + self.__ongoing_flows
 
-    def get_flows(self):
-        return self.__finished_flows + self.__ongoing_flows
-
-    def __add_packet_to_flow(self, packet: Packet) -> None:
+    def __add_packet_to_flow(self, packet: Packet, flows: list, flows_lock: Lock) -> None:
         src_ip = packet.get_src_ip()
         dst_ip = packet.get_dst_ip()
         src_port = packet.get_src_port()
@@ -59,25 +64,28 @@ class AppFlowCapturer(object):
             return
 
         if flow.is_ended(packet, self.max_flow_duration, self.activity_timeout):
-            # print('flow is ended', str(flow))
             self.__ongoing_flows.remove(flow)
             self.__finished_flows.append(flow)
             self.__ongoing_flows.append(self.flow_factory.create(packet))
 
+            # TODO: read from file
             if len(self.__ongoing_flows) >= 8000:
-                print(">> ", self.thread_number, " >>", "finished flows:", len(self.__finished_flows))
-                print(">> ", self.thread_number, " >>", "ongoing flows:", len(self.__ongoing_flows))
+                # TODO: read from file
+                dns_activity_timeout = 30
                 for oflow in self.__ongoing_flows:
-                    dns_activity_timeout = 30
+                    timeout = self.activity_timeout
+                    if isinstance(oflow, DNSFlow):
+                        timeout = dns_activity_timeout
                     active_time = packet.get_timestamp() - oflow.get_last_packet_timestamp()
-                    if active_time >= dns_activity_timeout:
+                    if active_time >= timeout:
                         self.__ongoing_flows.remove(oflow)
                         self.__finished_flows.append(oflow)
-                print(">> ", self.thread_number, " >>", "new finished flows:", len(self.__finished_flows))
-                print(">> ", self.thread_number, " >>", "new ongoing flows:", len(self.__ongoing_flows))
-                print(">> ", self.thread_number, " >>", 50*"=")
-            # if len(self.__finished_flows) >= 8000:
-            #     self.__finished_flows.clear()
+            if len(self.__finished_flows) >= 8000:
+                with flows_lock:
+                    print(50*"@")
+                    flows.extend(self.__finished_flows.copy())
+                    self.__finished_flows.clear()
+                    print(50*"@")
             return
 
         flow.add_packet(packet)

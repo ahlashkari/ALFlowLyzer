@@ -101,7 +101,7 @@ class DNSFlow(Flow):
         self.__domain_names = []
 
     def add_packet(self, packet) -> None:
-        self.__domain_names.append(packet.get_domain_name())
+        self.__domain_names.extend(packet.get_domain_names())
         super().add_packet(packet)
 
     def __str__(self):
@@ -112,13 +112,12 @@ class DNSFlow(Flow):
 
     def equality_check(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
             timestamp: str, protocol: str, transaction_id: int = -1) -> bool:
-        # TODO: should we check this too?
-#        if super().equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, transaction_id):
         if transaction_id == self.__transaction_id:
             return True
         return False
 
     def is_ended(self, packet: object, max_flow_duration: int, activity_timeout: int) -> bool:
+        # TODO: read it from config
         dns_activity_timeout = 30
         flow_duration = packet.get_timestamp() - self._timestamp
         active_time = packet.get_timestamp() - self._last_packet_timestamp
