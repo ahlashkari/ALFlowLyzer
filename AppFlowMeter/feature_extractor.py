@@ -141,9 +141,14 @@ class FeatureExtractor(object):
             ]
         self.__features = self.__features + self.__dns_features
 
-    def execute(self, flows: list, features_ignore_list: list = [], label: str = "") -> list:
+    def execute(self, flows, features_ignore_list: list = [], label: str = "") -> list:
         extracted_data = []
+        print("AAAA")
+        print(len(flows))
         for flow in flows:
+            print("BBBB")
+            print(len(flows))
+
             features_of_flow = {}
             features_of_flow["flow_id"] = str(flow)
             features_of_flow["timestamp"] = datetime.fromtimestamp(flow.get_timestamp())

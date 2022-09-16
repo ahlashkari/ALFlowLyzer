@@ -17,8 +17,8 @@ class AppFlowCapturer(object):
         self.thread_number = -1
 
     def capture(self, thread_number: int, pcap_file: str, flows: list, flows_lock: Lock,
-            thread_pid: int) -> list:
-        thread_pid = os.getpid()
+            thread_pid: list) -> list:
+        thread_pid.set(os.getpid())
         self.thread_number = thread_number
         f = open(pcap_file, 'rb')
         pcap = dpkt.pcap.Reader(f)
@@ -80,7 +80,7 @@ class AppFlowCapturer(object):
                     if active_time >= timeout:
                         self.__ongoing_flows.remove(oflow)
                         self.__finished_flows.append(oflow)
-            if len(self.__finished_flows) >= 8000:
+            if len(self.__finished_flows) >= 5000:
                 with flows_lock:
                     print(50*"@")
                     flows.extend(self.__finished_flows.copy())
