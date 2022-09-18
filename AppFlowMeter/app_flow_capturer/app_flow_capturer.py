@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import dpkt
-import os
 from AppFlowMeter.app_flow_capturer.flow import DNSFlow
 from .packet import Packet
 from .flow_factory import FlowFactory
@@ -13,11 +12,10 @@ class AppFlowCapturer(object):
         self.max_flow_duration = max_flow_duration
         self.activity_timeout = activity_timeout
         self.flow_factory = FlowFactory()
-        self.thread_number = -1
 
-    def capture(self, thread_number: int, pcap_file: str, flows: list, flows_lock,
-            thread_pid: list) -> list:
-        self.thread_number = thread_number
+    def capture(self, pcap_file: str, flows: list, flows_lock, thread_finished,
+                read_packets_count_value_log_info: int, check_flows_ending_min_flows: int,
+                capturer_updating_flows_min_value: int, dns_activity_timeout: int) -> list:
         f = open(pcap_file, 'rb')
         pcap = dpkt.pcap.Reader(f)
         i = 0
@@ -36,18 +34,22 @@ class AppFlowCapturer(object):
                 continue
 
             app_flow_packet = Packet(buf, ts)
-            self.__add_packet_to_flow(app_flow_packet, flows, flows_lock)
-            if i % 10000 == 0:
-                print(">> ", self.thread_number, " >>", i, "number of packets has been processed from", pcap_file)
+            self.__add_packet_to_flow(app_flow_packet, flows, flows_lock,
+                                      check_flows_ending_min_flows, dns_activity_timeout,
+                                      capturer_updating_flows_min_value)
+            if i % read_packets_count_value_log_info == 0:
+                print(">>", i, "number of packets has been processed...")
 
         with flows_lock:
             flows.extend(self.__finished_flows)
             flows.extend(self.__ongoing_flows)
-        print("> ", self.thread_number, "> end of", pcap_file)
-        thread_pid.set(os.getpid())
+        print(">> end of reading from", pcap_file)
+        thread_finished.set(True)
         return self.__finished_flows + self.__ongoing_flows
 
-    def __add_packet_to_flow(self, packet: Packet, flows: list, flows_lock) -> None:
+    def __add_packet_to_flow(self, packet: Packet, flows: list, flows_lock,
+                             check_flows_ending_min_flows: int, dns_activity_timeout: int,
+                             capturer_updating_flows_min_value: int) -> None:
         src_ip = packet.get_src_ip()
         dst_ip = packet.get_dst_ip()
         src_port = packet.get_src_port()
@@ -64,10 +66,7 @@ class AppFlowCapturer(object):
             self.__finished_flows.append(flow)
             self.__ongoing_flows.append(self.flow_factory.create(packet))
 
-            # TODO: read from file
-            if len(self.__ongoing_flows) >= 1000:
-                # TODO: read from file
-                dns_activity_timeout = 30
+            if len(self.__ongoing_flows) >= check_flows_ending_min_flows:
                 for oflow in self.__ongoing_flows:
                     timeout = self.activity_timeout
                     if isinstance(oflow, DNSFlow):
@@ -76,14 +75,12 @@ class AppFlowCapturer(object):
                     if active_time >= timeout:
                         self.__ongoing_flows.remove(oflow)
                         self.__finished_flows.append(oflow)
-            if len(self.__finished_flows) >= 2000:
+            if len(self.__finished_flows) >= capturer_updating_flows_min_value:
                 with flows_lock:
                     flows.extend(self.__finished_flows)
                     self.__finished_flows.clear()
             return
-
         flow.add_packet(packet)
-
 
     def __search_for_flow(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
             timestamp: str, protocol: str, transaction_id: int) -> object:

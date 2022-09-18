@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
+import dpkt
 import multiprocessing
 from multiprocessing import Process, Manager, Pool
-
 from .app_flow_capturer import AppFlowCapturer
 from .feature_extractor import FeatureExtractor
 from .writers import Writer, CSVWriter
@@ -16,61 +16,70 @@ class AppFlowMeter(object):
 
     def run(self):
         self.__config = ConfigLoader(self.__config_file_address)
+        print(">> Analyzing the", self.__config.pcap_file_address, "...")
+        f = open(self.__config.pcap_file_address, 'rb')
+        pcap = dpkt.pcap.Reader(f)
+        packets_temp = [1 for ts, buf in pcap]
+        print(">> The input PCAP file contains", len(packets_temp), "packets.")
+
         with Manager() as manager:
             self.__flows = manager.list()
             self.__data = manager.list()
-            capturers = []
-            self.__threads = []
-            self.number_of_th = multiprocessing.cpu_count() - 1
-            if self.__config.number_of_threads is not None:
-                self.number_of_th = self.__config.number_of_threads
+            number_of_writer_threads = 1
+            number_of_required_threads = 3
+            number_of_extractor_threads = self.__config.number_of_threads - number_of_writer_threads
+            if self.__config.number_of_threads < number_of_required_threads:
+                print(">>> At least 3 threads are required. "
+                "There should be one for the capturer, one for the writer, "
+                "and one or more for the feature extractor."
+                "\nWe set the number of threads based on your CPU cores.")
+                number_of_extractor_threads = multiprocessing.cpu_count() - number_of_writer_threads
+                if multiprocessing.cpu_count() < number_of_required_threads:
+                    number_of_extractor_threads = number_of_required_threads - number_of_writer_threads
 
-            self.__threads_pid = manager.list([manager.Value('i', 0) for i in range(self.number_of_th - 1)])
+            self.__capturer_thread_finish = manager.Value('i', False)
+            self.__extractor_thread_finish = manager.Value('i', False)
+
             self.__data_lock = manager.Lock()
             self.__flows_lock = manager.Lock()
             self.__feature_extractor_watchdog_lock = manager.Lock()
-            self.__finish = manager.Value('i', 0)
 
-            with Pool(processes=self.number_of_th) as pool:
-                for i in range(self.number_of_th - 1):
-                    capturers.append(AppFlowCapturer(self.__config.max_flow_duration,
-                                                    self.__config.activity_timeout))
-                    self.__threads.append(pool.starmap_async(capturers[i].capture,
-                            [(i, self.__config.pcap_file_address + str(i), self.__flows, 
-                            self.__flows_lock, self.__threads_pid[i],)]))
-
-                writer_thread = Process(target=self.writer)
-                writer_thread.start()
+            capturer = AppFlowCapturer(self.__config.max_flow_duration,
+                                       self.__config.activity_timeout)
+            writer_thread = Process(target=self.writer)
+            writer_thread.start()
+            with Pool(processes=number_of_extractor_threads) as pool:
+                pool.starmap_async(capturer.capture,
+                        [(self.__config.pcap_file_address, self.__flows, 
+                        self.__flows_lock, self.__capturer_thread_finish,
+                        self.__config.read_packets_count_value_log_info,
+                        self.__config.check_flows_ending_min_flows,
+                        self.__config.capturer_updating_flows_min_value,
+                        self.__config.dns_activity_timeout,)])
                 self.feature_extractor(pool)
                 pool.close()
                 pool.join()
-                writer_thread.join()
-        print("results are ready!")
+            writer_thread.join()
+        print(">> results are ready!")
 
     def feature_extractor(self, pool: Pool):
-        # TODO: read from file
-        label = "benign"
         feature_extractor = FeatureExtractor(self.__config.floating_point_unit)
         while 1:
-            # TODO: read from file
-            if len(self.__flows) >= 4000:
+            if len(self.__flows) >= self.__config.feature_extractor_min_flows:
                 temp_flows = []
                 with self.__flows_lock:
                     temp_flows.extend(self.__flows)
                     self.__flows[:] = []
-
                 pool.starmap_async(feature_extractor.execute, 
                         [(self.__data, self.__data_lock, temp_flows,
-                        self.__config.features_ignore_list, label)]
-                )
+                        self.__config.features_ignore_list, self.__config.label)])
                 del temp_flows
-            if not any(thread_pid.get() == 0 for thread_pid in self.__threads_pid):
+            if self.__capturer_thread_finish.get():
                 pool.starmap(feature_extractor.execute,
                         [(self.__data, self.__data_lock, self.__flows,
-                        self.__config.features_ignore_list, label)]
-                )
+                        self.__config.features_ignore_list, self.__config.label)])
                 with self.__feature_extractor_watchdog_lock:
-                    self.__finish.set(1)
+                    self.__extractor_thread_finish.set(True)
                 return
 
     def writer(self):
@@ -78,23 +87,19 @@ class AppFlowMeter(object):
         header_writing_mode = 'w'
         data_writing_mode = 'a+'
         file_address = self.__config.output_file_address
-        first = True
-
+        write_headers = True
         while 1:
-            # TODO: read from file
-            if len(self.__data) > 6000:
-                if first:
+            if len(self.__data) > self.__config.writer_min_rows:
+                if write_headers:
                     writer.write(file_address, self.__data, header_writing_mode, only_headers=True)
-                    first = False
+                    write_headers = False
                 temp_data = []
-                print("### writer", len(self.__data))
                 with self.__data_lock:
                     temp_data.extend(self.__data)
                     self.__data[:] = []
                 writer.write(file_address, temp_data, data_writing_mode)
                 del temp_data
             with self.__feature_extractor_watchdog_lock:
-                if self.__finish.get() != 0:
-                    print(50*"@")
+                if self.__extractor_thread_finish.get():
                     writer.write(file_address, self.__data, data_writing_mode)
                     return
