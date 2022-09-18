@@ -44,21 +44,25 @@ class AppFlowMeter(object):
             self.__flows_lock = manager.Lock()
             self.__feature_extractor_watchdog_lock = manager.Lock()
 
-            capturer = AppFlowCapturer(self.__config.max_flow_duration,
-                                       self.__config.activity_timeout)
+            capturer = AppFlowCapturer(
+                    max_flow_duration=self.__config.max_flow_duration,
+                    activity_timeout=self.__config.activity_timeout,
+                    dns_activity_timeout=self.__config.dns_activity_timeout,
+                    check_flows_ending_min_flows=self.__config.check_flows_ending_min_flows,
+                    capturer_updating_flows_min_value=self.__config.capturer_updating_flows_min_value,
+                    read_packets_count_value_log_info=self.__config.read_packets_count_value_log_info)
             writer_thread = Process(target=self.writer)
             writer_thread.start()
             with Pool(processes=number_of_extractor_threads) as pool:
                 pool.starmap_async(capturer.capture,
                         [(self.__config.pcap_file_address, self.__flows,
-                        self.__flows_lock, self.__capturer_thread_finish,
-                        self.__config.read_packets_count_value_log_info,
-                        self.__config.check_flows_ending_min_flows,
-                        self.__config.capturer_updating_flows_min_value,
-                        self.__config.dns_activity_timeout,)])
+                        self.__flows_lock, self.__capturer_thread_finish,)])
                 self.feature_extractor(pool)
                 pool.close()
                 pool.join()
+                with self.__feature_extractor_watchdog_lock:
+                    self.__extractor_thread_finish.set(True)
+
             writer_thread.join()
         print(">> results are ready!")
 
@@ -75,11 +79,10 @@ class AppFlowMeter(object):
                         self.__config.features_ignore_list, self.__config.label)])
                 del temp_flows
             if self.__capturer_thread_finish.get():
-                pool.starmap(feature_extractor.execute,
-                        [(self.__data, self.__data_lock, self.__flows,
-                        self.__config.features_ignore_list, self.__config.label)])
-                with self.__feature_extractor_watchdog_lock:
-                    self.__extractor_thread_finish.set(True)
+                if len(self.__flows) > 0:
+                    pool.starmap_async(feature_extractor.execute,
+                            [(self.__data, self.__data_lock, self.__flows,
+                            self.__config.features_ignore_list, self.__config.label)])
                 return
 
     def writer(self):
