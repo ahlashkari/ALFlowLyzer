@@ -95,7 +95,7 @@ class DomainAge(WhoisInfo):
         try:
             if whois_response.creation_date is None:
                 return "no creation date"
-            return result if whois_response is None else (datetime.datetime.today() - whois_response.creation_date).days 
+            return result if whois_response is None else (datetime.datetime.today() - whois_response.creation_date).days
         except:
             return "ERROR"
 
@@ -523,7 +523,7 @@ class TTLValuesCoefficientOfVariation(Feature):
         ttl_values = utils.get_dns_ttl_valus(flow)
         if len(ttl_values) == 0:
             return -1
-        return format(stats.variation(ttl_values), self.floating_point_unit)    
+        return format(stats.variation(ttl_values), self.floating_point_unit)
 
 
 class DistinctARecords(Feature):

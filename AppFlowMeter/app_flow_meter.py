@@ -50,7 +50,7 @@ class AppFlowMeter(object):
             writer_thread.start()
             with Pool(processes=number_of_extractor_threads) as pool:
                 pool.starmap_async(capturer.capture,
-                        [(self.__config.pcap_file_address, self.__flows, 
+                        [(self.__config.pcap_file_address, self.__flows,
                         self.__flows_lock, self.__capturer_thread_finish,
                         self.__config.read_packets_count_value_log_info,
                         self.__config.check_flows_ending_min_flows,
@@ -70,7 +70,7 @@ class AppFlowMeter(object):
                 with self.__flows_lock:
                     temp_flows.extend(self.__flows)
                     self.__flows[:] = []
-                pool.starmap_async(feature_extractor.execute, 
+                pool.starmap_async(feature_extractor.execute,
                         [(self.__data, self.__data_lock, temp_flows,
                         self.__config.features_ignore_list, self.__config.label)])
                 del temp_flows

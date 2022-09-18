@@ -15,7 +15,7 @@ class CSVWriter(Strategy):
             if only_headers:
                 writer.writerow(headers)
                 return
-                
+
             for data_row in data:
                 row = []
                 for header in headers:
