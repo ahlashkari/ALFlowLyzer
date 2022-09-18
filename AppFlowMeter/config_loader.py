@@ -13,7 +13,7 @@ class ConfigLoader:
         self.protocols: list = []
         self.floating_point_unit: str = ".64f"
         self.features_ignore_list: list = []
-        self.number_of_threads: int = 1
+        self.number_of_threads: int = None
 
         self.read_config_file()
 

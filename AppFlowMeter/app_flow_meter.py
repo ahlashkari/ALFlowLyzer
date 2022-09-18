@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-import psutil
-import os
-from multiprocessing import Process, Manager, Lock
+import multiprocessing
+from multiprocessing import Process, Manager, Pool
+
 from .app_flow_capturer import AppFlowCapturer
 from .feature_extractor import FeatureExtractor
 from .writers import Writer, CSVWriter
@@ -21,73 +21,80 @@ class AppFlowMeter(object):
             self.__data = manager.list()
             capturers = []
             self.__threads = []
-            self.__threads_pid = manager.list([manager.Value('i', 0) for i in range(self.__config.number_of_threads)])
-            self.__watchdog_feature_extractor_pid = manager.Value('i', 0)
-            self.__data_lock = Lock()
-            self.__flows_lock = Lock()
+            self.number_of_th = multiprocessing.cpu_count() - 1
+            if self.__config.number_of_threads is not None:
+                self.number_of_th = self.__config.number_of_threads
 
-            for i in range(self.__config.number_of_threads):
-                capturers.append(AppFlowCapturer(self.__config.max_flow_duration,
-                                                 self.__config.activity_timeout))
-                self.__threads.append(Process(target=capturers[i].capture,
-                                         args=(i, self.__config.pcap_file_address + str(i),
-                                                self.__flows, self.__flows_lock, self.__threads_pid[i],)))
-            self.__watchdog_feature_extractor = Process(target=self.feature_extractor, daemon=True)
-            self.__watchdog_writer = Process(target=self.writer, daemon=True)
+            self.__threads_pid = manager.list([manager.Value('i', 0) for i in range(self.number_of_th - 1)])
+            self.__data_lock = manager.Lock()
+            self.__flows_lock = manager.Lock()
+            self.__feature_extractor_watchdog_lock = manager.Lock()
+            self.__finish = manager.Value('i', 0)
 
-            print("> capturing started...")
-            for thread in self.__threads:
-                thread.start()
-            self.__watchdog_feature_extractor.start()
-            self.__watchdog_writer.start()
+            with Pool(processes=self.number_of_th) as pool:
+                for i in range(self.number_of_th - 1):
+                    capturers.append(AppFlowCapturer(self.__config.max_flow_duration,
+                                                    self.__config.activity_timeout))
+                    self.__threads.append(pool.starmap_async(capturers[i].capture,
+                            [(i, self.__config.pcap_file_address + str(i), self.__flows, 
+                            self.__flows_lock, self.__threads_pid[i],)]))
 
-            for thread in self.__threads:
-                thread.join()
-            self.__watchdog_feature_extractor.join()
-            self.__watchdog_writer.join()
-            print("results are ready!")
+                writer_thread = Process(target=self.writer)
+                writer_thread.start()
+                self.feature_extractor(pool)
+                pool.close()
+                pool.join()
+                writer_thread.join()
+        print("results are ready!")
 
-    def feature_extractor(self):
+    def feature_extractor(self, pool: Pool):
         # TODO: read from file
         label = "benign"
-        self.__watchdog_feature_extractor_pid.set(os.getpid())
-
         feature_extractor = FeatureExtractor(self.__config.floating_point_unit)
         while 1:
             # TODO: read from file
-            if len(self.__flows) > 1000:
-                with self.__data_lock and self.__flows_lock:
-                    # TODO: temp = self.__flows # copy it and then work with the copy and release the lock
-                    print(50*"$")
-                    aa = feature_extractor.execute(self.__flows, label)
-                    print("OKOKOKOKOK")
-                    self.__data.extend(aa)
-                    print("OK")
-                    # self.__flows.clear()
+            if len(self.__flows) >= 4000:
+                temp_flows = []
+                with self.__flows_lock:
+                    temp_flows.extend(self.__flows)
                     self.__flows[:] = []
-                    print(50*"$")
-            if not any(psutil.pid_exists(thread_pid.get()) for thread_pid in self.__threads_pid):
-                print("::::::::::")
+
+                pool.starmap_async(feature_extractor.execute, 
+                        [(self.__data, self.__data_lock, temp_flows,
+                        self.__config.features_ignore_list, label)]
+                )
+                del temp_flows
+            if not any(thread_pid.get() == 0 for thread_pid in self.__threads_pid):
+                pool.starmap(feature_extractor.execute,
+                        [(self.__data, self.__data_lock, self.__flows,
+                        self.__config.features_ignore_list, label)]
+                )
+                with self.__feature_extractor_watchdog_lock:
+                    self.__finish.set(1)
                 return
 
     def writer(self):
         writer = Writer(CSVWriter())
         header_writing_mode = 'w'
-        data_writing_mode = 'a'
+        data_writing_mode = 'a+'
         file_address = self.__config.output_file_address
-        writer.write(file_address, self.__data, header_writing_mode, only_headers=True)
+        first = True
 
         while 1:
             # TODO: read from file
-            if len(self.__data) > 1000:
-                with self.__data_lock and self.__flows_lock:
-                    # TODO: copy data and release the lock
-                    print(50*"*")
-                    writer.write(file_address, self.__data, data_writing_mode)
+            if len(self.__data) > 6000:
+                if first:
+                    writer.write(file_address, self.__data, header_writing_mode, only_headers=True)
+                    first = False
+                temp_data = []
+                print("### writer", len(self.__data))
+                with self.__data_lock:
+                    temp_data.extend(self.__data)
                     self.__data[:] = []
-                    # self.__data.clear()
-                    print(50*"*")
-            if not psutil.pid_exists(self.__watchdog_feature_extractor_pid.get()):
-                print("^^^^^^^", len(self.__data))
-                writer.write(file_address, self.__data, data_writing_mode)
-                return
+                writer.write(file_address, temp_data, data_writing_mode)
+                del temp_data
+            with self.__feature_extractor_watchdog_lock:
+                if self.__finish.get() != 0:
+                    print(50*"@")
+                    writer.write(file_address, self.__data, data_writing_mode)
+                    return

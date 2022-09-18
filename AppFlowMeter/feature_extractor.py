@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
+from multiprocessing import Lock
 from .features import *
 
 
@@ -141,14 +142,10 @@ class FeatureExtractor(object):
             ]
         self.__features = self.__features + self.__dns_features
 
-    def execute(self, flows, features_ignore_list: list = [], label: str = "") -> list:
+    def execute(self, data: list, data_lock, flows: list, features_ignore_list: list = [],
+            label: str = "") -> list:
         extracted_data = []
-        print("AAAA")
-        print(len(flows))
         for flow in flows:
-            print("BBBB")
-            print(len(flows))
-
             features_of_flow = {}
             features_of_flow["flow_id"] = str(flow)
             features_of_flow["timestamp"] = datetime.fromtimestamp(flow.get_timestamp())
@@ -163,6 +160,7 @@ class FeatureExtractor(object):
                 feature.set_floating_point_unit(self.floating_point_unit)
                 features_of_flow[feature.name] = feature.extract(flow)
             features_of_flow["label"] = label
-            # extracted_data.append(features_of_flow.copy())
             extracted_data.append(features_of_flow)
-        return extracted_data
+        with data_lock:
+            data.extend(extracted_data)
+            del extracted_data

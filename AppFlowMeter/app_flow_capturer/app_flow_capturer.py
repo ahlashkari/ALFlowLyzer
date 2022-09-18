@@ -2,7 +2,6 @@
 
 import dpkt
 import os
-from multiprocessing import Lock
 from AppFlowMeter.app_flow_capturer.flow import DNSFlow
 from .packet import Packet
 from .flow_factory import FlowFactory
@@ -16,9 +15,8 @@ class AppFlowCapturer(object):
         self.flow_factory = FlowFactory()
         self.thread_number = -1
 
-    def capture(self, thread_number: int, pcap_file: str, flows: list, flows_lock: Lock,
+    def capture(self, thread_number: int, pcap_file: str, flows: list, flows_lock,
             thread_pid: list) -> list:
-        thread_pid.set(os.getpid())
         self.thread_number = thread_number
         f = open(pcap_file, 'rb')
         pcap = dpkt.pcap.Reader(f)
@@ -35,8 +33,6 @@ class AppFlowCapturer(object):
                     continue
 
             except (dpkt.dpkt.NeedData, dpkt.dpkt.UnpackError, Exception) as e:
-                print('\nError Parsing DNS, Might be a truncated packet...')
-                print('Exception: {!r}'.format(e))
                 continue
 
             app_flow_packet = Packet(buf, ts)
@@ -45,13 +41,13 @@ class AppFlowCapturer(object):
                 print(">> ", self.thread_number, " >>", i, "number of packets has been processed from", pcap_file)
 
         with flows_lock:
-            print(50*"#")
             flows.extend(self.__finished_flows)
             flows.extend(self.__ongoing_flows)
-            print(50*"#")
+        print("> ", self.thread_number, "> end of", pcap_file)
+        thread_pid.set(os.getpid())
         return self.__finished_flows + self.__ongoing_flows
 
-    def __add_packet_to_flow(self, packet: Packet, flows: list, flows_lock: Lock) -> None:
+    def __add_packet_to_flow(self, packet: Packet, flows: list, flows_lock) -> None:
         src_ip = packet.get_src_ip()
         dst_ip = packet.get_dst_ip()
         src_port = packet.get_src_port()
@@ -69,7 +65,7 @@ class AppFlowCapturer(object):
             self.__ongoing_flows.append(self.flow_factory.create(packet))
 
             # TODO: read from file
-            if len(self.__ongoing_flows) >= 8000:
+            if len(self.__ongoing_flows) >= 1000:
                 # TODO: read from file
                 dns_activity_timeout = 30
                 for oflow in self.__ongoing_flows:
@@ -80,12 +76,10 @@ class AppFlowCapturer(object):
                     if active_time >= timeout:
                         self.__ongoing_flows.remove(oflow)
                         self.__finished_flows.append(oflow)
-            if len(self.__finished_flows) >= 5000:
+            if len(self.__finished_flows) >= 2000:
                 with flows_lock:
-                    print(50*"@")
-                    flows.extend(self.__finished_flows.copy())
+                    flows.extend(self.__finished_flows)
                     self.__finished_flows.clear()
-                    print(50*"@")
             return
 
         flow.add_packet(packet)
