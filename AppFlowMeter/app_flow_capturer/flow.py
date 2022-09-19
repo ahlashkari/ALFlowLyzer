@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
+from .packet import Packet
 
 class Flow(object):
     def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: str,
-            protocol: str, network_protocol: str):
+            protocol: str, network_protocol: str, activity_timeout: int):
         self.__src_ip = src_ip
         self.__dst_ip = dst_ip
         self.__src_port = src_port
@@ -16,10 +17,11 @@ class Flow(object):
         self.__has_rst_flag = False
         self._last_packet_timestamp = timestamp
         self.__network_protocol = network_protocol
+        self.__activity_timeout = activity_timeout
 
     def __str__(self):
-        return str(datetime.fromtimestamp(self._timestamp)) + '_' + self.__src_ip + '_' + \
-                str(self.__src_port) + '_' + self.__dst_ip + '_' + str(self.__dst_port)
+        return "_".join([str(datetime.fromtimestamp(self._timestamp)), self.__src_ip,
+                str(self.__src_port), self.__dst_ip, str(self.__dst_port)])
 
     def __eq__(self, other):
         if isinstance(other, Flow):
@@ -43,9 +45,9 @@ class Flow(object):
         self.__packets.append(packet)
         self._last_packet_timestamp = packet.get_timestamp()
         # TODO: check for forward and backward FIN
-        if 'F' in packet.get_tcp_flags():
+        if packet.has_fin_flag():
             self.__number_of_fin_flags += 1
-        if 'R' in packet.get_tcp_flags():
+        if packet.has_rst_flag():
             self.__has_rst_flag = True
 
     def get_src_ip(self) -> str:
@@ -83,11 +85,15 @@ class Flow(object):
     def get_last_packet_timestamp(self) -> str:
         return self._last_packet_timestamp
 
-    # TODO: change configuration class to be singleton
-    def is_ended(self, packet: object, max_flow_duration: int, activity_timeout: int) -> bool:
-        flow_duration = packet.get_timestamp() - self._timestamp
+    def actvity_timeout(self, packet: Packet):
         active_time = packet.get_timestamp() - self._last_packet_timestamp
-        if flow_duration > max_flow_duration or active_time > activity_timeout or \
+        if active_time > self.__activity_timeout:
+            return True
+        return False
+
+    def is_ended(self, packet: Packet, max_flow_duration: int) -> bool:
+        flow_duration = packet.get_timestamp() - self._timestamp
+        if flow_duration > max_flow_duration or self.actvity_timeout(packet) or \
                 self.has_two_fin_flags() or self.has_rst_flag():
             return True
         return False
@@ -95,35 +101,38 @@ class Flow(object):
 
 class DNSFlow(Flow):
     def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: str,
-            protocol: str, network_protocol: str, transaction_id: int):
-        super().__init__(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, network_protocol)
+            protocol: str, network_protocol: str, activity_timeout: int, transaction_id: int):
+        super().__init__(src_ip, dst_ip, src_port, dst_port, timestamp, protocol,
+                         network_protocol, activity_timeout)
         self.__transaction_id = transaction_id
+        self.__dns_activity_timeout = activity_timeout
         self.__domain_names = []
 
     def add_packet(self, packet) -> None:
-        self.__domain_names.append(packet.get_domain_name())
+        self.__domain_names.extend(packet.get_domain_names())
         super().add_packet(packet)
 
     def __str__(self):
-        return super().__str__() + '_' + str(self.__transaction_id)
+        return "_".join([super().__str__(), str(self.__transaction_id)])
 
     def get_transaction_id(self) -> int:
         return self.__transaction_id
 
     def equality_check(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str,
             timestamp: str, protocol: str, transaction_id: int = -1) -> bool:
-        # TODO: should we check this too?
-#        if super().equality_check(src_ip, dst_ip, src_port, dst_port, timestamp, protocol, transaction_id):
         if transaction_id == self.__transaction_id:
             return True
         return False
 
-    def is_ended(self, packet: object, max_flow_duration: int, activity_timeout: int) -> bool:
-        return False
-        # TODO: check dns timeout=30 sec
-        flow_duration = packet.get_timestamp() - self._timestamp
+    def actvity_timeout(self, packet: Packet):
         active_time = packet.get_timestamp() - self._last_packet_timestamp
-        if flow_duration > max_flow_duration or active_time > activity_timeout:
+        if active_time > self.__dns_activity_timeout:
+            return True
+        return False
+
+    def is_ended(self, packet: object, max_flow_duration: int) -> bool:
+        flow_duration = packet.get_timestamp() - self._timestamp
+        if flow_duration > max_flow_duration or self.actvity_timeout(packet):
             return True
         return False
 

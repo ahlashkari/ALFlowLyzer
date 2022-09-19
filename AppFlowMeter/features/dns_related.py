@@ -3,10 +3,10 @@
 import datetime
 import math
 import statistics
-import string
 import whois
 from scipy import stats
 from .feature import Feature
+from . import utils
 
 domains = {}
 
@@ -16,10 +16,7 @@ class DomainName(Feature):
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         domain_name = flow.get_domain_names()[0]
-        index = len(domain_name) - 1
-        domain_name = domain_name[:index] + "" + domain_name[index + 1:]
         return domain_name
-        return flow.get_domain_names()[0]
 
 
 class WhoisInfo(Feature):
@@ -36,7 +33,6 @@ class WhoisInfo(Feature):
         try:
             domain_name = self.get_domain_name(flow)
             if domain_name not in domains:
-                print(domain_name)
                 whois_response = whois.whois(domain_name)
                 domains[domain_name] = whois_response
         except:
@@ -99,7 +95,7 @@ class DomainAge(WhoisInfo):
         try:
             if whois_response.creation_date is None:
                 return "no creation date"
-            return result if whois_response is None else (datetime.datetime.today() - whois_response.creation_date).days 
+            return result if whois_response is None else (datetime.datetime.today() - whois_response.creation_date).days
         except:
             return "ERROR"
 
@@ -183,9 +179,9 @@ class TopLevelDomain(Feature):
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         try:
-            return "." + flow.get_domain_names()[0].split(".")[tld_index]
+            return flow.get_domain_names()[0].split(".")[tld_index]
         except:
-            return "ERROR"
+            return "not-found"
 
 
 class SecondLevelDomain(Feature):
@@ -196,9 +192,9 @@ class SecondLevelDomain(Feature):
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
         try:
-            return "." + flow.get_domain_names()[0].split(".")[sld_index] + "." + flow.get_domain_names()[0].split(".")[tld_index]
+            return flow.get_domain_names()[0].split(".")[sld_index] + "." + flow.get_domain_names()[0].split(".")[tld_index]
         except:
-            return "ERROR"
+            return "not-found"
 
 
 class DomainNameLen(Feature):
@@ -393,7 +389,9 @@ class VowelsConsonantRatio(Feature):
                 vowel_count += 1
             elif char in consonants:
                 consonant_count += 1
-        return vowel_count / consonant_count
+        if consonant_count != 0:
+            return vowel_count / consonant_count
+        return 0
 
 
 class ConvFreqVowelsConsonants(Feature):
@@ -418,24 +416,25 @@ class ConvFreqVowelsConsonants(Feature):
                 elif (domain_name[i] in vowels) and (domain_name[i+2] in consonants):
                     freq_count += 1
                     total_count -= 1
-        return freq_count/total_count
+        return freq_count / total_count
 
 
 class DistinctTTLValues(Feature):
     name = "distinct_ttl_values"
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
-        return len(set(ttl_values))
+            return "not a dns flow"
+        return len(set(utils.get_dns_ttl_valus(flow)))
 
 
 class TTLValuesMin(Feature):
     name = "ttl_values_min"
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
         return min(ttl_values)
 
 
@@ -443,8 +442,10 @@ class TTLValuesMax(Feature):
     name = "ttl_values_max"
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
         return max(ttl_values)
 
 
@@ -452,8 +453,10 @@ class TTLValuesMean(Feature):
     name = "ttl_values_mean"
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
         return format(statistics.mean(ttl_values), self.floating_point_unit)
 
 
@@ -461,8 +464,10 @@ class TTLValuesMode(Feature):
     name = "ttl_values_mode"
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
         return format(float(stats.mode(ttl_values)[0]), self.floating_point_unit)
 
 
@@ -470,8 +475,10 @@ class TTLValuesVariance(Feature):
     name = "ttl_values_variance"
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
         return format(statistics.pvariance(ttl_values), self.floating_point_unit)
 
 
@@ -479,8 +486,10 @@ class TTLValuesStandardDeviation(Feature):
     name = "ttl_values_standard_deviation"
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
         return format(statistics.pstdev(ttl_values), self.floating_point_unit)
 
 
@@ -488,8 +497,10 @@ class TTLValuesMedian(Feature):
     name = "ttl_values_median"
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
         return format(statistics.median(ttl_values), self.floating_point_unit)
 
 
@@ -497,8 +508,10 @@ class TTLValuesSkewness(Feature):
     name = "ttl_values_skewness"
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
         return format(stats.skew(ttl_values), self.floating_point_unit)
 
 
@@ -506,9 +519,11 @@ class TTLValuesCoefficientOfVariation(Feature):
     name = "ttl_values_coefficient_of_variation"
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
-            return "not a dns flow"   
-        ttl_values = [packet.get_dns_ttl_value() for packet in flow.get_packets()]
-        return format(stats.variation(ttl_values), self.floating_point_unit)    
+            return "not a dns flow"
+        ttl_values = utils.get_dns_ttl_valus(flow)
+        if len(ttl_values) == 0:
+            return -1
+        return format(stats.variation(ttl_values), self.floating_point_unit)
 
 
 class DistinctARecords(Feature):
@@ -516,9 +531,8 @@ class DistinctARecords(Feature):
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
         A_record_code = 1
-        return rr_type.count(A_record_code)
+        return utils.get_dns_rr_types(flow).count(A_record_code)
 
 
 class DistinctNSRecords(Feature):
@@ -526,9 +540,8 @@ class DistinctNSRecords(Feature):
     def extract(self, flow: object) -> int:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
         NS_record_code = 2
-        return rr_type.count(NS_record_code)
+        return utils.get_dns_rr_types(flow).count(NS_record_code)
 
 
 class AvgAuthorityResourceRecords(Feature):
@@ -554,7 +567,7 @@ class AvgAnswerResourceRecords(Feature):
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        ans_rr_count = [packet.get_dns_ans_rr() for packet in flow.get_packets()]
+        ans_rr_count = [packet.get_dns_add_rr() for packet in flow.get_packets()]
         return format(statistics.mean(ans_rr_count), self.floating_point_unit)
 
 
@@ -563,8 +576,10 @@ class QueryResourceRecordType(Feature):
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        query_rr_type = [packet.get_dns_qtype() for packet in flow.get_packets()]
-        return query_rr_type
+        query_rr_types = []
+        for packet in flow.get_packets():
+            query_rr_types.extend([query_rr_type for query_rr_type in packet.get_dns_qtypes()])
+        return query_rr_types
 
 
 class AnsResourceRecordType(Feature):
@@ -572,8 +587,7 @@ class AnsResourceRecordType(Feature):
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        rr_type = [packet.get_dns_rr_type() for packet in flow.get_packets()]
-        return rr_type
+        return utils.get_dns_rr_types(flow)
 
 
 class QueryResourceRecordClass(Feature):
@@ -581,8 +595,10 @@ class QueryResourceRecordClass(Feature):
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        rr_qclass = [packet.get_dns_qclass() for packet in flow.get_packets()]
-        return rr_qclass
+        rr_qclasses = []
+        for packet in flow.get_packets():
+            rr_qclasses.extend([rr_qclass for rr_qclass in packet.get_dns_qclasses()])
+        return rr_qclasses
 
 
 class AnsResourceRecordClass(Feature):
@@ -590,5 +606,7 @@ class AnsResourceRecordClass(Feature):
     def extract(self, flow: object) -> float:
         if flow.get_protocol() != "DNS":
             return "not a dns flow"
-        rr_rclass = [packet.get_dns_rclass() for packet in flow.get_packets()]
-        return rr_rclass
+        rr_rclasses = []
+        for packet in flow.get_packets():
+            rr_rclasses.extend([rr_class for rr_class in packet.get_dns_rclasses()])
+        return rr_rclasses

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
+from .packet import Packet
 from .flow import Flow, DNSFlow
 
 
 class FlowFactory(object):
-    def create(self, packet) -> Flow:
+    def create(self, packet: Packet, activity_timeout: int, dns_activity_timeout: int) -> Flow:
         src_ip = packet.get_src_ip()
         dst_ip = packet.get_dst_ip()
         src_port = packet.get_src_port()
@@ -16,10 +17,10 @@ class FlowFactory(object):
 
         if "DNS" == application_protocol:
             new_flow = DNSFlow(src_ip, dst_ip, src_port, dst_port, timestamp, application_protocol,
-                    network_protocol, transaction_id)
+                    network_protocol, dns_activity_timeout, transaction_id)
         else:
             new_flow = Flow(src_ip, dst_ip, src_port, dst_port, timestamp, application_protocol,
-                    network_protocol)
+                    network_protocol, activity_timeout)
 
         new_flow.add_packet(packet)
         return new_flow

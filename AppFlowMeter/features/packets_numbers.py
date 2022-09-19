@@ -20,9 +20,3 @@ class SendingPacketsNumbers(Feature):
     name = "sending_packets_numbers"
     def extract(self, flow: object) -> int:
         return len(utils.extract_sending_packets(flow.get_packets(), flow.get_dst_ip()))
-
-
-class SuccessfulPacketsNumbers(Feature):
-    name = "success_packets_numbers"
-    def extract(self, flow: object) -> int:
-        return len(utils.extract_successful_packets(flow.get_packets(), flow.get_dst_ip())) 
