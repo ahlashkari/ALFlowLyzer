@@ -39,10 +39,14 @@ class AppFlowMeter(object):
 
             self.__capturer_thread_finish = manager.Value('i', False)
             self.__extractor_thread_finish = manager.Value('i', False)
+            self.__writed_rows = manager.Value('i', 0)
+            self.__output_file_index = manager.Value('i', 1)
 
             self.__data_lock = manager.Lock()
             self.__flows_lock = manager.Lock()
             self.__feature_extractor_watchdog_lock = manager.Lock()
+            self.__writed_rows_lock = manager.Lock()
+            self.__output_file_index_lock = manager.Lock()
 
             capturer = AppFlowCapturer(
                     max_flow_duration=self.__config.max_flow_duration,
@@ -93,6 +97,16 @@ class AppFlowMeter(object):
         write_headers = True
         while 1:
             if len(self.__data) > self.__config.writer_min_rows:
+                with self.__writed_rows_lock and self.__output_file_index_lock:
+                    if self.__writed_rows.get() > self.__config.max_rows_number:
+                        new_file_address = self.__config.output_file_address + str(self.__output_file_index.get())
+                        print(f">> {file_address} has reached its maximum number of rows.")
+                        print(f">> The {file_address} file will be closed and other rows"
+                              f" will be written in the {new_file_address}.")
+                        file_address = new_file_address
+                        self.__output_file_index.set(self.__output_file_index.get() + 1)
+                        write_headers = True
+                        self.__writed_rows.set(0)
                 if write_headers:
                     writer.write(file_address, self.__data, header_writing_mode, only_headers=True)
                     write_headers = False
@@ -101,6 +115,8 @@ class AppFlowMeter(object):
                     temp_data.extend(self.__data)
                     self.__data[:] = []
                 writer.write(file_address, temp_data, data_writing_mode)
+                with self.__writed_rows_lock:
+                    self.__writed_rows.set(self.__writed_rows.get() + len(temp_data))
                 del temp_data
             with self.__feature_extractor_watchdog_lock:
                 if self.__extractor_thread_finish.get():

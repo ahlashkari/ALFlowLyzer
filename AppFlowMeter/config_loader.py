@@ -22,6 +22,7 @@ class ConfigLoader:
         self.check_flows_ending_min_flows = 2000
         self.capturer_updating_flows_min_value = 2000
         self.dns_activity_timeout = 30
+        self.max_rows_number = 900000
         self.read_config_file()
 
     def read_config_file(self):

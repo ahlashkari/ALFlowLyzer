@@ -1,6 +1,6 @@
 {
-    "pcap_file_address": "../pcaps/spam.pcap",
-    "output_file_address": "./output-of-spam-pcap.csv",
+    "pcap_file_address": "../pcaps/benign2.pcap",
+    "output_file_address": "./output-of-benign-pcap.csv",
     "label": "spam",
     "number_of_threads": 4,
     "feature_extractor_min_flows": 3000,
@@ -13,6 +13,7 @@
     "max_flow_duration": 120000,
     "activity_timeout": 300,
     "floating_point_unit": ".8f",
+    "max_rows_number": 900000,
     "features_ignore_list": [
         "dns_whois_domain_name",
         "dns_domain_email",
