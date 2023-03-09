@@ -7,9 +7,9 @@ A Python open-source project to extract features from network traffic flow.
 
 * [**Arash Habibi Lashkari:**](http://ahlashkari.com/index.asp) Founder and supervisor
 
-* [**Moein Shafi:**](https://github.com/moein-shafi) Researcher and developer - York University
+* [**Moein Shafi:**](https://github.com/moein-shafi) Graduate researcher and developer - York University
 
-* [**Hardik Mohanty:**] Researcher and developer - York University
+* [**Hardik Mohanty:**] (https://github.com/hardhik-99) Mitacs Undergraduate researcher and developer - York University
 
 
 ## Acknowledgement
