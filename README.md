@@ -1,5 +1,5 @@
-# AppFlowMeter
-A Python open-source project to extract features from network traffic flow. 
+# Application Layer Flow Analyzer (ALFlowLyzer)
+A Python open-source project to extract features from Application Layer traffic flow. 
 
 
 
