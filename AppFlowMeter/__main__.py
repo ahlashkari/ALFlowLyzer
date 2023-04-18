@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
-from .app_flow_meter import AppFlowMeter
+
+from AppFlowMeter.app_flow_meter import AppFlowMeter
 
 def args_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog='AppFlowMeter')
