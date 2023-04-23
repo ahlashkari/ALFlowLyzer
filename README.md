@@ -1,5 +1,5 @@
 # Application Layer Flow Analyzer (ALFlowLyzer)
-A Python open-source project to extract features from Application Layer traffic flow. 
+As a part of the Network Flow Analyzer (NetFlowLyzer), ALFlowLyzer ia a Python open-source project to extract features from Application Layer in a network traffic. 
 
 
 
