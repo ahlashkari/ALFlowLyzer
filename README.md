@@ -9,7 +9,7 @@ As a part of the Network Flow Analyzer (NetFlowLyzer), ALFlowLyzer ia a Python o
 
 * [**Moein Shafi:**](https://github.com/moein-shafi) Graduate researcher and developer - York University
 
-* [**Hardik Mohanty:**](https://github.com/hardhik-99) Mitacs Undergraduate researcher and developer - York University
+* [**Hardik Mohanty:**](https://github.com/hardhik-99) Mitacs Global Research Internship (GRI), Rearcher and developer - York University
 
 
 ## Acknowledgement
