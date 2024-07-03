@@ -1,6 +1,5 @@
-# AppFlowMeter
-TODO: update these values:
-![](https://img.shields.io/github/stars/pandao/editor.md.svg) ![](https://img.shields.io/github/forks/pandao/editor.md.svg) ![](https://img.shields.io/github/tag/pandao/editor.md.svg) ![](https://img.shields.io/github/release/pandao/editor.md.svg) ![](https://img.shields.io/github/issues/pandao/editor.md.svg)
+# ALFlowLyzer
+
 
 
 # Table of Contents
@@ -21,7 +20,7 @@ You must install the requirements in your system before you can begin installing
 sudo pip3 install -r requirements.txt
 ```
 
-You are now ready to install AppFlowMeter. In order to do so, you should run this command, which will install the AppFlowMeter package in your system:
+You are now ready to install ALFlowLyzer. In order to do so, you should run this command, which will install the ALFlowLyzer package in your system:
 
 ```bash
 sudo python3 setup.py install
@@ -35,10 +34,6 @@ sudo app-flow-meter
 Also, you can use `-h` to see different options of the program.
 
 Moreover, this project has been successfully tested on Ubuntu 20.04. It should work on other versions of Ubuntu OS (or even Debian OS) as long as your system has the necessary python3 packages (you can see the required packages in the `requirements.txt` file).
-
-TODO: after adding arg parser, explain different options here.
-
-TODO: after adding config file, explain how to use it here.
 
 
 # Architecture
@@ -207,10 +202,7 @@ We use differnet libraries to calculate various mathematical equations. Below yo
 
 
 
-TODO: for all functions, use scipy library instead of statistics (because it is faster).
-
-
-Nine mathematical functions are used to extract different features. You can see how those functions are calculated in the AppFlowMeter below:
+Nine mathematical functions are used to extract different features. You can see how those functions are calculated in the ALFlowLyzer below:
 
 1. Min
 
@@ -225,8 +217,6 @@ Nine mathematical functions are used to extract different features. You can see 
       The ['mean'](https://docs.python.org/3/library/statistics.html#statistics.mean) function from 'statistics' library (Python built-in) calculates the mean value of a given list. According to the library documentation:
         
       The arithmetic mean is the sum of the data divided by the number of data points. It is commonly called “the average”, although it is only one of many different mathematical averages. It is a measure of the central location of the data.
-
-      TODO: use 'fmean' instead of mean (it is new in python 3.8). According to the library documentation:
         
       This runs faster than the mean() function and it always returns a float. The data may be a sequence or iterable. If the input dataset is empty, raises a StatisticsError.
 
