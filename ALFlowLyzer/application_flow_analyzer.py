@@ -3,13 +3,13 @@
 import dpkt
 import multiprocessing
 from multiprocessing import Process, Manager, Pool
-from .app_flow_capturer import AppFlowCapturer
+from .application_flow_capturer import AppFlowCapturer
 from .feature_extractor import FeatureExtractor
 from .writers import Writer, CSVWriter
 from .config_loader import ConfigLoader
 
 
-class AppFlowMeter(object):
+class ALFlowLyzer(object):
     def __init__(self, config_file_address: str, online_capturing: bool):
         print("You initiated Application Flow Meter!")
         self.__config_file_address = config_file_address

@@ -9,24 +9,24 @@ version = "0.1.0"
 author = "Moein Shafi"
 author_email = "mosafer.moein@gmail.com"
 entry_points = {
-        "console_scripts": ["app-flow-meter = AppFlowMeter.__main__:main"]
+        "console_scripts": ["alflowlyzer = ALFlowLyzer.__main__:main"]
         }
 
 setup(
-        name="AppFlowMeter",
+        name="ALFlowLyzer",
         version=version,
         author=author,
         author_email=author_email,
         packages=[
-            "AppFlowMeter",
-            "AppFlowMeter.features",
-            "AppFlowMeter.app_flow_capturer",
-            "AppFlowMeter.writers",
+            "ALFlowLyzer",
+            "ALFlowLyzer.features",
+            "ALFlowLyzer.application_flow_capturer",
+            "ALFlowLyzer.writers",
         ],
         package_dir={
-            "AppFlowMeter": "AppFlowMeter",
-            "AppFlowMeter.features": "AppFlowMeter/features",
-            "AppFlowMeter.writers": "AppFlowMeter/writers",
+            "ALFlowLyzer": "ALFlowLyzer",
+            "ALFlowLyzer.features": "ALFlowLyzer/features",
+            "ALFlowLyzer.writers": "ALFlowLyzer/writers",
         },
         entry_points=entry_points,
 )

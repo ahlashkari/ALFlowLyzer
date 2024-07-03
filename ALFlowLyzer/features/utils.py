@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from ..app_flow_capturer import Flow
+from ..application_flow_capturer import Flow
 
 def calculate_duration(packets: list) -> float:
     packets_time = [packet.get_timestamp() for packet in packets]

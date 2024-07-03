@@ -21,4 +21,4 @@ WORKDIR /Project
 RUN python setup.py install
 ENTRYPOINT [ "/bin/bash" ]
 
-RUN app-flow-meter
+RUN alflowlyzer

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import dpkt
-from AppFlowMeter.app_flow_capturer.flow import DNSFlow
+from ALFlowLyzer.application_flow_capturer.flow import DNSFlow
 from .packet import Packet
 from .flow_factory import FlowFactory
 
