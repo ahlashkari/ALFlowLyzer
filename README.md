@@ -44,7 +44,17 @@ pip3 install .
 After successfully installing the package, confirm the installation by running the following command:
 
 ```bash
-alflowlyzer --version
+alflowlyzer -h
+```
+
+```
+usage: ALFlowLyzer [-h] [-c CONFIG_FILE] [-o] 
+options:
+ -h, --help            show this help message and exit
+ -c CONFIG_FILE, --config-file CONFIG_FILE
+                       JSON config file address.
+ -o, --online-capturing
+                       Capturing mode. The default mode is offline capturing. 
 ```
 
 
