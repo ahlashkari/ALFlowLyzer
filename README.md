@@ -482,7 +482,7 @@ Nine mathematical functions are used to extract different features. You can see 
 
 For citation in your works and also understanding ALFlowLyzer completely, you can find below published papers:
 
-- “Unveiling malicious DNS behavior profiling and generating benchmark dataset through application layer traffic analysis”, MohammadMoein Shafi, Arash Habibi Lashkari, and Hardhik Mohanty
+- “Unveiling malicious DNS behavior profiling and generating benchmark dataset through application layer traffic analysis”, MohammadMoein Shafi, Arash Habibi Lashkari, and Hardhik Mohanty, Computers and Electrical Engineering, Vol 118, 2024
 
 # Contributing
 
