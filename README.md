@@ -2,7 +2,7 @@
 
 As part of the Understanding Cybersecurity Series (UCS), ALFlowLyzer is a Python open-source project to extract application layer features from network traffic for Anomaly Profiling (AP) which is the third component of the [**NetFlowLyzer**](https://github.com/ahlashkari/NetFlowLyzer).
 
-ALFlowLyzer generates bidirectional flows from the Application Layer of network traffic, where the first packet determines the forward (source to destination) and backward (destination to source) directions, hence the statistical time-related features can be calculated separately in the forward and backward directions. Additional functionalities include selecting features from the list of existing features, adding new features, and controlling the duration of flow timeout. In the first version, it supports DNS protocol and in the next versions other protocols will be supported. For more information regarding the DNS flow definition, please refer to the corresponding paper in [Copyright](#Copyright) section.
+ALFlowLyzer generates bidirectional flows from the Application Layer of network traffic, where the first packet determines the forward (source to destination) and backward (destination to source) directions, hence the statistical time-related features can be calculated separately in the forward and backward directions. Additional functionalities include selecting features from the list of existing features, adding new features, and controlling the duration of flow timeout. In the first version, it supports DNS protocol and in the next versions other protocols will be supported. For more information regarding the DNS flow definition, please refer to the corresponding paper in the [Copyright](#copyright-(c)-2024) section.
 
 # Table of Contents
 
@@ -15,7 +15,7 @@ ALFlowLyzer generates bidirectional flows from the Application Layer of network 
   * [DNS Related](#dns-related)
   * [Statistical Information Calculation](#statistical-information-calculation)
 - [Output](#output)
-- [Copyright](#copyright)
+- [Copyright (c) 2024](#copyright-(c)-2024)
 - [Contributing](#contributing)
 - [Project Team members](#project-team-members)
 - [Acknowledgement](#acknowledgement)
