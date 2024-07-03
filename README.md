@@ -1,4 +1,4 @@
-# ALFlowLyzer
+# Application Layer Flow Analyzer (ALFlowLyzer
 
 As part of the Understanding Cybersecurity Series (UCS), ALFlowLyzer is a Python open-source project to extract application layer features from network traffic for Anomaly Profiling (AP) which is the third component of the [**NetFlowLyzer**](https://github.com/ahlashkari/NetFlowLyzer).
 
@@ -501,6 +501,3 @@ Any contribution is welcome in the form of pull requests.
 # Acknowledgement
 This project has been made possible through funding from the Natural Sciences and Engineering Research Council of Canada — NSERC (#RGPIN-2020-04701), Canada Research Chair (Tier II) - (#CRC-2021-00340) to Arash Habibi Lashkari and Mitacs Global Research Internship (MGRI) program for summer student.
 
-                    
-
-----
