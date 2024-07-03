@@ -17,19 +17,19 @@
 You must install the requirements in your system before you can begin installing or running anything. To do so, you can easily run this command:
 
 ```bash
-sudo pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 You are now ready to install ALFlowLyzer. In order to do so, you should run this command, which will install the ALFlowLyzer package in your system:
 
 ```bash
-sudo python3 setup.py install
+python3 setup.py install
 ```
 
 Finally, to execute the program, run this command:
 
 ```bash
-sudo app-flow-meter
+alflowlyzer
 ```
 Also, you can use `-h` to see different options of the program.
 
