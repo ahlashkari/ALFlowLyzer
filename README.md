@@ -206,14 +206,14 @@ Moreover, this project has been successfully tested on Ubuntu 20.04, Ubuntu 22.0
 
 # Extracted Features
                 
-We have currenlty 130 features that are as follows:
+We currently have currently 130 features that are as follows:
 
 1. Duration
 1. Packets Numbers
 1. Receiving Packets Numbers
 1. Sending Packets Numbers
-1. Successful Packets Numbers (HTTP packets only)
-1. Successful Packets Rate (HTTP packets only)
+1. Successful packet numbers (HTTP packets only)
+1. Successful packet rate (HTTP packets only)
 1. Delta Start
 1. Handshake Duration
 1. Total Bytes
@@ -476,7 +476,7 @@ For citation in your works and also understanding ALFlowLyzer completely, you ca
 
 # Contributing
 
-Any contribution is welcome in form of pull requests.
+Any contribution is welcome in the form of pull requests.
 
 
 # Project Team members 
@@ -485,7 +485,7 @@ Any contribution is welcome in form of pull requests.
 
 * [**Moein Shafi:**](https://github.com/moein-shafi) Graduate student, Researcher and developer - York University
 
-* [**Hardik Mohanty:**](https://github.com/hardhik-99) Mitacs Global Research Internship (GRI), Rearcher and developer - York University
+* [**Hardik Mohanty:**](https://github.com/hardhik-99) Mitacs Global Research Internship (GRI), Researcher and developer - York University
 
 
 # Acknowledgement
