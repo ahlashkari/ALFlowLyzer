@@ -1,15 +1,25 @@
 # ALFlowLyzer
 
+As part of the Understanding Cybersecurity Series (UCS), ALFlowLyzer is a Python open-source project to extract application layer features from network traffic for Anomaly Profiling (AP) which is the third component of the [**NetFlowLyzer**](https://github.com/ahlashkari/NetFlowLyzer).
 
+ALFlowLyzer generates bidirectional flows from the Application Layer of network traffic, where the first packet determines the forward (source to destination) and backward (destination to source) directions, hence the statistical time-related features can be calculated separately in the forward and backward directions. Additional functionalities include selecting features from the list of existing features, adding new features, and controlling the duration of flow timeout. In the first version, it supports DNS protocol and in the next versions other protocols will be supported. For more information regarding the DNS flow definition, please refer to the corresponding paper in [Copyright](#Copyright) section.
 
 # Table of Contents
 
 - [Installation](#installation)
+- [Execution](#execution)
+  * [Configuration File](#configuration-file)
+  * [Argument Parser](#argument-parser)
 - [Architecture](#architecture)
 - [Extracted Features](#extracted-features)
   * [DNS Related](#dns-related)
   * [Statistical Information Calculation](#statistical-information-calculation)
 - [Output](#output)
+- [Copyright](#copyright)
+- [Contributing](#contributing)
+- [Project Team members](#project-team-members)
+- [Acknowledgement](#acknowledgement)
+
 
 # Installation
 
@@ -458,12 +468,11 @@ Nine mathematical functions are used to extract different features. You can see 
 | 2022-04-15 01:01:40_192.168.116.100_43244_192.168.119.112_22 | 4/15/2022 1:01 | 192.168.116.100 | 43244 | 192.168.119.112 | 22 | Others | 6.917505 | 23283 | 7452 | 15831 | 0.00093 | 0.000222 | 0 | 0 | 24671240 | 501761 | 24169479 | 3365.808915 | 1077.302684 | 2288.839353 | 3566493.98880087 | 72537.3687561404 | 3494413.15581659 | 66 | 36266 | 1059.624619 | 1514 | 1514 | 765.659792 | 586234.917 | 0.722576447 | 6.898108476 | 66 | 1578 | 67.33239399 | 66 | 66 | 20.63231412 | 425.6923859 | 0.306424782 | 60.05231415 | 66 | 36266 | 1526.718401 | 1514 | 1514 | 424.6387625 | 180318.0786 | 0.278138236 | 60.85177157 | -1512 | 1512 | -0.001073681 | 0 | 29.21008551 | 853.2290956 | 0 | -27205.54339 | -0.001048411 | -31856 | 34752 | -0.00050537 | 0 | 567.7554589 | 322346.2611 | 0 | -1123446.114 | 3.715976314 | 4.359194994 | 0.000928369 | 0.000169992 | 0.051381806 | 0.00264009 | 0.000170946 | 55.34633046 | 82.30143017 | 0 | 4.317461967 | 0.00043693 | 6.19888E-05 | 0.034980458 | 0.001223632 | 5.6982E-05 | 80.05959085 | 119.424366 | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow |
 
 
-# Copyright (c) 2023
+# Copyright (c) 2024
 
 For citation in your works and also understanding ALFlowLyzer completely, you can find below published papers:
 
 - “Unveiling malicious DNS behavior profiling and generating benchmark dataset through application layer traffic analysis”, MohammadMoein Shafi, Arash Habibi Lashkari, and Hardhik Mohanty
-
 
 # Contributing
 
@@ -479,7 +488,7 @@ Any contribution is welcome in form of pull requests.
 * [**Hardik Mohanty:**](https://github.com/hardhik-99) Mitacs Global Research Internship (GRI), Rearcher and developer - York University
 
 
-## Acknowledgement
+# Acknowledgement
 This project has been made possible through funding from the Natural Sciences and Engineering Research Council of Canada — NSERC (#RGPIN-2020-04701), Canada Research Chair (Tier II) - (#CRC-2021-00340) to Arash Habibi Lashkari and Mitacs Global Research Internship (MGRI) program for summer student.
 
                     
