@@ -1,0 +1,4 @@
+scipy
+multipledispatch
+python-whois
+dpkt

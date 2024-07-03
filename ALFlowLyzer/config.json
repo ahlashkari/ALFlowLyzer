@@ -1,0 +1,32 @@
+{
+    "pcap_file_address": "../pcaps/my_pcap_file.pcap",
+    "output_file_address": "./output-of-my-pcap-file.csv",
+    "label": "Benign",
+    "number_of_threads": 4,
+    "feature_extractor_min_flows": 3000,
+    "writer_min_rows": 6000,
+    "read_packets_count_value_log_info": 10000,
+    "check_flows_ending_min_flows": 1000,
+    "capturer_updating_flows_min_value": 1000,
+    "dns_activity_timeout": 30,
+    "max_flow_duration": 120000,
+    "floating_point_unit": ".8f",
+    "max_rows_number": 900000,
+    "features_ignore_list": [
+        "dns_whois_domain_name",
+        "dns_domain_email",
+        "dns_domain_registrar",
+        "dns_domain_creation_date",
+        "dns_domain_expiration_date",
+        "dns_domain_age",
+        "dns_domain_country",
+        "dns_domain_dnssec",
+        "dns_domain_dnssec",
+        "dns_domain_address",
+        "dns_domain_city",
+        "dns_domain_state",
+        "dns_domain_zipcode",
+        "dns_domain_name_servers",
+        "dns_domain_updated_date"
+    ]
+}
