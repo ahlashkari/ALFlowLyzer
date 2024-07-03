@@ -11,29 +11,179 @@
   * [Statistical Information Calculation](#statistical-information-calculation)
 - [Output](#output)
 
-
 # Installation
 
-You must install the requirements in your system before you can begin installing or running anything. To do so, you can easily run this command:
+Before installing or running the ALFlowLyzer package, it's essential to set up the necessary requirements on your system. Begin by ensuring you have both `Python` and `pip` installed and functioning properly (execute the `pip3 --version` command). Then, execute the following command:
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-You are now ready to install ALFlowLyzer. In order to do so, you should run this command, which will install the ALFlowLyzer package in your system:
+You are prepared to install ALFlowLyzer. To proceed, execute the following command in the package's root directory (where the setup.py file is located), which will install the ALFlowLyzer package on your system:
 
+### On Linux:
 ```bash
 python3 setup.py install
 ```
 
-Finally, to execute the program, run this command:
+### On Windows:
+```bash
+pip3 install .
+```
+
+After successfully installing the package, confirm the installation by running the following command:
 
 ```bash
-alflowlyzer
+alflowlyzer --version
 ```
-Also, you can use `-h` to see different options of the program.
 
-Moreover, this project has been successfully tested on Ubuntu 20.04. It should work on other versions of Ubuntu OS (or even Debian OS) as long as your system has the necessary python3 packages (you can see the required packages in the `requirements.txt` file).
+
+# Execution
+
+The core aspect of running ALFlowLyzer involves preparing the configuration file. This file is designed to facilitate users in customizing the program's behavior with minimal complexity and cost, thus enhancing program scalability. Below, we outline how to prepare the configuration file and subsequently demonstrate how to execute ALFlowLyzer using it.
+
+## Configuration File
+
+The configuration file is formatted in `JSON`, comprising key-value pairs that enable customization of the package. While some keys are mandatory, others are optional. Below, each key is explained along with its corresponding value:
+
+* **pcap_file_address** [Required]
+  
+  This key specifies the input PCAP file address. The format of the value should be a string.
+  
+  **Note**: At this version of ALFlowLyzer, we only support the `PCAP` format. For other formats such as `PCAPNG`, you must convert them to `PCAP`. To convert `PCAPNG` to `PCAP`, you can use Wireshark. If you prefer command-line tools, you can use the following command:
+
+  ```bash
+  tshark -F pcap -r {pcapng_file} -w {pcap_file}
+  ```
+
+  Replace `{pcapng_file}` with the path to your PCAPNG file and `{pcap_file}` with the desired output PCAP file name.
+
+* **output_file_address** [Required]
+
+  This key specifies the output CSV file address. The format of the value should be a string.
+
+* **label** [Optional]
+
+  This key specifies the value of the `label` column in the output CSV file address. The format of the value should be a string. The default value is `Unknown`.
+
+
+* **number_of_threads** [Optional]
+
+  This key specifies the number of threads to be used for all processes, including flow extraction, feature calculation, and output writing. The value must be an integer of at least `3`. The default value is `4`.
+
+  It's important to consider that the optimal value for this option varies based on the system configuration and the format of the input PCAP file. For instance, if the PCAP file contains a large number of packets (e.g., more than 5 million) and they are all TCP packets, increasing the number of threads might be beneficial. However, if the packets represent a small number of flows and all related packets are contiguous, adding more threads could potentially slow down the program since there are fewer distinct flows.
+
+  As a rule of thumb, the ideal value for this option typically falls between half the number of CPU cores (CPU count) and twice the CPU count. This helps balance computational resources without overwhelming the system. (`0.5 * cpu_count < best_option < 2 * cpu_count`)
+
+
+* **feature_extractor_min_flows** [Optional]
+
+  This key determines the minimum number of finished flows required for the feature extractor thread to initiate its work and extract features from these finished flows. The value must be an integer. The default value is `4000`.
+
+  Selecting a high value for this option will consume more RAM since more flows will be stored in memory, potentially slowing down the entire program. Conversely, choosing a low value for this option can slow down the execution process, as it involves locking the finished flows list and then copying those flows for feature extraction. These two processes, locking and copying, are slow and can impede other program components.
+
+
+* **writer_min_rows** [Optional]
+
+  This key specifies the minimum number of ready flows (i.e., finished flows from which features have been extracted) required for the writer thread to begin its work of writing the flows to the CSV file. The value must be an integer. The default value is `6000`.
+
+  Opting for a high value for this option will increase RAM usage since more flows will be stored in memory, potentially slowing down the overall program performance. Conversely, selecting a low value for this option can slow down the execution process, involving locking the finished flows list, copying those flows for the writing process, and performing I/O operations to write to the file. These three processes — locking, copying, and I/O — are slow and may impede other program components.
+  
+* **read_packets_count_value_log_info** [Optional]
+
+  This key determines the minimum number of processed packets (i.e., the number of packets read from the PCAP file and assigned to a flow) required for the logger to log. The value must be an integer. The default value is `10,000`. This means that after processing every `10,000` packets, the program will print a statement indicating the number of packets analyzed.
+
+
+* **check_flows_ending_min_flows** [Optional]
+
+  This key specifies the minimum number of ongoing flows (i.e., created flows that have not yet finished) required for checking if they have reached the timeout or maximum flow time value. The value must be an integer. The default value is `2000`. This indicates that if the number of ongoing flows exceeds `2000`, the program will proceed to check all flows for timeout or maximum flow time.
+
+
+* **capturer_updating_flows_min_value** [Optional]
+
+  This key determines the minimum number of finished flows required to be added to the queue for feature extraction. The value must be an integer. The default value is `2000`. This means that if the number of finished flows exceeds `2000`, the program will move them to a separate list for the feature extractor.
+  
+
+* **max_flow_duration** [Optional]
+
+  This key sets the maximum duration of a flow in seconds. The value must be an integer. The default value is `120,000`. It means if the flow duration exceeds `120,000` seconds, the program will terminate the flow and initiate a new one.
+
+
+* **activity_timeout** [Optional]
+
+  This key defines the flow activity timeout in seconds. The value must be an integer. The default value is `5000`. It means if `5000` seconds have elapsed since the last packet of the flow, the program will terminate the flow.
+
+
+* **floating_point_unit** [Optional]
+
+  This key specifies the floating point unit used for the feature extraction process. The value must be in the format: `.[UNIT]f`. The default value is `.4f`. This indicates that the feature values will be rounded to the fourth decimal place.
+
+
+* **max_rows_number** [Optional]
+
+  This key defines the maximum number of rows in the output CSV file. The value must be an integer. The default value is `900,000`. It means if there are more than `900,000` flows to be written in the CSV file, the program will close the current CSV file and create a new one for the remaining flows.
+
+
+* **features_ignore_list** [Optional]
+
+  This key specifies the features that you do not want to extract. The value must be a list of string values, where each string represents a feature name. The default value is an empty list. If you include a feature name in this list, the program will skip extracting that feature, and it will not appear in the output CSV file.
+
+
+An example of a configuration file would be like this:
+
+```json
+{
+    "pcap_file_address": "/mnt/c/dataset/my_pcap_file.pcap",
+    "output_file_address": "./output-of-my_pcap_file.csv",
+    "label": "Benign",
+    "number_of_threads": 4,
+    "feature_extractor_min_flows": 2500,
+    "writer_min_rows": 1000,
+    "read_packets_count_value_log_info": 1000000,
+    "check_flows_ending_min_flows": 20000,
+    "capturer_updating_flows_min_value": 5000,
+    "dns_activity_timeout": 30,
+    "max_flow_duration": 120000,
+    "floating_point_unit": ".4f",
+    "max_rows_number": 800000,
+    "features_ignore_list": [
+        "dns_whois_domain_name",
+        "dns_domain_email",
+        "dns_domain_registrar",
+        "dns_domain_creation_date",
+        "dns_domain_expiration_date",
+        "dns_domain_age",
+        "dns_domain_country",
+        "dns_domain_dnssec",
+        "dns_domain_dnssec",
+        "dns_domain_address",
+        "dns_domain_city",
+        "dns_domain_state",
+        "dns_domain_zipcode",
+        "dns_domain_name_servers",
+        "dns_domain_updated_date"
+    ]
+}
+```
+
+
+In general, we recommend adjusting the values of the following options: `number_of_threads`, `feature_extractor_min_flows`, `writer_min_rows`, `check_flows_ending_min_flows`, and `capturer_updating_flows_min_value`, based on your system configuration. This is particularly important if your PCAP file is large (usually more than 4 GB with over 1 million TCP packets), to optimize program efficiency.
+
+
+## Argument Parser
+
+You can use `-h` to see different options of the program.
+
+To execute ALFlowLyzer, simply run the following command:
+
+```bash
+alflowlyzer -c YOUR_CONFIG_FILE
+```
+
+Replace `YOUR_CONFIG_FILE` with the path to your configuration file.
+
+
+Moreover, this project has been successfully tested on Ubuntu 20.04, Ubuntu 22.04, Windows 10, and Windows 11. It should work on other versions of Ubuntu OS (or even Debian OS) as long as your system has the necessary Python3 packages (you can find the required packages listed in the `requirements.txt` file).
 
 
 # Architecture
@@ -294,21 +444,6 @@ Nine mathematical functions are used to extract different features. You can see 
 
 
 
-----
-
-## Handshaking Feature Extraction
-
-The following steps are observed in the handshaking process of the TCP/IP packets:
-
-1. The client sends a connection request to the server with a SYN message. The SYN message has sequence number and acknowledgment number initialised to 0.
-
-1. The server establishes the connection to the client by sending a SYN and ACK message. The sequence number is 0 and the acknowledgment number is incremented to 1.
-
-1. The client confirms the connection by sending a ACK message to the server. The sequence number and acknowledgment number are both set to 1. 
-
-+ **Delta Start:** It is defined as the time duration between the last handshaking packet and the first non-handshaking request packet sent by the client to the server. The timestamp of the last packet in the handshaking process and the first non-handshaking request packet is stored in the memory. Next, both these quantities are subtracted to obtain the delta start time. However, the function returns NaN in the absence of TCP/IP layer or incomplete handshaking process.   
-
-
 
 ----
                     
@@ -321,6 +456,32 @@ The following steps are observed in the handshaking process of the TCP/IP packet
 | 2022-04-15 01:05:39_192.168.116.100_58528_192.168.91.24_80 | 4/15/2022 1:05 | 192.168.116.100 | 58528 | 192.168.91.24 | 80 | HTTP | 7.875475 | 1050 | 281 | 769 | 0.001688 | 0.000106 | 13 | 1.650694085 | 1198900 | 36130 | 1162770 | 133.3252915 | 35.68119399 | 97.66550239  |  152232.087588367  |  4587.76348371369  |  147675.57374355  | 66 | 10202 | 1141.809524 | 1514 | 1514 | 810.3565446 | 656677.7294 | 0.709712546 | 1.938364541 | 66 | 1428 | 128.5765125 | 66 | 66 | 240.7908131 | 57980.21568 | 1.872743385 | 3.891267082 | 66 | 10202 | 1512.054616 | 1514 | 1514 | 602.6786735 | 363221.5835 | 0.398582609 | 6.298889431 | -1362 | 1362 | -0.028571429 | 0 | 340.8741063 | 116195.1563 | 0 | -11930.59372 | -0.066420757 | -8688 | 8688 | -0.010416667 | 0 | 701.4665366 | 492055.302 | 0 | -67340.78751 | -0.555146197 | 2.694911957 | 0.028126061 | 0.000115871 | 0.202381878 | 0.040958425 | 0.00011301 | 7.19552868 | 11.15603825 | 0 | 2.695833921 | 0.010252362 | 6.98566E-05 | 0.12326028 | 0.015193097 | 6.69956E-05 | 12.02262252 | 18.48471894 | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow |
 | 2022-04-15 01:00:11_192.168.116.100_56471_192.168.92.11_53 | 4/15/2022 1:00 | 192.168.116.100 | 56471 | 192.168.92.11 | 53 | DNS | 0.002526 | 2 | 1 | 1 | not a tcp connection | not a tcp connection | 0 | 0 | 220 | 102 | 118 | 791.7656374 | 0 | 0 | 87094.2201108471 | 0 | 0 | 102 | 118 | 110 | 110 | 102 | 8 | 64 | 0.072727273 | 0 | 102 | 102 | 102 | 102 | 102 | 0 | 0 | 0 | 0 | 118 | 118 | 118 | 118 | 118 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | content-autofill.googleapis.com. | .com | .googleapis.com | 32 | 16 | ['c', 'o', 'n', 't', 'e', 'n', 't', '-', 'a', 'u', 't', 'o', 'f', 'i', 'l', 'l', '.', 'g', 'o', 'o', 'g', 'l', 'e', 'a', 'p', 'i', 's', '.', 'c', 'o', 'm', '.'] | ['co', 'on', 'nt', 'te', 'en', 'nt', 't-', '-a', 'au', 'ut', 'to', 'of', 'fi', 'il', 'll', 'l.', '.g', 'go', 'oo', 'og', 'gl', 'le', 'ea', 'ap', 'pi', 'is', 's.', '.c', 'co', 'om', 'm.'] | ['con', 'ont', 'nte', 'ten', 'ent', 'nt-', 't-a', '-au', 'aut', 'uto', 'tof', 'ofi', 'fil', 'ill', 'll.', 'l.g', '.go', 'goo', 'oog', 'ogl', 'gle', 'lea', 'eap', 'api', 'pis', 'is.', 's.c', '.co', 'com', 'om.'] | 0 | {'m': 1, 's': 1, 'p': 1, '.': 3, 'g': 2, 'l': 3, 'o': 5, '-': 1, 't': 3, 'i': 2, 'a': 2, 'f': 1, 'n': 2, 'c': 2, 'e': 2, 'u': 1} | 3.81642803184602 | 0 | 10 | 2 | 2 | 0.75 | 0.53125 | 2 | 0 | 415 | 207.5 | 0 | 43056.25 | 207.5 | 207.5 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | [1, 1] | [0, 1] | [1, 1] | [0, 1] |
 | 2022-04-15 01:01:40_192.168.116.100_43244_192.168.119.112_22 | 4/15/2022 1:01 | 192.168.116.100 | 43244 | 192.168.119.112 | 22 | Others | 6.917505 | 23283 | 7452 | 15831 | 0.00093 | 0.000222 | 0 | 0 | 24671240 | 501761 | 24169479 | 3365.808915 | 1077.302684 | 2288.839353 | 3566493.98880087 | 72537.3687561404 | 3494413.15581659 | 66 | 36266 | 1059.624619 | 1514 | 1514 | 765.659792 | 586234.917 | 0.722576447 | 6.898108476 | 66 | 1578 | 67.33239399 | 66 | 66 | 20.63231412 | 425.6923859 | 0.306424782 | 60.05231415 | 66 | 36266 | 1526.718401 | 1514 | 1514 | 424.6387625 | 180318.0786 | 0.278138236 | 60.85177157 | -1512 | 1512 | -0.001073681 | 0 | 29.21008551 | 853.2290956 | 0 | -27205.54339 | -0.001048411 | -31856 | 34752 | -0.00050537 | 0 | 567.7554589 | 322346.2611 | 0 | -1123446.114 | 3.715976314 | 4.359194994 | 0.000928369 | 0.000169992 | 0.051381806 | 0.00264009 | 0.000170946 | 55.34633046 | 82.30143017 | 0 | 4.317461967 | 0.00043693 | 6.19888E-05 | 0.034980458 | 0.001223632 | 5.6982E-05 | 80.05959085 | 119.424366 | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow |
+
+
+# Copyright (c) 2023
+
+For citation in your works and also understanding ALFlowLyzer completely, you can find below published papers:
+
+- “Unveiling malicious DNS behavior profiling and generating benchmark dataset through application layer traffic analysis”, MohammadMoein Shafi, Arash Habibi Lashkari, and Hardhik Mohanty
+
+
+# Contributing
+
+Any contribution is welcome in form of pull requests.
+
+
+# Project Team members 
+
+* [**Arash Habibi Lashkari:**](http://ahlashkari.com/index.asp) Founder and supervisor
+
+* [**Moein Shafi:**](https://github.com/moein-shafi) Graduate student, Researcher and developer - York University
+
+* [**Hardik Mohanty:**](https://github.com/hardhik-99) Mitacs Global Research Internship (GRI), Rearcher and developer - York University
+
+
+## Acknowledgement
+This project has been made possible through funding from the Natural Sciences and Engineering Research Council of Canada — NSERC (#RGPIN-2020-04701), Canada Research Chair (Tier II) - (#CRC-2021-00340) to Arash Habibi Lashkari and Mitacs Global Research Internship (MGRI) program for summer student.
+
                     
 
 ----
