@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import warnings
 from datetime import datetime
 from multiprocessing import Lock
 from .features import *
@@ -7,6 +8,7 @@ from .features import *
 
 class FeatureExtractor(object):
     def __init__(self, floating_point_unit: str):
+        warnings.filterwarnings("ignore")
         self.floating_point_unit = floating_point_unit
         self.__features = [
                 Duration(),
@@ -144,23 +146,25 @@ class FeatureExtractor(object):
 
     def execute(self, data: list, data_lock, flows: list, features_ignore_list: list = [],
             label: str = "") -> list:
-        extracted_data = []
-        for flow in flows:
-            features_of_flow = {}
-            features_of_flow["flow_id"] = str(flow)
-            features_of_flow["timestamp"] = datetime.fromtimestamp(flow.get_timestamp())
-            features_of_flow["src_ip"] = flow.get_src_ip()
-            features_of_flow["src_port"] = flow.get_src_port()
-            features_of_flow["dst_ip"] = flow.get_dst_ip()
-            features_of_flow["dst_port"] = flow.get_dst_port()
-            features_of_flow["protocol"] = flow.get_protocol()
-            for feature in self.__features:
-                if feature.name in features_ignore_list:
-                    continue
-                feature.set_floating_point_unit(self.floating_point_unit)
-                features_of_flow[feature.name] = feature.extract(flow)
-            features_of_flow["label"] = label
-            extracted_data.append(features_of_flow)
-        with data_lock:
-            data.extend(extracted_data)
-            del extracted_data
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            extracted_data = []
+            for flow in flows:
+                features_of_flow = {}
+                features_of_flow["flow_id"] = str(flow)
+                features_of_flow["timestamp"] = datetime.fromtimestamp(flow.get_timestamp())
+                features_of_flow["src_ip"] = flow.get_src_ip()
+                features_of_flow["src_port"] = flow.get_src_port()
+                features_of_flow["dst_ip"] = flow.get_dst_ip()
+                features_of_flow["dst_port"] = flow.get_dst_port()
+                features_of_flow["protocol"] = flow.get_protocol()
+                for feature in self.__features:
+                    if feature.name in features_ignore_list:
+                        continue
+                    feature.set_floating_point_unit(self.floating_point_unit)
+                    features_of_flow[feature.name] = feature.extract(flow)
+                features_of_flow["label"] = label
+                extracted_data.append(features_of_flow)
+            with data_lock:
+                data.extend(extracted_data)
+                del extracted_data

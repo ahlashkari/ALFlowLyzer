@@ -1,7 +1,7 @@
 {
-    "pcap_file_address": "../pcaps/benign2.pcap",
-    "output_file_address": "./output-of-benign-pcap.csv",
-    "label": "spam",
+    "pcap_file_address": "../pcaps/my_pcap_file.pcap",
+    "output_file_address": "./output-of-my-pcap-file.csv",
+    "label": "Benign",
     "number_of_threads": 4,
     "feature_extractor_min_flows": 3000,
     "writer_min_rows": 6000,
@@ -9,9 +9,7 @@
     "check_flows_ending_min_flows": 1000,
     "capturer_updating_flows_min_value": 1000,
     "dns_activity_timeout": 30,
-    "interface_name": "eth0",
     "max_flow_duration": 120000,
-    "activity_timeout": 300,
     "floating_point_unit": ".8f",
     "max_rows_number": 900000,
     "features_ignore_list": [
