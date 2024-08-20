@@ -4,6 +4,7 @@ import dpkt
 import socket
 from datetime import datetime
 from .protocols import Protocols
+from scapy.all import DNS, DNSQR, DNSRR, Ether
 
 
 class Packet(object):
@@ -33,7 +34,7 @@ class Packet(object):
         self.__dns_rr_qtypes = []
         self.__dns_rr_qclasses = []
         self.__domain_names = []
-        self.__extract_dns_data(net_layer)
+        self.__extract_dns_data(net_layer, packet)
 
     def __len__(self):
         return self.__len
@@ -41,10 +42,68 @@ class Packet(object):
     def __lt__(self, o: object):
         return (self.__timestamp <= o.get_timestamp())
 
-    def __extract_dns_data(self, net_layer):
+    def contains_non_hex_values(self, byte_string):
+        for byte in byte_string:
+            if not (0x00 <= byte <= 0x7F and (0x20 <= byte <= 0x7E)):
+                return True
+        try:
+            byte_string.decode('ascii')
+            return False
+        except UnicodeDecodeError:
+            return True
+
+    def __extract_dns_data_using_scapy(self, parsed_packet):
+        dns_data = parsed_packet[DNS]
+        self.__transaction_id = dns_data.id
+
+        if dns_data.qdcount > 0 and isinstance(dns_data.qd, DNSQR):
+            self.__domain_names.append(dns_data.qd.qname.decode())
+
+        self.__dns_ancount = dns_data.ancount
+        if dns_data.ancount > 0 and isinstance(dns_data.an, DNSRR):
+            for i in range(dns_data.ancount):
+                if hasattr(dns_data.an[i], 'rrname'):
+                    self.__domain_names.append(dns_data.an[i].rrname.decode())
+                if hasattr(dns_data.an[i], 'ttl'):
+                    self.__dns_ttl_values.append(dns_data.an[i].ttl)
+                if hasattr(dns_data.an[i], 'type'):
+                    self.__dns_rr_types.append(dns_data.an[i].type)
+                if hasattr(dns_data.an[i], 'rclass'):
+                    self.__dns_rr_rclasses.append(dns_data.an[i].rclass)
+
+        self.__dns_nscount = dns_data.nscount
+
+        self.__dns_arcount = dns_data.arcount
+        if dns_data.arcount > 0 and isinstance(dns_data.ar, DNSRR):
+            for i in range(dns_data.arcount):
+                if hasattr(dns_data.ar[i], 'type'):
+                    self.__dns_rr_qtypes.append(dns_data.ar[i].type)
+                if hasattr(dns_data.ar[i], 'rclass'):
+                    self.__dns_rr_qclasses.append(dns_data.ar[i].rclass)
+
+
+    def __extract_dns_data(self, net_layer, packet):
         if self.__application_protocol != 'DNS':
             return
         try:
+            if self.contains_non_hex_values(net_layer.data):
+                print()
+                print(f">> The DNS payload contains non bytes data. It is probably a malformed packet.")
+                parsed_packet = Ether(packet)
+                if DNS in parsed_packet:
+                    print(">> Some data are extractable using `Scapy` library. We will use them for this packet.")
+                    self.__extract_dns_data_using_scapy(parsed_packet)
+
+                else:
+                    print(">> We continue the analysis and use the UDP layer data for analysis.")
+                    self.__transaction_id = -2
+                    self.__domain_names.append("malformed-packet")
+                    self.__dns_ancount = -2
+                    self.__dns_nscount = -2
+                    self.__dns_arcount = -2
+
+                print()
+                return
             dns_data = dpkt.dns.DNS(net_layer.data)
             self.__transaction_id = dns_data.id
             if len(dns_data.qd) > 0:
@@ -66,8 +125,11 @@ class Packet(object):
                     self.__dns_rr_qclasses.append(data.cls)
 
         except (dpkt.dpkt.NeedData, dpkt.dpkt.UnpackError, Exception) as e:
+            print()
             print('\nError Parsing DNS, Might be a truncated packet...')
             print('Exception: {!r}'.format(e))
+            exit()
+
             return
 
     def __extract_application_layer_protocol(self) -> None:
