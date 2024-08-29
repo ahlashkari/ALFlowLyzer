@@ -1,4 +1,4 @@
-![](https://github.com/ahlashkari/ALFlowLyzer/blob/master/bccc.jpg)
+![](https://github.com/ahlashkari/ALFlowLyzer/blob/main/bccc.jpg)
 
 # Application Layer Flow Analyzer (ALFlowLyzer)
 
