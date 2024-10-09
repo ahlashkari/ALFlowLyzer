@@ -162,7 +162,11 @@ class FeatureExtractor(object):
                     if feature.name in features_ignore_list:
                         continue
                     feature.set_floating_point_unit(self.floating_point_unit)
-                    features_of_flow[feature.name] = feature.extract(flow)
+                    try:
+                        features_of_flow[feature.name] = feature.extract(flow)
+                    except Exception as e:
+                        print(f">> Error occurred in feature extraction for extracting >> {feature.name} << for the flow with {str(flow)} id.\n{e}\n")
+                        pass
                 features_of_flow["label"] = label
                 extracted_data.append(features_of_flow)
             with data_lock:

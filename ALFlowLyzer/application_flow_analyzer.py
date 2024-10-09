@@ -76,7 +76,7 @@ class ALFlowLyzer(object):
 
     def feature_extractor(self, pool: Pool):
         feature_extractor = FeatureExtractor(self.__config.floating_point_unit)
-        while 1:
+        while True:
             if len(self.__flows) >= self.__config.feature_extractor_min_flows:
                 temp_flows = []
                 with self.__flows_lock:
@@ -99,7 +99,7 @@ class ALFlowLyzer(object):
         data_writing_mode = 'a+'
         file_address = self.__config.output_file_address
         write_headers = True
-        while 1:
+        while True:
             if len(self.__data) > self.__config.writer_min_rows:
                 with self.__writed_rows_lock and self.__output_file_index_lock:
                     if self.__writed_rows.get() > self.__config.max_rows_number:

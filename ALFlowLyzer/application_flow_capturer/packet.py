@@ -2,7 +2,7 @@
 
 import dpkt
 import socket
-from datetime import datetime
+import datetime
 from .protocols import Protocols
 from scapy.all import DNS, DNSQR, DNSRR, Ether
 
@@ -19,8 +19,8 @@ class Packet(object):
         self.__network_protocol = 'TCP'
         if isinstance(ip.data, dpkt.udp.UDP):
             self.__network_protocol = 'UDP'
-        self.__timestamp = ts
-        self.__human_readable_timestamp = datetime.utcfromtimestamp(ts)
+        self.__timestamp = float(ts)
+        self.__human_readable_timestamp = datetime.datetime.fromtimestamp(float(ts), datetime.UTC)
         self.__tcp_flags = net_layer.flags if self.__network_protocol == 'TCP' else 0
         self.__seq_number = net_layer.seq if self.__network_protocol == 'TCP' else -1
         self.__ack_number = net_layer.ack if self.__network_protocol == 'TCP' else -1
@@ -87,22 +87,22 @@ class Packet(object):
             return
         try:
             if self.contains_non_hex_values(net_layer.data):
-                print()
-                print(f">> The DNS payload contains non bytes data. It is probably a malformed packet.")
+                # print()
+                # print(f">> The DNS payload contains non bytes data. It is probably a malformed packet.")
                 parsed_packet = Ether(packet)
                 if DNS in parsed_packet:
-                    print(">> Some data are extractable using `Scapy` library. We will use them for this packet.")
+                    # print(">> Some data are extractable using `Scapy` library. We will use them for this packet.")
                     self.__extract_dns_data_using_scapy(parsed_packet)
 
                 else:
-                    print(">> We continue the analysis and use the UDP layer data for analysis.")
+                    # print(">> We continue the analysis and use the UDP layer data for analysis.")
                     self.__transaction_id = -2
                     self.__domain_names.append("malformed-packet")
                     self.__dns_ancount = -2
                     self.__dns_nscount = -2
                     self.__dns_arcount = -2
 
-                print()
+                # print()
                 return
             dns_data = dpkt.dns.DNS(net_layer.data)
             self.__transaction_id = dns_data.id
@@ -128,8 +128,6 @@ class Packet(object):
             print()
             print('\nError Parsing DNS, Might be a truncated packet...')
             print('Exception: {!r}'.format(e))
-            exit()
-
             return
 
     def __extract_application_layer_protocol(self) -> None:

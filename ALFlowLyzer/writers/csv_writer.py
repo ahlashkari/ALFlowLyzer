@@ -21,3 +21,4 @@ class CSVWriter(Strategy):
                 for header in headers:
                     row.append(data_row[header])
                 writer.writerow(row)
+            print(f">> {len(data)} number of flows has been written in {file_address} file.")

@@ -18,6 +18,7 @@ class AppFlowCapturer(object):
         self.__capturer_updating_flows_min_value = capturer_updating_flows_min_value
         self.__read_packets_count_value_log_info = read_packets_count_value_log_info
         self.__flow_factory = FlowFactory()
+        self.__number_of_flows = 0
 
     def capture(self, pcap_file: str, flows: list, flows_lock, thread_finished) -> list:
         f = open(pcap_file, 'rb')
@@ -35,6 +36,7 @@ class AppFlowCapturer(object):
                     continue
 
             except (dpkt.dpkt.NeedData, dpkt.dpkt.UnpackError, Exception) as e:
+                print(f"Error encountered during the pcap file reading process: {e}")
                 continue
 
             app_flow_packet = Packet(buf, ts)
@@ -45,8 +47,13 @@ class AppFlowCapturer(object):
         with flows_lock:
             flows.extend(self.__finished_flows)
             flows.extend(self.__ongoing_flows)
+            self.__number_of_flows += len(self.__finished_flows)
+            self.__number_of_flows += len(self.__ongoing_flows)
+
+
         print(">> end of reading from", pcap_file)
         thread_finished.set(True)
+        print(f">> {self.__number_of_flows} number of flows created in total.")
         return self.__finished_flows + self.__ongoing_flows
 
     def __add_packet_to_flow(self, packet: Packet, flows: list, flows_lock) -> None:
@@ -76,6 +83,7 @@ class AppFlowCapturer(object):
             if len(self.__finished_flows) >= self.__capturer_updating_flows_min_value:
                 with flows_lock:
                     flows.extend(self.__finished_flows)
+                    self.__number_of_flows += len(self.__finished_flows)
                     self.__finished_flows.clear()
             return
         flow.add_packet(packet)

@@ -4,7 +4,7 @@ from datetime import datetime
 from .packet import Packet
 
 class Flow(object):
-    def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: str,
+    def __init__(self, src_ip: str, dst_ip: str, src_port: str, dst_port: str, timestamp: float,
             protocol: str, network_protocol: str, activity_timeout: int):
         self.__src_ip = src_ip
         self.__dst_ip = dst_ip
