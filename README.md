@@ -1,12 +1,14 @@
 ![](https://github.com/ahlashkari/ALFlowLyzer/blob/main/bccc.jpg)
 
-# Application Layer Flow Analyzer (ALFlowLyzer)
+# ALFlowLyzer
+
+**Application Layer Flow Analyzer**
 
 As part of the Understanding Cybersecurity Series (UCS), ALFlowLyzer is a Python open-source project to extract application layer features from network traffic for Anomaly Profiling (AP) which is the third component of the [**NetFlowLyzer**](https://github.com/ahlashkari/NetFlowLyzer).
 
-ALFlowLyzer generates bidirectional flows from the Application Layer of network traffic, where the first packet determines the forward (source to destination) and backward (destination to source) directions, hence the statistical time-related features can be calculated separately in the forward and backward directions. Additional functionalities include selecting features from the list of existing features, adding new features, and controlling the duration of flow timeout. In the first version, it supports DNS protocol and in the next versions, other protocols will be supported. For more information regarding the DNS flow definition, please refer to the corresponding paper in the [Copyright](#copyright-(c)-2024) section.
+ALFlowLyzer generates bidirectional flows from the Application Layer of network traffic, where the first packet determines the forward (source to destination) and backward (destination to source) directions, hence the statistical time-related features can be calculated separately in the forward and backward directions. Additional functionalities include selecting features from the list of existing features, adding new features, and controlling the duration of flow timeout. In the first version, it supports DNS protocol and in the next versions, other protocols will be supported. For more information regarding the DNS flow definition, please refer to the corresponding paper in the [Citation](#copyright-c-2024--citation) section.
 
-# Table of Contents
+## Table of Contents
 
 - [Installation](#installation)
 - [Execution](#execution)
@@ -17,13 +19,13 @@ ALFlowLyzer generates bidirectional flows from the Application Layer of network 
   * [DNS Related](#dns-related)
   * [Statistical Information Calculation](#statistical-information-calculation)
 - [Output](#output)
-- [Copyright (c) 2024](#copyright-(c)-2024)
 - [Contributing](#contributing)
-- [Project Team members](#project-team-members)
-- [Acknowledgement](#acknowledgement)
+- [Copyright (c) 2024 & Citation](#copyright-c-2024--citation)
+- [Team Members](#team-members)
+- [Acknowledgment](#acknowledgment)
 
 
-# Installation
+## Installation
 
 Before installing or running the ALFlowLyzer package, it's essential to set up the necessary requirements on your system. Begin by ensuring you have both `Python` and `pip` installed and functioning properly (execute the `pip3 --version` command). Then, execute the following command:
 
@@ -60,11 +62,11 @@ options:
 ```
 
 
-# Execution
+## Execution
 
 The core aspect of running ALFlowLyzer involves preparing the configuration file. This file is designed to facilitate users in customizing the program's behavior with minimal complexity and cost, thus enhancing program scalability. Below, we outline how to prepare the configuration file and subsequently demonstrate how to execute ALFlowLyzer using it.
 
-## Configuration File
+### Configuration File
 
 The configuration file is formatted in `JSON`, comprising key-value pairs that enable customization of the package. While some keys are mandatory, others are optional. Below, each key is explained along with its corresponding value:
 
@@ -192,7 +194,7 @@ An example of a configuration file would be like this:
 In general, we recommend adjusting the values of the following options: `number_of_threads`, `feature_extractor_min_flows`, `writer_min_rows`, `check_flows_ending_min_flows`, and `capturer_updating_flows_min_value`, based on your system configuration. This is particularly important if your PCAP file is large (usually more than 4 GB with over 1 million TCP packets), to optimize program efficiency.
 
 
-## Argument Parser
+### Argument Parser
 
 You can use `-h` to see different options of the program.
 
@@ -208,17 +210,14 @@ Replace `YOUR_CONFIG_FILE` with the path to your configuration file.
 Moreover, this project has been successfully tested on Ubuntu 20.04, Ubuntu 22.04, Windows 10, and Windows 11. It should work on other versions of Ubuntu OS (or even Debian OS) as long as your system has the necessary Python3 packages (you can find the required packages listed in the `requirements.txt` file).
 
 
-# Architecture
-
+## Architecture
 
 ![](./Architecture.svg)
+ 
 
+## Extracted Features
                 
-----
-
-# Extracted Features
-                
-We currently have currently 130 features that are as follows:
+We currently have 130 features, as follows:
 
 1. Duration
 1. Packets Numbers
@@ -300,7 +299,7 @@ We currently have currently 130 features that are as follows:
 1. Sending Packets Delta Time Coefficient of Variation
 1. Sending Packets Delta Time Skewness
 
-note: Delta features are about differences (time or length or anything else) between two 'consecutive' packets.
+Note: Delta features are about differences (time, length, or anything else) between two 'consecutive' packets.
 
 ## DNS Related
 
@@ -357,9 +356,10 @@ note: Delta features are about differences (time or length or anything else) bet
 1. Answer Resource Record Class
 
 
+----------
 ## Statistical Information Calculation
 
-We use differnet libraries to calculate various mathematical equations. Below you can see the libraries and their brief definition based on their documentations:
+We use different libraries to calculate various mathematical equations. Below you can see the libraries and their brief definitions based on their documentation:
 
 + [**statistics**](https://docs.python.org/3/library/statistics.html)
 
@@ -463,13 +463,8 @@ Nine mathematical functions are used to extract different features. You can see 
       is the biased sample ith central moment, and x- is the sample mean. If bias is False, the calculations are corrected for bias and the value computed is the adjusted Fisher-Pearson standardized moment coefficient, i.e.
       
       ![equation](https://latex.codecogs.com/svg.image?{\color{blue}G_{1}=\frac{k_{3}}{k_{2}^{\frac{3}{2}}}=\frac{\sqrt{N(N-1)}}{N-2}\frac{m_{3}}{m_{2}^{\frac{3}{2}}})      
-
-
-
-
-----
-                    
-# Output
+  
+## Output
 
 
 | flow_id  | 	timestamp  | 	src_ip  | 	src_port  | 	dst_ip  | 	dst_port  | 	protocol  | 	duration  | 	packets_numbers  | 	receiving_packets_numbers  | 	sending_packets_numbers  | handshake_duration | delta_start	| success_packets_numbers  | 	success_packets_rate  |  total_bytes  |  receiving_bytes  |  sending_bytes  | 	packets_rate  | 	receiving_packets_rate  | 	sending_packets_rate  |  packets_len_rate  |  receiving_packets_len_rate  |  sending_packets_len_rate  | 	min_packets_len  | 	max_packets_len  | 	mean_packets_len  | 	median_packets_len  | 	mode_packets_len  | 	standard_deviation_packets_len  | 	variance_packets_len  | 	coefficient_of_variation_packets_len  | 	skewness_packets_len  | 	min_receiving_packets_len  | 	max_receiving_packets_len  | 	mean_receiving_packets_len  | 	median_receiving_packets_len  | 	mode_receiving_packets_len  | 	standard_deviation_receiving_packets_len  | 	variance_receiving_packets_len  | 	coefficient_of_variation_receiving_packets_len  | 	skewness_receiving_packets_len  | 	min_sending_packets_len  | 	max_sending_packets_len  | 	mean_sending_packets_len  | 	median_sending_packets_len  | 	mode_sending_packets_len  | 	standard_deviation_sending_packets_len  | 	variance_sending_packets_len  | 	coefficient_of_variation_sending_packets_len  | 	skewness_sending_packets_len  | 	min_receiving_packets_delta_len  | 	max_receiving_packets_delta_len  | 	mean_receiving_packets_delta_len  | 	median_receiving_packets_delta_len  | 	standard_deviation_receiving_packets_delta_len  | 	variance_receiving_packets_delta_len  | 	mode_receiving_packets_delta_len  | 	coefficient_of_variation_receiving_packets_delta_len  | 	skewness_receiving_packets_delta_len  | 	min_sending_packets_delta_len  | 	max_sending_packets_delta_len  | 	mean_sending_packets_delta_len  | 	median_sending_packets_delta_len  | 	standard_deviation_sending_packets_delta_len  | 	variance_sending_packets_delta_len  | 	mode_sending_packets_delta_len  | 	coefficient_of_variation_sending_packets_delta_len  | 	skewness_sending_packets_delta_len  | 	max_receiving_packets_delta_time  | 	mean_receiving_packets_delta_time  | 	median_receiving_packets_delta_time  | 	standard_deviation_receiving_packets_delta_time  | 	variance_receiving_packets_delta_time  | 	mode_receiving_packets_delta_time  | 	coefficient_of_variation_receiving_packets_delta_time  | 	skewness_sreceiving_packets_delta_time  | 	min_sending_packets_delta_time  | 	max_sending_packets_delta_time  | 	mean_sending_packets_delta_time  | 	median_sending_packets_delta_time  | 	standard_deviation_sending_packets_delta_time  | 	variance_sending_packets_delta_time  | 	mode_sending_packets_delta_time  | 	coefficient_of_variation_sending_packets_delta_time  | 	skewness_sending_packets_delta_time  | domain_name | top_level_domain | second_level_domain | domain_name_length | subdomain_name_length | uni_gram_domain_name | bi_gram_domain_name | tri_gram_domain_name | numerical_percentage | character_distribution | character_entropy | max_continuous_numeric_len | max_continuous_aphabet_len | max_continuous_consonants_len | max_continuous_same_alphabet_len | vowels_consonant_ratio | conv_freq_vowels_consonants | distinct_ttl_values | ttl_values_min | ttl_values_max | ttl_values_mean | ttl_values_mode | ttl_values_variance | ttl_values_standard_deviation | ttl_values_median | ttl_values_skewness | ttl_values_coefficient_of_variation | distinct_A_records | distinct_NS_records | average_authority_resource_records | average_additional_resource_records | average_answer_resource_records | query_resource_record_type | ans_resource_record_type | query_resource_record_class | ans_resource_record_class |
@@ -480,26 +475,36 @@ Nine mathematical functions are used to extract different features. You can see 
 | 2022-04-15 01:01:40_192.168.116.100_43244_192.168.119.112_22 | 4/15/2022 1:01 | 192.168.116.100 | 43244 | 192.168.119.112 | 22 | Others | 6.917505 | 23283 | 7452 | 15831 | 0.00093 | 0.000222 | 0 | 0 | 24671240 | 501761 | 24169479 | 3365.808915 | 1077.302684 | 2288.839353 | 3566493.98880087 | 72537.3687561404 | 3494413.15581659 | 66 | 36266 | 1059.624619 | 1514 | 1514 | 765.659792 | 586234.917 | 0.722576447 | 6.898108476 | 66 | 1578 | 67.33239399 | 66 | 66 | 20.63231412 | 425.6923859 | 0.306424782 | 60.05231415 | 66 | 36266 | 1526.718401 | 1514 | 1514 | 424.6387625 | 180318.0786 | 0.278138236 | 60.85177157 | -1512 | 1512 | -0.001073681 | 0 | 29.21008551 | 853.2290956 | 0 | -27205.54339 | -0.001048411 | -31856 | 34752 | -0.00050537 | 0 | 567.7554589 | 322346.2611 | 0 | -1123446.114 | 3.715976314 | 4.359194994 | 0.000928369 | 0.000169992 | 0.051381806 | 0.00264009 | 0.000170946 | 55.34633046 | 82.30143017 | 0 | 4.317461967 | 0.00043693 | 6.19888E-05 | 0.034980458 | 0.001223632 | 5.6982E-05 | 80.05959085 | 119.424366 | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow | not a dns flow |
 
 
-# Copyright (c) 2024
+## Contributing
 
-For citation in your works and also understanding ALFlowLyzer completely, you can find below published papers:
-
-- “Unveiling malicious DNS behavior profiling and generating benchmark dataset through application layer traffic analysis”, MohammadMoein Shafi, Arash Habibi Lashkari, and Hardhik Mohanty, Computers and Electrical Engineering, Vol 118, 2024
-
-# Contributing
-
-Any contribution is welcome in the form of pull requests.
+Contributions are welcome in the form of pull requests.
 
 
-# Project Team members 
+## Copyright (c) 2024 & Citation
 
-* [**Arash Habibi Lashkari:**](http://ahlashkari.com/index.asp) Founder and supervisor
+To cite ALFlowLyzer in your work and understand it completely, find the following published paper:
+```
+@article{shafi_2024,
+    author = {Shafi, MohammadMoein and Lashkari, Arash Habibi and Mohanty, Hardhik},
+    title = {Unveiling malicious DNS behavior profiling and generating benchmark dataset through application layer traffic analysis},
+    journal = {Computers and Electrical Engineering},
+    year = {2024},
+    volume = {118},
+    pages = {109436},
+    issn = {0045-7906},
+    doi = {10.1016/j.compeleceng.2024.109436}
+}
+```
 
-* [**Moein Shafi:**](https://github.com/moein-shafi) Graduate student, Researcher and developer - York University
 
-* [**Hardik Mohanty:**](https://github.com/hardhik-99) Mitacs Global Research Internship (GRI), Researcher and developer - York University
+## Team Members 
+
+* [**Arash Habibi Lashkari:**](http://ahlashkari.com/index.asp) Founder and Supervisor
+
+* [**Moein Shafi:**](https://github.com/moein-shafi) Graduate Student, Researcher and Developer - York University (2 years, 2022–2024)
+
+* [**Hardhik Mohanty:**](https://github.com/hardhik-99) Mitacs Globalink Research Intern, Researcher and Developer - York University (3 months, 2022)
 
 
-# Acknowledgement
-This project has been made possible through funding from the Natural Sciences and Engineering Research Council of Canada — NSERC (#RGPIN-2020-04701), Canada Research Chair (Tier II) - (#CRC-2021-00340) to Arash Habibi Lashkari and Mitacs Global Research Internship (MGRI) program for summer student.
-
+## Acknowledgment
+This project has been made possible through funding from the Natural Sciences and Engineering Research Council of Canada — NSERC (#RGPIN-2020-04701) and Canada Research Chair (Tier II) - (#CRC-2021-00340) to Arash Habibi Lashkari, and the Mitacs Globalink Research Internship (GRI) program.
